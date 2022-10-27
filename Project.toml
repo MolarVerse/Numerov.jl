@@ -1,0 +1,4 @@
+name = "Numerov"
+uuid = "19e90f0b-5b53-4501-bfb7-be6aec03b1b3"
+authors = ["Jakob Gamper <97gamjak@gmail.com>"]
+version = "0.1.0"
