@@ -3,18 +3,34 @@ function readInputFile(inputFileName::String)
     inputFile = open(inputFileName, "r")
 
     lines = readlines(inputFile)
+    
+    # removing all comments starting with #
+    lines = getindex.(split.(lines, "#"), 1)
 
-    lineElements = split.(lines)
+    # removing all blank lines from input
+    filter!(x -> !isempty(strip(x)), lines)
+
+    lineElements = split.(lowercase.(lines))
 
     for line in lineElements
-        
-        line[2] != "=" && @error "Parsing error in inputfile -- second entry in a line has to be a \"=\""
 
-        if("potential-file" == line[1])
-            continue
+        keyFound = false
+        
+        length(line) > 3   && (@error "There are to many entries in line $(line)"; exit())
+        length(line) < 3   && (@error "There are to few entries in line $(line)"; exit())
+        line[2]     != "=" && (@error "Parsing error in inputfile -- second entry in a line has to be a \"=\"" ; exit())
+
+        for (key, _) in inputDictionary
+            if key == line[1] && keyFound == false
+                inputDictionary[key] = line[3]
+                keyFound = true
+            elseif key == line[1]
+                @error "You have defined the keyword $(line[1]) multiple times" ; exit()
+            end
         end
-        @error "Keyword $(line[1]) not defined!"
-        break
+
+        keyFound == false && (@error "Keyword $(line[1]) not defined!" ; exit())
+
     end
     
 end

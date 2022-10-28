@@ -1,1 +1,3 @@
-potential_file adsf= 3
+potential-file = potential.dat
+stencil = 3
+
