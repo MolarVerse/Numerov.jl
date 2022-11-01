@@ -13,6 +13,8 @@ import PhysicalConstants.CODATA2018: h, ħ, N_A, c_0
 include("MyUnits.jl")
 using .MyUnits
 
+MyUnits.__init__()
+
 abstract type System end
 
 include("datatypes/InputDictionary.jl")

@@ -21,11 +21,33 @@ function checkPotentialFile(potential::Potential)
 end
 
 function checkPotentialUnits(potential::Potential)
-    isempty(inputDictionary["potential-unit"]) && (potential.potentialUnit = u"hartree"; return) #write to log file about default setting
+    isempty(inputDictionary["potential-unit"])      && (potential.potentialUnit = u"hartree"    ; return) #write to log file about default setting
+    inputDictionary["potential-unit"] == "ev"       && (potential.potentialUnit = u"eV"         ; return)
+    inputDictionary["potential-unit"] == "kj/mol"   && (potential.potentialUnit = u"kJpermol"   ; return)
+    inputDictionary["potential-unit"] == "kcal/mol" && (potential.potentialUnit = u"kcalpermol" ; return)
+
+    @error "\nThe given potential-unit $(inputDictionary["potential-unit"]) was not recognised!\n" *
+           "Valid opttions are:                                                                \n" * 
+           "    - ev                                                                           \n" *
+           "    - kj/mol                                                                       \n" *
+           "    - kcal/mol                                                                     \n"
+
+    exit()
 end
 
 function checkCoordsUnits(potential::Potential)
-    isempty(inputDictionary["coord-unit"]) && (potential.coordsUnit = u"bohr"; return) #write to log file about default setting
+    isempty(inputDictionary["coord-unit"])      && (potential.coordsUnit = u"angstrom"; return) #write to log file about default setting
+    inputDictionary["coord-unit"] == "angstrom" && (potential.coordsUnit = u"angstrom"; return)
+    inputDictionary["coord-unit"] == "nm"       && (potential.coordsUnit = u"nm"      ; return)
+    inputDictionary["coord-unit"] == "bohr"     && (potential.coordsUnit = u"bohr"    ; return)
+
+    @error "\nThe given coord-unit $(inputDictionary["coord-unit"]) was not recognised!\n" *
+           "Valid opttions are:                                                        \n" * 
+           "    - angstrom                                                             \n" *
+           "    - nm                                                                   \n" *
+           "    - bohr                                                                 \n"
+
+    exit()
 end
 
 function checkMassUnits(potential::Potential)
