@@ -2,5 +2,9 @@ inputDictionary = Dict(
     "potential-file" => "",
     "potential-unit" => "",
     "coord-unit"     => "",
-    "stencil"        => ""
+    "mass-unit"      => "",
+    "stencil"        => "",
+    "reduced-mass"   => "",
+    "periodic"       => "",
+    "n-eigenvalues"  => ""
 )

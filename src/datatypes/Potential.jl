@@ -3,13 +3,19 @@ mutable struct Potential
 
     potentialUnit::Unitful.FreeUnits
     coordsUnit   ::Unitful.FreeUnits
+    massUnit     ::Unitful.FreeUnits
+
+    internalElemEnergy::Quantity
+    internalElemCoords::Quantity
+    internalElemMass  ::Quantity
 
     dimension::Int64
-    periodic ::Bool
 
-    potential::Vector{Quantity}
+    mass::Float64
 
-    coords::Vector{Vector{Quantity}}
+    potential::Vector{Float64}
+
+    coords::Vector{Vector{Float64}}
 
     Potential() = new()
 end

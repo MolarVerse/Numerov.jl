@@ -32,5 +32,5 @@ function readInputFile(inputFileName::String)
         keyFound == false && (@error "Keyword $(line[1]) not defined!" ; exit())
 
     end
-    
+
 end
