@@ -1,8 +1,8 @@
 function readPotential(potential::Potential)
 
-    potential.internalElemEnergy = 1.0u"hartree"
-    potential.internalElemCoords = 1.0u"bohr"
-    potential.internalElemMass   = 1.0u"me"
+    potential.internalElemEnergy = u"hartree"
+    potential.internalElemCoords = u"bohr"
+    potential.internalElemMass   = u"me"
 
     file = open(potential.file, "r")
 
@@ -37,10 +37,14 @@ function readPotential(potential::Potential)
 
     end    
 
-    potential.potential = ustrip.(uconvert.(unit(potential.internalElemEnergy), potential.potential * potential.potentialUnit))
-    potential.mass      = ustrip.(uconvert.(unit(potential.internalElemMass  ), potential.mass      * potential.massUnit)) #still no idea why this horrible hack with unit(.)
+    potential.potential = ustrip.(uconvert.(potential.internalElemEnergy, potential.potential * potential.potentialUnit))
+    potential.mass      = ustrip.(uconvert.(potential.internalElemMass  , potential.mass      * potential.massUnit)) #still no idea why this horrible hack with .)
 
     for i in eachindex(potential.coords)
-        potential.coords[i]    = ustrip.(uconvert.(unit(potential.internalElemCoords), potential.coords[i]    * potential.coordsUnit))
+        potential.coords[i]    = ustrip.(uconvert.(potential.internalElemCoords, potential.coords[i] * potential.coordsUnit))
     end
+
+    #shift potential
+
+    potential.shift && (potential.potential = potential.potential .- minimum(potential.potential))
 end

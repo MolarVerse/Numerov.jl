@@ -40,7 +40,7 @@ function printEigenvectors(potential::Potential, system::System, output::Output)
 
     close(file)
     close(file_shifted)
-    
+
 end
 
 function printFrequencies(potential::Potential, output::Output)
@@ -57,7 +57,7 @@ function printFrequencies(potential::Potential, output::Output)
     
     for i in 1:output.n_eigenvalues-1
         for j in 1:i
-            @printf(file, "%8.6lf ", ustrip(uconvert(u"cm^-1", output.frequencies[i,j]*unit(potential.internalElemEnergy) / h / c_0)))
+            @printf(file, "%8.6lf ", ustrip(uconvert(u"cm^-1", output.frequencies[i,j]*potential.internalElemEnergy / h / c_0)))
         end
         @printf(file, "\n")
     end

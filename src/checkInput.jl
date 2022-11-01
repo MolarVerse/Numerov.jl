@@ -4,6 +4,7 @@ function checkInput(potential::Potential)
     checkCoordsUnits(potential)
     checkMassUnits(potential)
     checkMass(potential)
+    checkShiftPotential(potential)
 end
 
 function checkInput(system::System)
@@ -12,7 +13,7 @@ function checkInput(system::System)
 end
 
 function checkInput(output::Output)
-    chechNEigenvalues(output)
+    checkNEigenvalues(output)
 end
 
 function checkPotentialFile(potential::Potential)
@@ -54,7 +55,7 @@ function checkMassUnits(potential::Potential)
     isempty(inputDictionary["mass-unit"])   && (potential.massUnit = u"u" ; return) #write to log file about default setting
     inputDictionary["mass-unit"] == "unit"  && (potential.massUnit = u"u" ; return)
     inputDictionary["mass-unit"] == "g/mol" && (potential.massUnit = u"u" ; return)
-    inputDictionary["mass-unit"] == "me"    && (potential.massUnit = unit(1.0u"me"); return) # here same brutal hack as later
+    inputDictionary["mass-unit"] == "me"    && (potential.massUnit = u"me"; return) # here same brutal hack as later
 
     @error "\nThe given mass-unit $(inputDictionary["mass-unit"]) was not recognised!\n" *
            "Valid opttions are:                                                      \n" * 
@@ -67,6 +68,11 @@ end
 
 function checkMass(potential::Potential)
     isempty(inputDictionary["reduced-mass"]) && (potential.mass = 1.0; return) #write to log file about default setting
+    potential.mass = parse(Float64, inputDictionary["reduced-mass"])
+end
+
+function checkShiftPotential(potential::Potential)
+    isempty(inputDictionary["shift-potential"]) && (potential.shift = true; return) #write to log file about default setting
 end
 
 function checkStencil(system::System)
@@ -78,8 +84,11 @@ end
 
 function checkPeriodicity(system::System)
     isempty(inputDictionary["periodic"]) && (system.periodic = false; return) #write to log file about default setting
+    system.periodic = parse(Bool, inputDictionary["periodic"])
 end
 
-function chechNEigenvalues(output::Output)
+function checkNEigenvalues(output::Output)
     isempty(inputDictionary["n-eigenvalues"]) && (output.n_eigenvalues = 5; return) #write to log file about default setting
+    output.n_eigenvalues = parse(Int64, inputDictionary["n-eigenvalues"])
+    output.n_eigenvalues < 1 && (@error "number of eigenvalues has to be >= 1"; exit())
 end

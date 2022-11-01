@@ -1,13 +1,15 @@
 mutable struct Potential
     file::String
 
+    shift::Bool
+
     potentialUnit::Unitful.FreeUnits
     coordsUnit   ::Unitful.FreeUnits
     massUnit     ::Unitful.FreeUnits
 
-    internalElemEnergy::Quantity
-    internalElemCoords::Quantity
-    internalElemMass  ::Quantity
+    internalElemEnergy::Unitful.FreeUnits
+    internalElemCoords::Unitful.FreeUnits
+    internalElemMass  ::Unitful.FreeUnits
 
     dimension::Int64
 
