@@ -11,6 +11,9 @@ mutable struct Potential
     internalElemCoords::Unitful.FreeUnits
     internalElemMass  ::Unitful.FreeUnits
 
+    n_kpoints::Int64
+    kpoints  ::Vector{Float64}
+
     dimension::Int64
 
     mass::Float64
@@ -18,6 +21,8 @@ mutable struct Potential
     potential::Vector{Float64}
 
     coords::Vector{Vector{Float64}}
+
+    n_datapoints::Vector{Int64}
 
     Potential() = new()
 end

@@ -7,5 +7,7 @@ inputDictionary = Dict(
     "reduced-mass"    => "",
     "periodic"        => "",
     "n-eigenvalues"   => "",
-    "shift-potential" => ""
+    "shift-potential" => "",
+    "k-points"        => "",
+    "datapoints"      => ""
 )

@@ -1,10 +1,9 @@
-function printEigenvalues(potential::Potential, output::Output)
+function printEigenvalues(potential::Potential, output::Output, k::Float64)
 
-    file = open("eigenvalues.dat", "w")
+    file = open("eigenvalues.dat", "a")
 
-    println(file, "#Eigenvalues given in chosen input unit - $(potential.potentialUnit)")
+    filesize("eigenvalues.dat") == 0 && println(file, "#Eigenvalues given in chosen input unit - $(potential.potentialUnit)")
 
-    k = 0.0 # here k chose as zero but important for band structure
     @printf(file, "%lf ", k)
     for λ in output.eigenvalues
         @printf(file, "%8.6lf ", ustrip(uconvert(potential.potentialUnit, λ*potential.internalElemEnergy)))
@@ -15,10 +14,15 @@ function printEigenvalues(potential::Potential, output::Output)
 
 end
 
-function printEigenvectors(potential::Potential, system::System, output::Output)
+function printEigenvectors(potential::Potential, system::System, output::Output, k::Float64)
     
-    file         = open("eigenvectors.dat", "w")
-    file_shifted = open("eigenvectors_shifted.dat", "w")
+    if system.bandStructure
+        file         = open("eigenvectors_k=$(k).dat", "w")
+        file_shifted = open("eigenvectors_shifted_k=$(k).dat", "w")
+    else
+        file         = open("eigenvectors.dat", "w")
+        file_shifted = open("eigenvectors_shifted.dat", "w")
+    end
     
     for i in 1:system.n_datapoints
         for coord in potential.coords
@@ -43,7 +47,7 @@ function printEigenvectors(potential::Potential, system::System, output::Output)
 
 end
 
-function printFrequencies(potential::Potential, output::Output)
+function printFrequencies(potential::Potential, system::System, output::Output, k::Float64)
 
     for i in 1:output.n_eigenvalues-1
         for j in i+1:output.n_eigenvalues
@@ -51,7 +55,11 @@ function printFrequencies(potential::Potential, output::Output)
         end
     end
 
-    file = open("frequencies.dat", "w")
+    if system.bandStructure
+        file = open("frequencies_k=$(k).dat", "w")
+    else
+        file = open("frequencies.dat", "w")
+    end
 
     @printf(file, "#Lower triangular matrix for frequencies in cm^-1\n")
     

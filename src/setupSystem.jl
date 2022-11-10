@@ -1,5 +1,25 @@
 function setupSystem(potential::Potential, system::System1D)
 
-    system.n_datapoints = length(potential.potential)
+    if potential.dimension == 1
+
+        system.n_datapoints = length(potential.potential)
+    
+    elseif potential.dimension == 2
+        
+        stencil = system.stencil
+        periodic = system.periodic
+        bandStructure = system.bandStructure
+        
+        system = System2D()
+
+        system.stencil = stencil
+        system.periodic = periodic
+        system.bandStructure = bandStructure
+        system.n_datapoints = potential.n_datapoints
+    end
+
+    potential.n_kpoints != -1 ? system.bandStructure = true : system.bandStructure = false
+
+    !system.periodic && system.bandStructure && (@error "You have defined a number of k-points - this option is only valid in combination with \"periodic = true\""; exit())
     
 end

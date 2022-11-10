@@ -15,13 +15,18 @@ function numerov(inputFileName::String)
     checkInput(system)
     setupSystem(potential, system)
     buildLaplace(system)
+    buildNabla(system)
 
     checkInput(output)
 
-    solve(potential, system, output)
+    isfile("eigenvalues.dat") && rm("eigenvalues.dat")
 
-    printEigenvalues(potential, output)
-    printEigenvectors(potential, system, output)
-    printFrequencies(potential, output)
+    for k in potential.kpoints
+        solve(potential, system, output, k)
+
+        printEigenvalues(potential, output, k)
+        printEigenvectors(potential, system, output, k)
+        printFrequencies(potential, system, output, k)
+    end
 
 end

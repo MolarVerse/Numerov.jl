@@ -45,6 +45,33 @@ function readPotential(potential::Potential)
     end
 
     #shift potential
-
     potential.shift && (potential.potential = potential.potential .- minimum(potential.potential))
+
+    #bandstruture setup
+    if potential.n_kpoints != -1
+        
+        potential.kpoints = zeros(potential.n_kpoints)
+        k_intervall = π / (potential.coords[1][end] - potential.coords[1][1]) / (potential.n_kpoints-1)
+        for i in 1:potential.n_kpoints
+            potential.kpoints[i] = k_intervall*(i-1)
+        end
+    
+    else
+        potential.kpoints = zeros(1)
+    end
+
+    if isempty(potential.n_datapoints)
+        if potential.dimension > 1
+            @error "If the dimension is higher than one the number of datapoints per dimension has to be given explicitly in the input file e.g. datapoints = 20, 30"
+            exit()
+        else
+            potential.n_datapoints = [length(potential.potential)]
+        end
+    end
+
+    #check if datapoints matches input dimensions
+
+    #check_spacing()
+    #reorder ???? dont know if it should be user handled - ask thh
+
 end
