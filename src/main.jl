@@ -30,13 +30,17 @@ function numerov(inputFileName::String)
             printFrequencies(potential, system, output, k)
         end
     elseif potential.dimension == 2
-        for kx in potential.kpoints[1]
-            for ky in potential.kpoints[2]
+        for (i, kx) in enumerate(potential.kpoints[1])
+            for (j, ky) in enumerate(potential.kpoints[2])
+
                 solve(potential, system, output, (kx,ky))
 
                 printEigenvalues(potential, output, (kx,ky))
                 printEigenvectors(potential, system, output, (kx,ky))
                 printFrequencies(potential, system, output, (kx,ky))
+
+                println((i-1)*length(potential.kpoints[1]) + j, "/", potential.n_kpoints*potential.n_kpoints, " Done")
+
             end
         end
     end

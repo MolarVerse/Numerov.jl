@@ -223,5 +223,10 @@ function buildNabla(system::System2D)
         end
     end
 
+    for i in 1:n_datapoints[1]*n_datapoints[2]
+        for j in i:n_datapoints[1]*n_datapoints[2]
+            system.Δ[j,i] = -system.Δ[i,j]
+        end
+    end
 
 end
