@@ -1,10 +1,15 @@
-function printEigenvalues(potential::Potential, output::Output, k::Float64)
+function printEigenvalues(potential::Potential, output::Output, k)
 
     file = open("eigenvalues.dat", "a")
 
     filesize("eigenvalues.dat") == 0 && println(file, "#Eigenvalues given in chosen input unit - $(potential.potentialUnit)")
 
-    @printf(file, "%lf ", k)
+    if potential.dimension == 1
+        @printf(file, "%lf ", k)
+    elseif potential.dimension == 2
+        @printf(file, "%lf ", k[1])
+        @printf(file, "%lf ", k[2])
+    end
     for λ in output.eigenvalues
         @printf(file, "%8.6lf ", ustrip(uconvert(potential.potentialUnit, λ*potential.internalElemEnergy)))
     end
@@ -14,7 +19,7 @@ function printEigenvalues(potential::Potential, output::Output, k::Float64)
 
 end
 
-function printEigenvectors(potential::Potential, system::System, output::Output, k::Float64)
+function printEigenvectors(potential::Potential, system::System, output::Output, k)   ###### probably not normalized!!!!!!!!!!!
     
     if system.bandStructure
         file         = open("eigenvectors_k=$(k).dat", "w")
@@ -24,7 +29,7 @@ function printEigenvectors(potential::Potential, system::System, output::Output,
         file_shifted = open("eigenvectors_shifted.dat", "w")
     end
     
-    for i in 1:system.n_datapoints
+    for i in 1:prod(system.n_datapoints)
         for coord in potential.coords
             @printf(file        , "%8.6lf ", ustrip(uconvert(potential.coordsUnit, coord[i]*potential.internalElemCoords)))
             @printf(file_shifted, "%8.6lf ", ustrip(uconvert(potential.coordsUnit, coord[i]*potential.internalElemCoords)))
@@ -47,7 +52,7 @@ function printEigenvectors(potential::Potential, system::System, output::Output,
 
 end
 
-function printFrequencies(potential::Potential, system::System, output::Output, k::Float64)
+function printFrequencies(potential::Potential, system::System, output::Output, k)
 
     for i in 1:output.n_eigenvalues-1
         for j in i+1:output.n_eigenvalues

@@ -47,17 +47,31 @@ function readPotential(potential::Potential)
     #shift potential
     potential.shift && (potential.potential = potential.potential .- minimum(potential.potential))
 
+    potential.kpoints = Vector()
+
     #bandstruture setup
-    if potential.n_kpoints != -1
+
+    if potential.n_kpoints != -1 && potential.dimension == 1
         
-        potential.kpoints = zeros(potential.n_kpoints)
+        push!(potential.kpoints, zeros(potential.n_kpoints))
         k_intervall = π / (potential.coords[1][end] - potential.coords[1][1]) / (potential.n_kpoints-1)
         for i in 1:potential.n_kpoints
-            potential.kpoints[i] = k_intervall*(i-1)
+            potential.kpoints[1][i] = k_intervall*(i-1)
         end
-    
+    elseif potential.n_kpoints != -1 && potential.dimension == 2
+        push!(potential.kpoints, zeros(potential.n_kpoints))
+        push!(potential.kpoints, zeros(potential.n_kpoints))
+        k_intervall_1 = π / (potential.coords[1][end] - potential.coords[1][1]) / (potential.n_kpoints-1)
+        k_intervall_2 = π / (potential.coords[2][end] - potential.coords[2][1]) / (potential.n_kpoints-1)
+        for i in 1:potential.n_kpoints
+            potential.kpoints[1][i] = k_intervall_1*(i-1) #TODO: make it for arbitrary k_points
+            potential.kpoints[2][i] = k_intervall_2*(i-1)
+        end
     else
-        potential.kpoints = zeros(1)
+        push!(potential.kpoints, zeros(1))
+        if potential.dimension == 2
+            push!(potential.kpoints, zeros(1))
+        end    
     end
 
     if isempty(potential.n_datapoints)

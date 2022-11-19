@@ -12,7 +12,7 @@ mutable struct Potential
     internalElemMass  ::Unitful.FreeUnits
 
     n_kpoints::Int64
-    kpoints  ::Vector{Float64}
+    kpoints  ::Vector{Vector{Float64}}
 
     dimension::Int64
 

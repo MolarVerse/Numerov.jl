@@ -16,13 +16,13 @@ function readInputFile(inputFileName::String)
 
         keyFound = false
         
-        length(line) > 3   && (@error "There are to many entries in line $(line)"; exit())
+        #length(line) > 3   && (@error "There are to many entries in line $(line)"; exit())
         length(line) < 3   && (@error "There are to few entries in line $(line)"; exit())
         line[2]     != "=" && (@error "Parsing error in inputfile -- second entry in a line has to be a \"=\"" ; exit())
 
         for (key, _) in inputDictionary
             if key == line[1] && keyFound == false
-                inputDictionary[key] = line[3]
+                inputDictionary[key] = join(line[3:end], " ")
                 keyFound = true
             elseif key == line[1]
                 @error "You have defined the keyword $(line[1]) multiple times" ; exit()

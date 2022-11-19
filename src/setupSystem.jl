@@ -18,8 +18,12 @@ function setupSystem(potential::Potential, system::System1D)
         system.n_datapoints = potential.n_datapoints
     end
 
+    system.Δ = zeros(prod(potential.n_datapoints), prod(potential.n_datapoints))
+
     potential.n_kpoints != -1 ? system.bandStructure = true : system.bandStructure = false
 
     !system.periodic && system.bandStructure && (@error "You have defined a number of k-points - this option is only valid in combination with \"periodic = true\""; exit())
+
+    return system
     
 end
