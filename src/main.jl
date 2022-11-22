@@ -1,4 +1,10 @@
+using TimerOutputs
+
 function numerov(inputFileName::String)
+
+    to = TimerOutput()
+
+    @timeit to "main" begin
 
     potential = Potential()
     system    = System1D()     #default setup but gets overridden later!
@@ -30,19 +36,26 @@ function numerov(inputFileName::String)
             printFrequencies(potential, system, output, k)
         end
     elseif potential.dimension == 2
+
+        @timeit to "loop" begin
         for (i, kx) in enumerate(potential.kpoints[1])
             for (j, ky) in enumerate(potential.kpoints[2])
 
-                solve(potential, system, output, (kx,ky))
+                @timeit to "solve" solve(potential, system, output, (kx,ky), to)
 
-                printEigenvalues(potential, output, (kx,ky))
-                printEigenvectors(potential, system, output, (kx,ky))
-                printFrequencies(potential, system, output, (kx,ky))
+                @timeit to "print1" printEigenvalues(potential, output, (kx,ky))
+                @timeit to "print2" printEigenvectors(potential, system, output, (kx,ky))
+                @timeit to "print3" printFrequencies(potential, system, output, (kx,ky))
 
                 println((i-1)*length(potential.kpoints[1]) + j, "/", potential.n_kpoints*potential.n_kpoints, " Done")
 
             end
         end
+        end
     end
+
+    end
+
+    show(to)
 
 end

@@ -1,18 +1,15 @@
-function solve(potential::Potential, system::System, output::Output, k)
+using TimerOutputs
+
+function solve(potential::Potential, system::System, output::Output, k, to)
+
+    @timeit to "inner solve" begin
 
     intervall   = potential.coords[end][2] - potential.coords[end][1]
-
-    for i in 1:prod(potential.n_datapoints)
-        for j in i:prod(potential.n_datapoints)
-            if system.Δ[i,j] != -system.Δ[j,i]
-                println(i, "  ", j, "  ", system.Δ[i,j], "  ", system.Δ[i,j])
-            end
-        end
-    end
 
     k_squared = zeros(prod(potential.n_datapoints), prod(potential.n_datapoints))
     Δ         = zeros(prod(potential.n_datapoints), prod(potential.n_datapoints))
 
+    @timeit to "build k*nabla" begin
     if potential.dimension == 1
         Δ = system.Δ*k
         k_squared = diagm(ones(system.n_datapoints)*k^2)
@@ -31,19 +28,23 @@ function solve(potential::Potential, system::System, output::Output, k)
         k_squared = diagm(ones(prod(potential.n_datapoints))*(k[1]^2+k[2]^2))
 
     end
+    end
 
-    Hamiltonian = 0.5 / potential.mass * (-system.laplace/intervall^2/2^(potential.dimension-1) - 2*im*Δ/intervall + k_squared) + diagm(potential.potential)
+    @timeit to "hamiltonian" Hamiltonian = 0.5 / potential.mass * (-sparse(system.laplace)/intervall^2/2^(potential.dimension-1) - 2*im*sparse(Δ)/intervall + sparse(k_squared)) + sparse(diagm(potential.potential))
     # Hamiltonian = 0.5 / potential.mass * (-system.laplace/intervall^2 - 2*im*system.Δ/intervall*k + diagm(ones(system.n_datapoints)*k^2)) + diagm(potential.potential)
     # Hamiltonian = 0.5 / potential.mass * (-system.laplace/intervall^2)/2^(potential.dimension-1) + diagm(potential.potential)
 
-    eigenvalues, eigenvectors = eigen(Hamiltonian)
+    # @timeit to "diagonalize" eigenvalues, eigenvectors = eigen(sparse(Hamiltonian))
+    @timeit to "diagonalize" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues, which = :SM)
 
     output.eigenvectors = Vector()
-    output.eigenvalues  = real.(eigenvalues[1:output.n_eigenvalues])
-    output.frequencies  = zeros(output.n_eigenvalues-1, output.n_eigenvalues-1)
+    @timeit to "assign eigvals" output.eigenvalues  = real.(eigenvalues[1:output.n_eigenvalues])
+    @timeit to "assign frequencies" output.frequencies  = zeros(output.n_eigenvalues-1, output.n_eigenvalues-1)
     
     for i in 1:output.n_eigenvalues
-        push!(output.eigenvectors, real.(eigenvectors[:,i]))
+        @timeit to "assign eigvectors" push!(output.eigenvectors, real.(eigenvectors[:,i]))
+    end
+
     end
 
 end
