@@ -5,131 +5,9 @@ function buildNabla(system::System1D) #combine these two functions!
 
     !system.bandStructure && (system.Δ = sparse(zeros(n_datapoints, n_datapoints)); return)
 
-    if system.stencil == 3
+    stencil = get_1d_stencil(system)
 
-        system.Δ = spdiagm(
-            -1 => ones(n_datapoints-1)*(-1/2),
-             1 => ones(n_datapoints-1)*( 1/2)
-        )
-
-        if system.periodic  #remove this periodic argument
-
-            system.Δ += spdiagm(
-                 n_datapoints-1 => ones(1)*(-1/2),
-                -n_datapoints+1 => ones(1)*( 1/2)
-            )
-
-        end
-
-    elseif system.stencil == 5
-        
-        system.Δ = spdiagm(
-            -2 => ones(n_datapoints-2)*( 1/12),
-            -1 => ones(n_datapoints-1)*(-2/3 ),
-             1 => ones(n_datapoints-1)*( 2/3 ),
-             2 => ones(n_datapoints-2)*(-1/12)
-        )
-
-        if system.periodic
-
-            system.Δ += spdiagm(
-                 n_datapoints-2 => ones(2)*( 1/12),
-                 n_datapoints-1 => ones(1)*(-2/3 ),
-                -n_datapoints+1 => ones(1)*( 2/3 ),
-                -n_datapoints+2 => ones(2)*(-1/12)
-            )
-            
-        end
-
-    elseif system.stencil == 7
-        
-        system.Δ = spdiagm(
-            -3 => ones(n_datapoints-3)*( -1/60),
-            -2 => ones(n_datapoints-2)*(  3/20),
-            -1 => ones(n_datapoints-1)*( -3/4 ),
-             1 => ones(n_datapoints-1)*(  3/4 ),
-             2 => ones(n_datapoints-2)*( -3/20),
-             3 => ones(n_datapoints-3)*(  1/60)
-        )
-
-        if system.periodic
-
-            system.Δ += spdiagm(
-                 n_datapoints-3 => ones(3)*( -1/60),
-                 n_datapoints-2 => ones(2)*(  3/20),
-                 n_datapoints-1 => ones(1)*( -3/4 ),
-                -n_datapoints+1 => ones(1)*(  3/4 ),
-                -n_datapoints+2 => ones(2)*( -3/20),
-                -n_datapoints+3 => ones(3)*(  1/60)
-            )
-            
-        end
-
-    elseif system.stencil == 9
-        
-        system.Δ = spdiagm(
-            -4 => ones(n_datapoints-4)*(   1/280),
-            -3 => ones(n_datapoints-3)*(  -4/105),
-            -2 => ones(n_datapoints-2)*(   1/5  ),
-            -1 => ones(n_datapoints-1)*(  -4/5  ),
-             1 => ones(n_datapoints-1)*(   4/5  ),
-             2 => ones(n_datapoints-2)*(  -1/5  ),
-             3 => ones(n_datapoints-3)*(   4/105),
-             4 => ones(n_datapoints-4)*(  -1/280)
-        )
-
-        if system.periodic
-
-            system.Δ += spdiagm(
-                 n_datapoints-4 => ones(4)*(   1/280),
-                 n_datapoints-3 => ones(3)*(  -4/105),
-                 n_datapoints-2 => ones(2)*(   1/5  ),
-                 n_datapoints-1 => ones(1)*(  -4/5  ),
-                -n_datapoints+1 => ones(1)*(   4/5  ),
-                -n_datapoints+2 => ones(2)*(  -1/5  ),
-                -n_datapoints+3 => ones(3)*(   4/105),
-                -n_datapoints+4 => ones(4)*(  -1/280)
-            )
-            
-        end
-
-    elseif system.stencil == 11
-        
-        system.Δ = spdiagm(
-            -5 => ones(n_datapoints-5)*(   -2/25200),
-            -4 => ones(n_datapoints-4)*(   25/25200),
-            -3 => ones(n_datapoints-3)*( -150/25200),
-            -2 => ones(n_datapoints-2)*(  600/25200),
-            -1 => ones(n_datapoints-1)*(-2100/25200),
-             1 => ones(n_datapoints-1)*( 2100/25200),
-             2 => ones(n_datapoints-2)*( -600/25200),
-             3 => ones(n_datapoints-3)*(  150/25200),
-             4 => ones(n_datapoints-4)*(  -25/25200),
-             5 => ones(n_datapoints-5)*(    2/25200)
-        )
-
-        if system.periodic
-
-            system.Δ += spdiagm(
-                 n_datapoints-5 => ones(5)*(   -2/25200),
-                 n_datapoints-4 => ones(4)*(   25/25200),
-                 n_datapoints-3 => ones(3)*( -150/25200),
-                 n_datapoints-2 => ones(2)*(  600/25200),
-                 n_datapoints-1 => ones(1)*(-2100/25200),
-                -n_datapoints+1 => ones(1)*( 2100/25200),
-                -n_datapoints+2 => ones(2)*( -600/25200),
-                -n_datapoints+3 => ones(3)*(  150/25200),
-                -n_datapoints+4 => ones(4)*(  -25/25200),
-                -n_datapoints+5 => ones(5)*(    2/25200)
-            )
-            
-        end
-
-    elseif system.stencil == 13
-
-        system.bandStructure && (@error "13-point stencil is not yet implemented for bandstructure calculation!"; exit())
-
-    end
+    system.Δ = build_1d_stencil(system, n_datapoints, stencil)
 
 end
 
@@ -144,7 +22,18 @@ function buildNabla(system::System2D)
 
     system.Δ   = zeros(n_datapoints[1]*n_datapoints[2], n_datapoints[1]*n_datapoints[2])
     stencil    = zeros(system.stencil, system.stencil)
-    stencil_1d = zeros(system.stencil)
+    stencil_1d = get_1d_stencil(system)
+
+    stencil[:,system.stencil÷2+1] = stencil_1d
+    stencil[system.stencil÷2+1,:] = stencil_1d
+
+    system.Δ = build_2d_stencil(system, n_datapoints, stencil)
+
+end
+
+function get_1d_stencil(system)
+
+    stencil = zeros(system.stencil)
 
     if system.stencil == 3
 
@@ -175,11 +64,7 @@ function buildNabla(system::System2D)
 
         system.bandStructure && (@error "13-point stencil is not yet implemented for bandstructure calculation!"; exit())
 
-    end
-
-    stencil[:,system.stencil÷2+1] = stencil_1d
-    stencil[system.stencil÷2+1,:] = stencil_1d
-
-    system.Δ = build_2d_stencil(system, n_datapoints, stencil)
-
+    end   
+    
+    return stencil
 end
