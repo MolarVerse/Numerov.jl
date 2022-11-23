@@ -28,7 +28,6 @@ function buildNabla(system::System2D)
     stencil[system.stencil÷2+1,:] = stencil_1d
 
     system.Δ = build_2d_stencil(system, n_datapoints, stencil)
-
 end
 
 function buildNabla(system::System3D)
@@ -80,7 +79,7 @@ function get_1d_stencil(system)
     elseif system.stencil == 11
         
         stencil_1d  = [-2, 25, -150, 600, -2100, 0, 2100, -600, 150, -25, 2]
-        stencil_1d /= 25200.0
+        stencil_1d /= 2520.0
 
     elseif system.stencil == 13
 
@@ -88,5 +87,5 @@ function get_1d_stencil(system)
 
     end   
     
-    return stencil
+    return stencil_1d
 end

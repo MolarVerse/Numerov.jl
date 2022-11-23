@@ -56,7 +56,7 @@ function numerov(inputFileName::String)
         @timeit to "loop" begin
             for (i, kx) in enumerate(potential.kpoints[1])
                 for (j, ky) in enumerate(potential.kpoints[2])
-                    for (j, kz) in enumerate(potential.kpoints[3])
+                    for (k, kz) in enumerate(potential.kpoints[3])
     
                     @timeit to "solve" solve(potential, system, output, (kx,ky,kz), to)
     
@@ -64,10 +64,9 @@ function numerov(inputFileName::String)
                     @timeit to "print2" printEigenvectors(potential, system, output, (kx,ky, kz))
                     @timeit to "print3" printFrequencies(potential, system, output, (kx,ky, kz))
        
+                    println((i-1)*potential.n_kpoints^2 + (j-1)*potential.n_kpoints + k, "/", potential.n_kpoints^3, " Done")
+
                     end
-
-                    println((i-1)*length(potential.kpoints[1]) + j, "/", potential.n_kpoints*potential.n_kpoints, " Done")
-
                 end
             end
         end

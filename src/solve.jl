@@ -25,15 +25,28 @@ function solve(potential::Potential, system::System, output::Output, k, to)
             end
         end
 
-        k_squared = spdiagm(ones(prod(potential.n_datapoints))*(k[1]^2+k[2]^2))
+        k_squared = spdiagm(ones(prod(potential.n_datapoints))*(norm(k)^2))
+
+    elseif potential.dimension == 3
+
+        stencil    = zeros(system.stencil, system.stencil, system.stencil)
+
+        stencil[:                 ,system.stencil÷2+1,system.stencil÷2+1] = ones(system.stencil)*k[1]
+        stencil[system.stencil÷2+1,:                 ,system.stencil÷2+1] = ones(system.stencil)*k[2]
+        stencil[system.stencil÷2+1,system.stencil÷2+1,:                 ] = ones(system.stencil)*k[3]
+        stencil[system.stencil÷2+1,system.stencil÷2+1,system.stencil÷2+1] = 0.0
+ 
+        Δ = system.Δ .* build_3d_stencil(system, potential.n_datapoints, stencil)
+
+        k_squared = spdiagm(ones(prod(potential.n_datapoints))*(norm(k)^2))
 
     end
     end
 
     @timeit to "hamiltonian" Hamiltonian = 0.5 / potential.mass * (-system.laplace/intervall^2/2^(potential.dimension-1) - 2*im*Δ/intervall + k_squared) + spdiagm(potential.potential)
     
-    # @timeit to "diagonalize" eigenvalues, eigenvectors = eigen(sparse(Hamiltonian))
-    @timeit to "diagonalize" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues, which = :SM)
+    # @timeit to "diagonalize" eigenvalues, eigenvectors = eigen(Matrix(Hamiltonian))
+    @timeit to "diagonalize" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues, which = :SM, maxiter=1000)
 
     output.eigenvectors = Vector()
     @timeit to "assign eigvals" output.eigenvalues  = real.(eigenvalues[1:output.n_eigenvalues])
