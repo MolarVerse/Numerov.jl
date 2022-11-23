@@ -4,11 +4,10 @@ function printEigenvalues(potential::Potential, output::Output, k)
 
     filesize("eigenvalues.dat") == 0 && println(file, "#Eigenvalues given in chosen input unit - $(potential.potentialUnit)")
 
-    if potential.dimension == 1
-        @printf(file, "%lf ", k)
-    elseif potential.dimension == 2
-        @printf(file, "%lf ", k[1])
-        @printf(file, "%lf ", k[2])
+    if potential.bandStructure
+        for i in 1:potential.dimension
+            @printf(file, "%lf ", k[i])
+        end
     end
     for λ in output.eigenvalues
         @printf(file, "%8.6lf ", ustrip(uconvert(potential.potentialUnit, λ*potential.internalElemEnergy)))

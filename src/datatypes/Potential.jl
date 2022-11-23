@@ -1,7 +1,8 @@
 mutable struct Potential
     file::String
 
-    shift::Bool
+    shift        ::Bool
+    bandStructure::Bool
 
     potentialUnit::Unitful.FreeUnits
     coordsUnit   ::Unitful.FreeUnits

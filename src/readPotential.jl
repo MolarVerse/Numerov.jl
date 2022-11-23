@@ -67,9 +67,20 @@ function readPotential(potential::Potential)
             potential.kpoints[1][i] = k_intervall_1*(i-1) #TODO: make it for arbitrary k_points
             potential.kpoints[2][i] = k_intervall_2*(i-1)
         end
+    elseif potential.n_kpoints != -1 && potential.dimension == 3
+        push!(potential.kpoints, zeros(potential.n_kpoints))
+        push!(potential.kpoints, zeros(potential.n_kpoints))
+        push!(potential.kpoints, zeros(potential.n_kpoints))
+        k_intervall_1 = π / (potential.coords[1][end] - potential.coords[1][1]) / (potential.n_kpoints-1)
+        k_intervall_2 = π / (potential.coords[2][end] - potential.coords[2][1]) / (potential.n_kpoints-1)
+        k_intervall_3 = π / (potential.coords[3][end] - potential.coords[3][1]) / (potential.n_kpoints-1)
+        for i in 1:potential.n_kpoints
+            potential.kpoints[1][i] = k_intervall_1*(i-1) #TODO: make it for arbitrary k_points
+            potential.kpoints[2][i] = k_intervall_2*(i-1)
+            potential.kpoints[3][i] = k_intervall_3*(i-1)
+        end
     else
-        push!(potential.kpoints, zeros(1))
-        if potential.dimension == 2
+        for i in 1:potential.dimension
             push!(potential.kpoints, zeros(1))
         end    
     end

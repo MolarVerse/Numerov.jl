@@ -31,8 +31,6 @@ function buildLaplace(system::System1D)
         stencil  = [-50, 864, -7425, 44000, -222750, 1425600, -2480478, 1425600, -222750, 44000, -7425, 864, -50]
         stencil /= 831600
 
-        end
-
     end
 
     system.laplace = build_1d_stencil(system, n_datapoints, stencil)

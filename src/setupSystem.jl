@@ -16,9 +16,23 @@ function setupSystem(potential::Potential, system::System1D)
         system.periodic = periodic
         system.bandStructure = bandStructure
         system.n_datapoints = potential.n_datapoints
+    elseif potential.dimension == 3
+
+        stencil = system.stencil
+        periodic = system.periodic
+        bandStructure = system.bandStructure
+
+        system = System3D()
+
+        system.stencil = stencil
+        system.periodic = periodic
+        system.bandStructure = bandStructure
+        system.n_datapoints = potential.n_datapoints
     end
 
-    system.Δ = zeros(prod(potential.n_datapoints), prod(potential.n_datapoints))
+    potential.bandStructure = system.bandStructure
+    
+    system.Δ = spzeros(prod(potential.n_datapoints), prod(potential.n_datapoints))
 
     potential.n_kpoints != -1 ? system.bandStructure = true : system.bandStructure = false
 
