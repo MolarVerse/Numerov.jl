@@ -3,6 +3,7 @@ mutable struct System1D <: System
     n_datapoints::Int64
 
     periodic     ::Bool
+    reciprocal   ::Bool
     bandStructure::Bool
 
     laplace::SparseMatrixCSC{Float64, Int64}
@@ -17,6 +18,7 @@ mutable struct System2D <: System
     n_datapoints::Vector{Int64}
 
     periodic     ::Bool
+    reciprocal   ::Bool
     bandStructure::Bool
 
     laplace::SparseMatrixCSC{Float64, Int64}
@@ -31,6 +33,7 @@ mutable struct System3D <: System
     n_datapoints::Vector{Int64}
 
     periodic     ::Bool
+    reciprocal   ::Bool
     bandStructure::Bool
 
     laplace::SparseMatrixCSC{Float64, Int64}

@@ -14,10 +14,6 @@ function numerov(inputFileName::String)
     checkInput(potential)
     readPotential(potential)
 
-    # if potential.dimension == 1
-    #     potential.periodic ? exit() : (system = System1D())
-    # end
-
     checkInput(system)
     system = setupSystem(potential, system)
     buildLaplace(system)
@@ -27,50 +23,20 @@ function numerov(inputFileName::String)
 
     isfile("eigenvalues.dat") && rm("eigenvalues.dat")
 
-    if potential.dimension == 1
-        for k in potential.kpoints[1]
-            solve(potential, system, output, k, to)
+    @timeit to "loop" begin
+    for (i, k) in enumerate(potential.kpoints)
 
-            printEigenvalues(potential, output, k)
-            printEigenvectors(potential, system, output, k)
-            printFrequencies(potential, system, output, k)
-        end
-    elseif potential.dimension == 2
+        @timeit to "solve" solve(potential, system, output, k, to)
 
-        @timeit to "loop" begin
-            for (i, kx) in enumerate(potential.kpoints[1])
-                for (j, ky) in enumerate(potential.kpoints[2])
-    
-                    @timeit to "solve" solve(potential, system, output, (kx,ky), to)
-    
-                    @timeit to "print1" printEigenvalues(potential, output, (kx,ky))
-                    @timeit to "print2" printEigenvectors(potential, system, output, (kx,ky))
-                    @timeit to "print3" printFrequencies(potential, system, output, (kx,ky))
-    
-                    println((i-1)*length(potential.kpoints[1]) + j, "/", potential.n_kpoints*potential.n_kpoints, " Done")
-    
-                end
-            end
-        end
-    elseif potential.dimension == 3
-        @timeit to "loop" begin
-            for (i, kx) in enumerate(potential.kpoints[1])
-                for (j, ky) in enumerate(potential.kpoints[2])
-                    for (k, kz) in enumerate(potential.kpoints[3])
-    
-                    @timeit to "solve" solve(potential, system, output, (kx,ky,kz), to)
-    
-                    @timeit to "print1" printEigenvalues(potential, output, (kx,ky, kz))
-                    @timeit to "print2" printEigenvectors(potential, system, output, (kx,ky, kz))
-                    @timeit to "print3" printFrequencies(potential, system, output, (kx,ky, kz))
-       
-                    println((i-1)*potential.n_kpoints^2 + (j-1)*potential.n_kpoints + k, "/", potential.n_kpoints^3, " Done")
+        @timeit to "print1" printEigenvalues(potential, output, k)
+        @timeit to "print2" printEigenvectors(potential, system, output, k)
+        @timeit to "print3" printFrequencies(potential, system, output, k)
 
-                    end
-                end
-            end
-        end
+        println(i, "/", length(potential.kpoints), " Done")
     end
+    end
+
+    potential.bandStructure && printBandStructure(potential.kpoints)
 
     end
 

@@ -7,6 +7,7 @@ function checkInput(potential::Potential)
     checkShiftPotential(potential)
     checkKPoints(potential)
     checkNDatapoints(potential)
+    checkBandStructure(potential)
 end
 
 function checkInput(system::System)
@@ -76,7 +77,7 @@ function checkMass(potential::Potential)
 end
 
 function checkShiftPotential(potential::Potential)
-    isempty(inputDictionary["shift-potential"]) && (potential.shift = true; return) #write to log file about default setting
+    isempty(inputDictionary["shift-potential"]) && (potential.shift = false; return) #write to log file about default setting
 end
 
 function checkKPoints(potential::Potential)
@@ -89,6 +90,12 @@ function checkNDatapoints(potential::Potential)
     isempty(inputDictionary["datapoints"]) && (potential.n_datapoints = Vector(); return) #write to log file about default setting
     potential.n_datapoints = parse.(Int64, split(join(split(inputDictionary["datapoints"], ","), " ")))
     length(potential.n_datapoints) == 0 && (@error "n_datapoints not correctly defined!"; exit())
+end
+
+function checkBandStructure(potential::Potential)
+    isempty(inputDictionary["band-structure"]) && (potential.bandStructure = false; return) #write to log file about default setting
+    inputDictionary["band-structure"] ∈ ["on","true"] && (potential.bandStructure = true; return)
+    @error ""; exit()
 end
 
 function checkStencil(system::System)

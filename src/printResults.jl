@@ -4,7 +4,7 @@ function printEigenvalues(potential::Potential, output::Output, k)
 
     filesize("eigenvalues.dat") == 0 && println(file, "#Eigenvalues given in chosen input unit - $(potential.potentialUnit)")
 
-    if potential.bandStructure
+    if potential.reciprocal
         for i in 1:potential.dimension
             @printf(file, "%lf ", k[i])
         end
@@ -20,7 +20,7 @@ end
 
 function printEigenvectors(potential::Potential, system::System, output::Output, k)   ###### probably not normalized!!!!!!!!!!!
     
-    if system.bandStructure
+    if system.reciprocal
         file         = open("eigenvectors_k=$(k).dat", "w")
         file_shifted = open("eigenvectors_shifted_k=$(k).dat", "w")
     else
@@ -59,7 +59,7 @@ function printFrequencies(potential::Potential, system::System, output::Output, 
         end
     end
 
-    if system.bandStructure
+    if system.reciprocal
         file = open("frequencies_k=$(k).dat", "w")
     else
         file = open("frequencies.dat", "w")
@@ -76,4 +76,32 @@ function printFrequencies(potential::Potential, system::System, output::Output, 
 
     close(file)
 
+end
+
+function printBandStructure(k_points)
+
+    file = open("bandstructure.dat", "w")
+
+    data = readdlm("eigenvalues.dat"; skipstart=1)
+
+    a = copy(k_points)
+    b = copy(k_points)
+
+    pushfirst!(a, zeros(length(k_points[1])))
+    push!(b, zeros(length(k_points[1])))
+
+    diff = (norm.([b[i] .- a[i] for i in 1:length(a)]))[1:end-1]
+
+    brioullin_path = 0.0
+
+    for (i, spacing) in enumerate(diff)
+        brioullin_path += spacing
+        @printf(file, "%lf ", brioullin_path)
+        for j in length(k_points[1])+1:length(data[1,:])
+            @printf(file, "%lf ", data[i,j])
+        end
+        @printf(file, "\n")
+    end
+
+    close(file)    
 end

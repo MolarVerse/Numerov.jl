@@ -3,7 +3,7 @@ function buildNabla(system::System1D) #combine these two functions!
     n_datapoints = system.n_datapoints
     n_datapoints < system.stencil && (@error "The number of datapoints has at least to be equal to the stencil size!"; exit())
 
-    !system.bandStructure && (system.Δ = spzeros(n_datapoints, n_datapoints); return)
+    !system.reciprocal && (system.Δ = spzeros(n_datapoints, n_datapoints); return)
 
     stencil = get_1d_stencil(system)
 
@@ -15,7 +15,7 @@ function buildNabla(system::System2D)
 
     n_datapoints = system.n_datapoints
 
-    !system.bandStructure && (system.Δ = spzeros(prod(n_datapoints), prod(n_datapoints)); return)
+    !system.reciprocal && (system.Δ = spzeros(prod(n_datapoints), prod(n_datapoints)); return)
     
     n_datapoints[1] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
     n_datapoints[2] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
@@ -34,7 +34,7 @@ function buildNabla(system::System3D)
 
     n_datapoints = system.n_datapoints
 
-    !system.bandStructure && (system.Δ = spzeros(prod(n_datapoints), prod(n_datapoints)); return)
+    !system.reciprocal && (system.Δ = spzeros(prod(n_datapoints), prod(n_datapoints)); return)
     
     n_datapoints[1] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
     n_datapoints[2] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
@@ -83,7 +83,7 @@ function get_1d_stencil(system)
 
     elseif system.stencil == 13
 
-        system.bandStructure && (@error "13-point stencil is not yet implemented for bandstructure calculation!"; exit())
+        system.reciprocal && (@error "13-point stencil is not yet implemented for reciprocal calculation!"; exit())
 
     end   
     

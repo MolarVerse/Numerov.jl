@@ -9,5 +9,6 @@ inputDictionary = Dict(
     "n-eigenvalues"   => "",
     "shift-potential" => "",
     "k-points"        => "",
-    "datapoints"      => ""
+    "datapoints"      => "",
+    "band-structure"  => ""
 )

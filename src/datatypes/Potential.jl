@@ -2,6 +2,7 @@ mutable struct Potential
     file::String
 
     shift        ::Bool
+    reciprocal   ::Bool
     bandStructure::Bool
 
     potentialUnit::Unitful.FreeUnits
@@ -13,7 +14,7 @@ mutable struct Potential
     internalElemMass  ::Unitful.FreeUnits
 
     n_kpoints::Int64
-    kpoints  ::Vector{Vector{Float64}}
+    kpoints  ::Vector{}
 
     dimension::Int64
 
