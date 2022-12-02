@@ -1,7 +1,6 @@
 mutable struct Potential
     file::String
 
-    shift        ::Bool
     reciprocal   ::Bool
     bandStructure::Bool
 
@@ -19,6 +18,8 @@ mutable struct Potential
     dimension::Int64
 
     mass::Float64
+
+    shift::Float64
 
     potential::Vector{Float64}
 

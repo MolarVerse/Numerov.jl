@@ -4,7 +4,6 @@ function checkInput(potential::Potential)
     checkCoordsUnits(potential)
     checkMassUnits(potential)
     checkMass(potential)
-    checkShiftPotential(potential)
     checkKPoints(potential)
     checkNDatapoints(potential)
     checkBandStructure(potential)
@@ -74,10 +73,6 @@ end
 function checkMass(potential::Potential)
     isempty(inputDictionary["reduced-mass"]) && (potential.mass = 1.0; return) #write to log file about default setting
     potential.mass = parse(Float64, inputDictionary["reduced-mass"])
-end
-
-function checkShiftPotential(potential::Potential)
-    isempty(inputDictionary["shift-potential"]) && (potential.shift = false; return) #write to log file about default setting
 end
 
 function checkKPoints(potential::Potential)

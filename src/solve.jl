@@ -15,7 +15,7 @@ function solve(potential::Potential, system::System, output::Output, k, to)
 
     @timeit to "hamiltonian" Hamiltonian = 0.5 / potential.mass * (-system.laplace/intervall^2/2^(potential.dimension-1) - 2*im*Δ/intervall + k_squared) + spdiagm(potential.potential)
     
-    # @timeit to "diagonalize" eigenvalues, eigenvectors = eigen(Matrix(Hamiltonian))
+    #add here more eigenvalues to calculate to ensure sparse algorithm finds the lowest ones
     @timeit to "diagonalize" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues, which = :SM, maxiter=typemax(Int))
 
     output.eigenvectors = Vector()

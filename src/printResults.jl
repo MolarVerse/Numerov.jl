@@ -19,7 +19,7 @@ function printEigenvalues(potential::Potential, output::Output, k)
 end
 
 function printEigenvectors(potential::Potential, system::System, output::Output, k)   ###### probably not normalized!!!!!!!!!!!
-    
+
     if system.reciprocal
         file         = open("eigenvectors_k=$(k).dat", "w")
         file_shifted = open("eigenvectors_shifted_k=$(k).dat", "w")
@@ -27,6 +27,8 @@ function printEigenvectors(potential::Potential, system::System, output::Output,
         file         = open("eigenvectors.dat", "w")
         file_shifted = open("eigenvectors_shifted.dat", "w")
     end
+
+    #think of a clever way to handle shifted input potential for output
     
     for i in 1:prod(system.n_datapoints)
         for coord in potential.coords
@@ -39,7 +41,7 @@ function printEigenvectors(potential::Potential, system::System, output::Output,
 
         for (j, ev) in enumerate(output.eigenvectors)
             @printf(file        , "%8.6lf ", ev[i])
-            @printf(file_shifted, "%8.6lf ", ev[i] + ustrip(uconvert(potential.potentialUnit, output.eigenvalues[j]*potential.internalElemEnergy)))
+            @printf(file_shifted, "%8.6lf ", ev[i] + ustrip(uconvert(potential.potentialUnit, (output.eigenvalues[j]+ potential.shift)*potential.internalElemEnergy)))
         end
 
         @printf(file        , "\n")

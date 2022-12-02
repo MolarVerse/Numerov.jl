@@ -44,9 +44,6 @@ function readPotential(potential::Potential)
         potential.coords[i]    = ustrip.(uconvert.(potential.internalElemCoords, potential.coords[i] * potential.coordsUnit))
     end
 
-    #shift potential
-    potential.shift && (potential.potential = potential.potential .- minimum(potential.potential))
-
     potential.kpoints = Vector()
 
     #bandstruture setup
@@ -136,6 +133,11 @@ function readPotential(potential::Potential)
             potential.n_datapoints = [length(potential.potential)]
         end
     end
+
+    #shift potential - sparse solver not capable of using not shifted potential!
+
+    potential.shift     = minimum(potential.potential)
+    potential.potential = potential.potential .- potential.shift
 
     #check if datapoints matches input dimensions
 

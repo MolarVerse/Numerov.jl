@@ -28,6 +28,9 @@ function numerov(inputFileName::String)
 
         @timeit to "solve" solve(potential, system, output, k, to)
 
+        #shift potential back for output
+        potential.potential = potential.potential .+ potential.shift
+
         @timeit to "print1" printEigenvalues(potential, output, k)
         @timeit to "print2" printEigenvectors(potential, system, output, k)
         @timeit to "print3" printFrequencies(potential, system, output, k)
