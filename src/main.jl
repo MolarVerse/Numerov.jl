@@ -23,8 +23,6 @@ function numerov(inputFileName::String)
 
     isfile("eigenvalues.dat") && rm("eigenvalues.dat")
 
-    println(k)
-
     @timeit to "loop" begin
     for (i, k) in enumerate(potential.kpoints)
 

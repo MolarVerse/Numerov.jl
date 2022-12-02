@@ -6,6 +6,31 @@ function solve(potential::Potential, system::System, output::Output, k, to)
 
     intervall   = potential.coords[end][2] - potential.coords[end][1]
 
+    if system.reciprocal
+        k_squared, Δ = build_hamiltonian_components(potential, system)
+    else
+        k_squared = spzeros(prod(potential.n_datapoints), prod(potential.n_datapoints))
+        Δ         = spzeros(prod(potential.n_datapoints), prod(potential.n_datapoints))
+    end
+
+    @timeit to "hamiltonian" Hamiltonian = 0.5 / potential.mass * (-system.laplace/intervall^2/2^(potential.dimension-1) - 2*im*Δ/intervall + k_squared) + spdiagm(potential.potential)
+    
+    # @timeit to "diagonalize" eigenvalues, eigenvectors = eigen(Matrix(Hamiltonian))
+    @timeit to "diagonalize" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues, which = :SM, maxiter=typemax(Int))
+
+    output.eigenvectors = Vector()
+    @timeit to "assign eigvals" output.eigenvalues  = real.(eigenvalues[1:output.n_eigenvalues])
+    @timeit to "assign frequencies" output.frequencies  = zeros(output.n_eigenvalues-1, output.n_eigenvalues-1)
+    
+    for i in 1:output.n_eigenvalues
+        @timeit to "assign eigvectors" push!(output.eigenvectors, real.(eigenvectors[:,i]))
+    end
+
+    end
+
+end
+
+function build_hamiltonian_components(potential::Potential, system::System)
     k_squared = spzeros(prod(potential.n_datapoints), prod(potential.n_datapoints))
     Δ         = spzeros(prod(potential.n_datapoints), prod(potential.n_datapoints))
 
@@ -43,19 +68,5 @@ function solve(potential::Potential, system::System, output::Output, k, to)
     end
     end
 
-    @timeit to "hamiltonian" Hamiltonian = 0.5 / potential.mass * (-system.laplace/intervall^2/2^(potential.dimension-1) - 2*im*Δ/intervall + k_squared) + spdiagm(potential.potential)
-    
-    # @timeit to "diagonalize" eigenvalues, eigenvectors = eigen(Matrix(Hamiltonian))
-    @timeit to "diagonalize" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues, which = :SM, maxiter=typemax(Int))
-
-    output.eigenvectors = Vector()
-    @timeit to "assign eigvals" output.eigenvalues  = real.(eigenvalues[1:output.n_eigenvalues])
-    @timeit to "assign frequencies" output.frequencies  = zeros(output.n_eigenvalues-1, output.n_eigenvalues-1)
-    
-    for i in 1:output.n_eigenvalues
-        @timeit to "assign eigvectors" push!(output.eigenvectors, real.(eigenvectors[:,i]))
-    end
-
-    end
-
+    return k_squared, Δ
 end
