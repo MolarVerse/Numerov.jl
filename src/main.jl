@@ -23,6 +23,8 @@ function numerov(inputFileName::String)
 
     isfile("eigenvalues.dat") && rm("eigenvalues.dat")
 
+    println(k)
+
     @timeit to "loop" begin
     for (i, k) in enumerate(potential.kpoints)
 
@@ -36,7 +38,7 @@ function numerov(inputFileName::String)
     end
     end
 
-    potential.bandStructure && printBandStructure(potential.kpoints)
+    potential.bandStructure && printBandStructure(potential, potential.kpoints)
 
     end
 

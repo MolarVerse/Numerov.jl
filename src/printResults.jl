@@ -78,7 +78,7 @@ function printFrequencies(potential::Potential, system::System, output::Output, 
 
 end
 
-function printBandStructure(k_points)
+function printBandStructure(potential::Potential, k_points)
 
     file = open("bandstructure.dat", "w")
 
@@ -101,6 +101,21 @@ function printBandStructure(k_points)
             @printf(file, "%lf ", data[i,j])
         end
         @printf(file, "\n")
+        if i == length(diff) - potential.n_kpoints && potential.dimension == 3
+            break
+        end
+    end
+
+    for (i, spacing) in enumerate(diff)
+        if i <= length(diff) - potential.n_kpoints || potential.dimension != 3
+            continue
+        end
+        @printf(file, "%lf ", brioullin_path)
+        for j in length(k_points[1])+1:length(data[1,:])
+            @printf(file, "%lf ", data[i,j])
+        end
+        @printf(file, "\n")
+        brioullin_path += spacing
     end
 
     close(file)    
