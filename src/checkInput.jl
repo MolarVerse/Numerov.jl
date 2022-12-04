@@ -101,8 +101,8 @@ function checkStencil(system::System)
 end
 
 function checkPeriodicity(system::System)
-    isempty(inputDictionary["periodic"]) && (system.periodic = false; return) #write to log file about default setting
-    system.periodic = parse(Bool, inputDictionary["periodic"])
+    isempty(inputDictionary["periodic"]) && (system.periodic = [false]; return) #write to log file about default setting
+    system.periodic = parse.(Bool, split(join(split(inputDictionary["periodic"], ","), " ")))
 end
 
 function checkNEigenvalues(output::Output)

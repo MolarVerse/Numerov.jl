@@ -7,7 +7,7 @@ function build_1d_stencil(system, n_datapoints, stencil)
 
         matrix += spdiagm(sub_matrix_index => ones(n_datapoints - abs(sub_matrix_index)) * stencil[j])
 
-        if system.periodic && sub_matrix_index != 0
+        if system.periodic[end] && sub_matrix_index != 0
             matrix += spdiagm(sign(sub_matrix_index)*n_datapoints - sub_matrix_index => ones(abs(sub_matrix_index)) * stencil[j])
         end
     end
@@ -36,7 +36,7 @@ function build_2d_stencil(system, n_datapoints, stencil)
 
             if cell_index < 1 || cell_index > n_datapoints[1]
                 
-                if system.periodic
+                if system.periodic[end-1]
                     range_j = (range_j[1] - sign(cell_index-1)*total_points):(range_j[end] - sign(cell_index-1)*total_points)
                 else
                     continue
@@ -71,7 +71,7 @@ function build_3d_stencil(system, n_datapoints, stencil)
 
             if cell_index < 1 || cell_index > n_datapoints[1]
                 
-                if system.periodic
+                if system.periodic[end-2]
                     range_j = (range_j[1] - sign(cell_index-1)*total_points):(range_j[end] - sign(cell_index-1)*total_points)
                 else
                     continue

@@ -7,7 +7,7 @@ function solve(potential::Potential, system::System, output::Output, k, to)
     intervall   = potential.coords[end][2] - potential.coords[end][1]
 
     if system.reciprocal
-        k_squared, Δ = build_hamiltonian_components(potential, system)
+        k_squared, Δ = build_hamiltonian_components(potential, system, k)
     else
         k_squared = spzeros(prod(potential.n_datapoints), prod(potential.n_datapoints))
         Δ         = spzeros(prod(potential.n_datapoints), prod(potential.n_datapoints))
@@ -15,6 +15,8 @@ function solve(potential::Potential, system::System, output::Output, k, to)
 
     @timeit to "hamiltonian" Hamiltonian = 0.5 / potential.mass * (-system.laplace/intervall^2/2^(potential.dimension-1) - 2*im*Δ/intervall + k_squared) + spdiagm(potential.potential)
     
+    println("Sparsity = ", length(Hamiltonian.nzval) / length(Hamiltonian))
+
     #add here more eigenvalues to calculate to ensure sparse algorithm finds the lowest ones
     @timeit to "diagonalize" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues, which = :SM, maxiter=typemax(Int))
 
@@ -30,11 +32,10 @@ function solve(potential::Potential, system::System, output::Output, k, to)
 
 end
 
-function build_hamiltonian_components(potential::Potential, system::System)
+function build_hamiltonian_components(potential::Potential, system::System, k)
     k_squared = spzeros(prod(potential.n_datapoints), prod(potential.n_datapoints))
     Δ         = spzeros(prod(potential.n_datapoints), prod(potential.n_datapoints))
 
-    @timeit to "build k*nabla" begin
     if potential.dimension == 1
         Δ = system.Δ*k
         k_squared = spdiagm(ones(system.n_datapoints)*k^2)
@@ -65,7 +66,6 @@ function build_hamiltonian_components(potential::Potential, system::System)
 
         k_squared = spdiagm(ones(prod(potential.n_datapoints))*(norm(k)^2))
 
-    end
     end
 
     return k_squared, Δ

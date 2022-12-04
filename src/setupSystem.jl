@@ -31,7 +31,11 @@ function setupSystem(potential::Potential, system::System1D)
     potential.n_kpoints != -1 ? system.reciprocal = true : system.reciprocal = false
     potential.reciprocal = system.reciprocal
 
-    !system.periodic && system.reciprocal && (@error "You have defined a number of k-points - this option is only valid in combination with \"periodic = true\""; exit())
+    !any(system.periodic) && system.reciprocal && (@error "You have defined a number of k-points - this option is only valid in combination with \"periodic = true\""; exit())
+
+    if length(system.periodic) == 1 && potential.dimension != 1
+        system.periodic = repeat(system.periodic, potential.dimension)
+    end
 
     return system
     

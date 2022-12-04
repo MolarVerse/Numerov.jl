@@ -120,9 +120,7 @@ function readPotential(potential::Potential)
             end
         end
     else
-        for i in 1:potential.dimension
-            push!(potential.kpoints, zeros(1))
-        end    
+        push!(potential.kpoints, zeros(potential.dimension))
     end
 
     if isempty(potential.n_datapoints)

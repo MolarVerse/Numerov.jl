@@ -2,7 +2,7 @@ mutable struct System1D <: System
     stencil     ::Int64
     n_datapoints::Int64
 
-    periodic     ::Bool
+    periodic     ::Vector{Bool}
     reciprocal   ::Bool
     bandStructure::Bool
 
@@ -17,7 +17,7 @@ mutable struct System2D <: System
     stencil     ::Int64
     n_datapoints::Vector{Int64}
 
-    periodic     ::Bool
+    periodic     ::Vector{Bool}
     reciprocal   ::Bool
     bandStructure::Bool
 
@@ -32,7 +32,7 @@ mutable struct System3D <: System
     stencil     ::Int64
     n_datapoints::Vector{Int64}
 
-    periodic     ::Bool
+    periodic     ::Vector{Bool}
     reciprocal   ::Bool
     bandStructure::Bool
 
