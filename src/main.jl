@@ -9,8 +9,10 @@ function numerov(inputFileName::String)
     potential = Potential()
     system    = System1D()     #default setup but gets overridden later!
     output    = Output()
+    files     = Files()
 
     readInputFile(inputFileName)
+    setupFiles(files)
     checkInput(potential)
     readPotential(potential)
 
@@ -18,6 +20,8 @@ function numerov(inputFileName::String)
     system = setupSystem(potential, system)
     buildLaplace(system)
     buildNabla(system)
+
+    println(files.lgoFileName, "This is a tes output")
 
     checkInput(output)
 
@@ -44,5 +48,7 @@ function numerov(inputFileName::String)
     end
 
     show(to)
+
+    close(files.logFile)
 
 end
