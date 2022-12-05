@@ -21,7 +21,7 @@ function numerov(inputFileName::String)
     buildLaplace(system)
     buildNabla(system)
 
-    println(files.lgoFileName, "This is a tes output")
+    println(files.logFile, "This is a tes output")
 
     checkInput(output)
 
