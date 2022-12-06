@@ -1,4 +1,5 @@
 using TimerOutputs
+using KrylovKit
 
 function solve(potential::Potential, system::System, output::Output, k, to, files::Files)
 
@@ -21,9 +22,19 @@ function solve(potential::Potential, system::System, output::Output, k, to, file
         println(files.logFile, "Sparsity  = ", length(Hamiltonian.nzval) / length(Hamiltonian))
     end
 
-    #add here more eigenvalues to calculate to ensure sparse algorithm finds the lowest ones
-    # @timeit to "diagonalize" eigenvalues, eigenvectors = eigen(Matrix(Hamiltonian))
+    add here more eigenvalues to calculate to ensure sparse algorithm finds the lowest ones
+    @timeit to "diagonalize" eigenvalues, eigenvectors = eigen(Matrix(Hamiltonian))
+    println("HERE")
     @timeit to "diagonalize" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues+5, which = :SM, maxiter=typemax(Int))
+    println("HERE")
+    @timeit to "diagonalize2" eigenvalues, eigenvectors, info = eigsolve(sparse(Hamiltonian), output.n_eigenvalues+5, :SR; maxiter=10000, )
+    println("HERE")
+
+    @show(info)
+
+    println(typeof(eigenvectors), typeof(eigenvalues))
+    eigenvectors = mapreduce(permutedims, vcat, eigenvectors)'
+    println(size(eigenvectors), typeof(eigenvalues))
 
     output.eigenvectors = Vector()
     @timeit to "assign eigvals" output.eigenvalues  = real.(eigenvalues[1:output.n_eigenvalues])
