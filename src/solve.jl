@@ -18,7 +18,8 @@ function solve(potential::Potential, system::System, output::Output, k, to)
     println("Sparsity = ", length(Hamiltonian.nzval) / length(Hamiltonian))
 
     #add here more eigenvalues to calculate to ensure sparse algorithm finds the lowest ones
-    @timeit to "diagonalize" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues, which = :SM, maxiter=typemax(Int))
+    # @timeit to "diagonalize" eigenvalues, eigenvectors = eigen(Matrix(Hamiltonian))
+    @timeit to "diagonalize" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues+5, which = :SM, maxiter=typemax(Int))
 
     output.eigenvectors = Vector()
     @timeit to "assign eigvals" output.eigenvalues  = real.(eigenvalues[1:output.n_eigenvalues])
