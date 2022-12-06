@@ -1,6 +1,6 @@
 using TimerOutputs
 
-function solve(potential::Potential, system::System, output::Output, k, to)
+function solve(potential::Potential, system::System, output::Output, k, to, files::Files)
 
     @timeit to "inner solve" begin
 
@@ -15,7 +15,11 @@ function solve(potential::Potential, system::System, output::Output, k, to)
 
     @timeit to "hamiltonian" Hamiltonian = 0.5 / potential.mass * (-system.laplace/intervall^2/2^(potential.dimension-1) - 2*im*Δ/intervall + k_squared) + spdiagm(potential.potential)
     
-    println("Sparsity = ", length(Hamiltonian.nzval) / length(Hamiltonian))
+    if sum(k) == 0.0
+        println(files.logFile, "Non zeros = ", length(Hamiltonian.nzval))
+        println(files.logFile, "zeros     = ", length(Hamiltonian) - length(Hamiltonian.nzval))
+        println(files.logFile, "Sparsity  = ", length(Hamiltonian.nzval) / length(Hamiltonian))
+    end
 
     #add here more eigenvalues to calculate to ensure sparse algorithm finds the lowest ones
     # @timeit to "diagonalize" eigenvalues, eigenvectors = eigen(Matrix(Hamiltonian))

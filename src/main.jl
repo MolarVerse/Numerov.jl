@@ -21,8 +21,6 @@ function numerov(inputFileName::String)
     buildLaplace(system)
     buildNabla(system)
 
-    println(files.logFile, "This is a tes output")
-
     checkInput(output)
 
     isfile("eigenvalues.dat") && rm("eigenvalues.dat")
@@ -30,7 +28,7 @@ function numerov(inputFileName::String)
     @timeit to "loop" begin
     for (i, k) in enumerate(potential.kpoints)
 
-        @timeit to "solve" solve(potential, system, output, k, to)
+        @timeit to "solve" solve(potential, system, output, k, to, files)
 
         #shift potential back for output
         potential.potential = potential.potential .+ potential.shift
@@ -47,8 +45,11 @@ function numerov(inputFileName::String)
 
     end
 
+    timingsfile = open("timings.out", "w")
     show(to)
+    show(timingsfile, to)
 
+    close(timingsfile)
     close(files.logFile)
 
 end
