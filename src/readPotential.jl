@@ -46,7 +46,7 @@ function readPotential(potential::Potential)
 
     potential.kpoints = Vector()
 
-    #bandstruture setup
+    #bandstruture setup TODO: make seperate k path routines!
 
     if potential.n_kpoints != -1 && potential.dimension == 1
         
