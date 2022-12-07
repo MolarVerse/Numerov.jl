@@ -1,5 +1,6 @@
 using TimerOutputs
 using KrylovKit
+using CUDA
 
 function solve(potential::Potential, system::System, output::Output, k, to, files::Files)
 
@@ -22,19 +23,22 @@ function solve(potential::Potential, system::System, output::Output, k, to, file
         println(files.logFile, "Sparsity  = ", length(Hamiltonian.nzval) / length(Hamiltonian))
     end
 
-    add here more eigenvalues to calculate to ensure sparse algorithm finds the lowest ones
-    @timeit to "diagonalize" eigenvalues, eigenvectors = eigen(Matrix(Hamiltonian))
-    println("HERE")
+    #add here more eigenvalues to calculate to ensure sparse algorithm finds the lowest ones
+    # @timeit to "diagonalize" eigenvalues, eigenvectors = eigen(Matrix(Hamiltonian))
+    println("eigs")
     @timeit to "diagonalize" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues+5, which = :SM, maxiter=typemax(Int))
-    println("HERE")
-    @timeit to "diagonalize2" eigenvalues, eigenvectors, info = eigsolve(sparse(Hamiltonian), output.n_eigenvalues+5, :SR; maxiter=10000, )
-    println("HERE")
+    println("krylov")
+    @timeit to "diagonalize2" eigenvalues, eigenvectors, info = eigsolve(sparse(Hamiltonian), output.n_eigenvalues+5, :SR; krylovdim=100, ishermitian=true, maxiter=10000)
+    println("cuda")
+    @timeit to "diagonalize CUDA" begin
+        Hamiltonian = CuArray(Hamiltonian)
+        CUSOLVER.csreigsvsi(Hamiltonian, rand(T), CUDA.rand(T, prod(potential.dimension)), 1e-6, Cint(1000), 'O')
+    end
+    println("all done")
 
     @show(info)
 
-    println(typeof(eigenvectors), typeof(eigenvalues))
     eigenvectors = mapreduce(permutedims, vcat, eigenvectors)'
-    println(size(eigenvectors), typeof(eigenvalues))
 
     output.eigenvectors = Vector()
     @timeit to "assign eigvals" output.eigenvalues  = real.(eigenvalues[1:output.n_eigenvalues])

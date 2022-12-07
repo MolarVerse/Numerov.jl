@@ -19,7 +19,7 @@ function build_2d_stencil(system, n_datapoints, stencil)
 
     total_points = prod(n_datapoints)
 
-    matrix = zeros(total_points, total_points)
+    matrix = spzeros(total_points, total_points)
 
     for i in 1:system.stencil
 
