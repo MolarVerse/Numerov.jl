@@ -136,6 +136,7 @@ function readPotential(potential::Potential)
 
     potential.shift     = minimum(potential.potential)
     potential.potential = potential.potential .- potential.shift
+    potential.intervall = potential.coords[end][2] - potential.coords[end][1]
 
     #check if datapoints matches input dimensions
 

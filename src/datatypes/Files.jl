@@ -5,5 +5,7 @@ mutable struct Files
     logFile    ::IOStream
     timingsFile::IOStream
 
+    to::TimerOutput
+
     Files() = new()
 end

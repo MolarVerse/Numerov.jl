@@ -21,6 +21,8 @@ mutable struct Potential
 
     shift::Float64
 
+    intervall::Float64
+
     potential::Vector{Float64}
 
     coords::Vector{Vector{Float64}}
