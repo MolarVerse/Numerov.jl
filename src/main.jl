@@ -14,6 +14,8 @@ function numerov(inputFileName::String)
     readInputFile(inputFileName)
     setupFiles(files)
     checkInput(potential)
+    checkInput(files)
+    checkInput(output)
     readPotential(potential)
 
     checkInput(system)
@@ -21,7 +23,6 @@ function numerov(inputFileName::String)
     buildLaplace(system)
     buildNabla(system)
 
-    checkInput(output)
 
     isfile("eigenvalues.dat") && rm("eigenvalues.dat")
 
@@ -45,11 +46,11 @@ function numerov(inputFileName::String)
 
     end
 
-    timingsfile = open("timings.out", "w")
+    files.timingsFile = open(files.timingsFileName, "w")
     show(to)
-    show(timingsfile, to)
+    show(files.timingsFile, to)
 
-    close(timingsfile)
+    close(files.timingsFile)
     close(files.logFile)
 
 end

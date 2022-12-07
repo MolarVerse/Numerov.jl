@@ -13,5 +13,6 @@ inputDictionary = Dict(
 
     "solver"          => "",
 
-    "output-file"     => ""
+    "output-file"     => "",
+    "timings-file"    => "",
 )

@@ -25,8 +25,12 @@ include("datatypes/System.jl")
 include("datatypes/Output.jl")
 include("datatypes/Files.jl")
 
+include("checkInput/checkFiles.jl")
+include("checkInput/checkPotential.jl")
+include("checkInput/checkSystem.jl")
+include("checkInput/checkOutput.jl")
+
 include("readInputFile.jl")
-include("checkInput.jl")
 include("readPotential.jl")
 include("setupSystem.jl")
 include("setupFiles.jl")

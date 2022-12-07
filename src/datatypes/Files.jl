@@ -1,7 +1,9 @@
 mutable struct Files
-    logFileName::String
+    logFileName    ::String
+    timingsFileName::String
 
-    logFile::IOStream
+    logFile    ::IOStream
+    timingsFile::IOStream
 
     Files() = new()
 end
