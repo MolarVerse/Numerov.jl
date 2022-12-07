@@ -12,6 +12,7 @@ end
 function checkInput(system::System)
     checkStencil(system)
     checkPeriodicity(system)
+    checkSolver(system)
 end
 
 function checkInput(output::Output)
@@ -103,6 +104,21 @@ end
 function checkPeriodicity(system::System)
     isempty(inputDictionary["periodic"]) && (system.periodic = [false]; return) #write to log file about default setting
     system.periodic = parse.(Bool, split(join(split(inputDictionary["periodic"], ","), " ")))
+end
+
+function checkSolver(system::System)
+    isempty(inputDictionary["solver"])    && (system.solver = ARPACK ; return) #write to log file about default setting
+    inputDictionary["solver"] == "arpack" && (system.solver = ARPACK ; return)
+    inputDictionary["solver"] == "krylov" && (system.solver = KRYLOV ; return)
+    inputDictionary["solver"] == "cuda"   && (system.solver = GPU    ; return)
+
+    @error "\nThe given solver $(inputDictionary["solver"]) was not recognised!\n" *
+           "Valid opttions are:                                                      \n" * 
+           "    - arpack                                                             \n" *
+           "    - krylov                                                             \n" *
+           "    - cuda                                                               \n"
+
+    exit()
 end
 
 function checkNEigenvalues(output::Output)

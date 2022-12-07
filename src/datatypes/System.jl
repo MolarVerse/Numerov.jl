@@ -10,6 +10,8 @@ mutable struct System1D <: System
 
     Δ::SparseMatrixCSC{Float64, Int64}
 
+    solver::SolverEnum
+
     System1D() = new()
 end
 
@@ -25,6 +27,8 @@ mutable struct System2D <: System
 
     Δ::SparseMatrixCSC{Float64, Int64}
 
+    solver::SolverEnum
+
     System2D() = new()
 end
 
@@ -39,6 +43,8 @@ mutable struct System3D <: System
     laplace::SparseMatrixCSC{Float64, Int64}
 
     Δ::SparseMatrixCSC{Float64, Int64}
+
+    solver::SolverEnum
 
     System3D() = new()
 end

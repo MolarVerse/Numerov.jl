@@ -11,5 +11,7 @@ inputDictionary = Dict(
     "datapoints"      => "",
     "band-structure"  => "",
 
+    "solver"          => "",
+
     "output-file"     => ""
 )

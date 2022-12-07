@@ -10,7 +10,7 @@ function printEigenvalues(potential::Potential, output::Output, k)
         end
     end
     for λ in output.eigenvalues
-        @printf(file, "%8.6lf ", ustrip(uconvert(potential.potentialUnit, λ*potential.internalElemEnergy)))
+        @printf(file, "%20.14lf ", ustrip(uconvert(potential.potentialUnit, λ*potential.internalElemEnergy)))
     end
     @printf(file, "\n")
 
@@ -92,7 +92,7 @@ function printBandStructure(potential::Potential, k_points)
     pushfirst!(a, zeros(length(k_points[1])))
     push!(b, zeros(length(k_points[1])))
 
-    diff = (norm.([b[i] .- a[i] for i in 1:length(a)]))[1:end-1]
+    diff = (norm.([b[i] .- a[i] for i in eachindex(a)]))[1:end-1]
 
     brioullin_path = 0.0
 
@@ -100,7 +100,7 @@ function printBandStructure(potential::Potential, k_points)
         brioullin_path += spacing
         @printf(file, "%lf ", brioullin_path)
         for j in length(k_points[1])+1:length(data[1,:])
-            @printf(file, "%lf ", data[i,j])
+            @printf(file, "%20.14lf ", data[i,j])
         end
         @printf(file, "\n")
         if i == length(diff) - potential.n_kpoints && potential.dimension == 3
@@ -114,7 +114,7 @@ function printBandStructure(potential::Potential, k_points)
         end
         @printf(file, "%lf ", brioullin_path)
         for j in length(k_points[1])+1:length(data[1,:])
-            @printf(file, "%lf ", data[i,j])
+            @printf(file, "%20.14lf ", data[i,j])
         end
         @printf(file, "\n")
         brioullin_path += spacing

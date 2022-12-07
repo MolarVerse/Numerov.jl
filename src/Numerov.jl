@@ -18,6 +18,7 @@ MyUnits.__init__()
 
 abstract type System end
 
+include("datatypes/SolverEnum.jl")
 include("datatypes/InputDictionary.jl")
 include("datatypes/Potential.jl")
 include("datatypes/System.jl")

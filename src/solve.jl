@@ -24,22 +24,9 @@ function solve(potential::Potential, system::System, output::Output, k, to, file
         println(files.logFile, "Sparsity  = ", length(Hamiltonian.nzval) / length(Hamiltonian))
     end
 
-    #add here more eigenvalues to calculate to ensure sparse algorithm finds the lowest ones
-    # @timeit to "diagonalize" eigenvalues, eigenvectors = eigen(Matrix(Hamiltonian))
-    println("eigs")
-    @timeit to "diagonalize" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues+5, which = :SM, maxiter=typemax(Int))
-    println("krylov")
-    @timeit to "diagonalize2" eigenvalues, eigenvectors, info = eigsolve(sparse(Hamiltonian), output.n_eigenvalues+5, :SR; krylovdim=100, ishermitian=true, maxiter=10000)
-    println("cuda")
-    @timeit to "diagonalize CUDA" begin
-        Hamiltonian = CUSPARSE.CuSparseMatrixCSC(Hamiltonian)
-        CUSOLVER.csceigsvsi(Hamiltonian, rand(T), CUDA.rand(T, prod(potential.dimension)), 1e-6, Cint(1000), 'O')
-    end
-    println("all done")
+    eigenvalues, eigenvectors = solveWrapper(system, output, files, Hamiltonian, to)
 
-    @show(info)
-
-    eigenvectors = mapreduce(permutedims, vcat, eigenvectors)'
+    
 
     output.eigenvectors = Vector()
     @timeit to "assign eigvals" output.eigenvalues  = real.(eigenvalues[1:output.n_eigenvalues])
@@ -53,6 +40,31 @@ function solve(potential::Potential, system::System, output::Output, k, to, file
 
     end
 
+end
+
+function solveWrapper(system::System, output::Output, files::Files, Hamiltonian, to)
+
+    if system.solver == ARPACK
+        @timeit to "Arpack" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues+5, which = :SM, maxiter=typemax(Int))
+    elseif system.solver == KRYLOV
+        @timeit to "Krylov" eigenvalues, eigenvectors, info = eigsolve(sparse(Hamiltonian), output.n_eigenvalues+5, :SR; ishermitian=true, maxiter=10000)
+        @show(info)
+        eigenvectors = mapreduce(permutedims, vcat, eigenvectors)'
+    elseif system.solver == GPU
+        @error "CUDA sparse solver not working yet!"
+        exit()
+
+        # @timeit to "diagonalize CUDA" begin
+        #     # CUDA.device!(1)
+        #     T = ComplexF32
+        #     Hamiltonian = SparseMatrixCSC{ComplexF32, Int32}(Hamiltonian)
+        #     Hamiltonian = CUSPARSE.CuSparseMatrixCSR(Hamiltonian)
+        #     CUSOLVER.csreigvsi(Hamiltonian, rand(T), CUDA.rand(T, prod(potential.n_datapoints)), Float32(1e-6), Cint(1000), 'O')
+        # end
+
+    end
+
+    return eigenvalues, eigenvectors
 end
 
 using NumericalIntegration
