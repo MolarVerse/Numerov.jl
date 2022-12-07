@@ -1,6 +1,7 @@
 using TimerOutputs
 using KrylovKit
 using CUDA
+using CUDA:CUSPARSE
 
 function solve(potential::Potential, system::System, output::Output, k, to, files::Files)
 
@@ -31,8 +32,8 @@ function solve(potential::Potential, system::System, output::Output, k, to, file
     @timeit to "diagonalize2" eigenvalues, eigenvectors, info = eigsolve(sparse(Hamiltonian), output.n_eigenvalues+5, :SR; krylovdim=100, ishermitian=true, maxiter=10000)
     println("cuda")
     @timeit to "diagonalize CUDA" begin
-        Hamiltonian = CuArray(Hamiltonian)
-        CUSOLVER.csreigsvsi(Hamiltonian, rand(T), CUDA.rand(T, prod(potential.dimension)), 1e-6, Cint(1000), 'O')
+        Hamiltonian = CuSparseMatrixCSC(Hamiltonian)
+        CUSOLVER.csceigsvsi(Hamiltonian, rand(T), CUDA.rand(T, prod(potential.dimension)), 1e-6, Cint(1000), 'O')
     end
     println("all done")
 
