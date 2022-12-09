@@ -1,5 +1,7 @@
 mutable struct System1D <: System
     stencil     ::Int64
+    stencil∇    ::Int64
+    stencilΔ    ::Int64
     n_datapoints::Vector{Int64}
 
     periodic     ::Vector{Bool}
@@ -16,6 +18,8 @@ end
 
 mutable struct System2D <: System
     stencil     ::Int64
+    stencil∇    ::Int64
+    stencilΔ    ::Int64
     n_datapoints::Vector{Int64}
 
     periodic     ::Vector{Bool}
@@ -32,6 +36,8 @@ end
 
 mutable struct System3D <: System
     stencil     ::Int64
+    stencil∇    ::Int64
+    stencilΔ    ::Int64
     n_datapoints::Vector{Int64}
 
     periodic     ::Vector{Bool}

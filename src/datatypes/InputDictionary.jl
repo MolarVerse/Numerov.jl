@@ -3,7 +3,11 @@ inputDictionary = Dict(
     "potential-unit"  => "",
     "coord-unit"      => "",
     "mass-unit"       => "",
+
     "stencil"         => "",
+    "stencil-laplace" => "",
+    "stencil-nabla"   => "",
+
     "reduced-mass"    => "",
     "periodic"        => "",
     "n-eigenvalues"   => "",

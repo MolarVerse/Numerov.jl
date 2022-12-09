@@ -39,13 +39,13 @@ function readPotential(potential::Potential)
         potential.coords[i]    = ustrip.(uconvert.(potential.internalElemCoords, potential.coords[i] * potential.coordsUnit))
     end
 
-    potential.kpoints = [Tuple(zeros(potential.dimension))]
+    potential.kpoints = []
 
     #bandstruture setup TODO: make seperate k path routines!
     if potential.n_kpoints != -1 && potential.dimension == 1
         
         k_intervall = π / (potential.coords[1][end] - potential.coords[1][1]) / (potential.n_kpoints-1)
-        [push!(potential.kpoints, k_intervall*(i-1)) for i in 1:potential.n_kpoints]
+        [push!(potential.kpoints, Tuple(k_intervall*(i-1))) for i in 1:potential.n_kpoints]
 
     elseif potential.n_kpoints != -1 && potential.dimension == 2
 
@@ -84,6 +84,8 @@ function readPotential(potential::Potential)
                 end
             end
         end
+    else
+        push!(potential.kpoints, Tuple(zeros(potential.dimension)))
     end
 
     if isempty(potential.n_datapoints)

@@ -2,14 +2,14 @@ function buildΔ(system::System2D)
 
     n_datapoints   = system.n_datapoints
 
-    stencil = zeros(system.stencil, system.stencil)
+    stencil = zeros(system.stencilΔ, system.stencilΔ)
 
-    if system.stencil == 3
+    if system.stencilΔ == 3
 
         stencil[:,1] = [1.0,  0.0, 1.0]
         stencil[:,2] = [0.0, -4.0, 0.0]
 
-    elseif system.stencil == 5
+    elseif system.stencilΔ == 5
         
         stencil[:,1] = [ 0.0,  0.0,  -1.0,  0.0,  0.0]
         stencil[:,2] = [ 0.0,  0.0,  16.0,  0.0,  0.0]
@@ -17,7 +17,7 @@ function buildΔ(system::System2D)
 
         stencil /= 6.0
 
-    elseif system.stencil == 7
+    elseif system.stencilΔ == 7
         
         stencil[:,1] = [ 0.0,    0.0,    0.0,    16.0,    0.0,    0.0,  0.0]
         stencil[:,2] = [ 0.0,   -5.0,   20.0,  -246.0,   20.0,   -5.0,  0.0]
@@ -26,7 +26,7 @@ function buildΔ(system::System2D)
 
         stencil /= 720.0
 
-    elseif system.stencil == 9
+    elseif system.stencilΔ == 9
         
         stencil[:,1] = [    0.0,     0.0,       0.0,       0.0,    -1620.0,       0.0,       0.0,     0.0,     0.0]
         stencil[:,2] = [    0.0,   -56.0,     231.0,    -420.0,    23530.0,    -420.0,     231.0,   -56.0,     0.0]
@@ -36,7 +36,7 @@ function buildΔ(system::System2D)
 
         stencil /= 453600.0
 
-    elseif system.stencil == 11
+    elseif system.stencilΔ == 11
         
         stencil[:, 1] = [    0.0,       0.0,       0.0,         0.0,        0.0,      16128.0,        0.0,         0.0,       0.0,       0.0,     0.0]
         stencil[:, 2] = [    0.0,     -81.0,     466.0,     -1281.0,     2226.0,    -254660.0,     2226.0,     -1281.0,     466.0,     -81.0,     0.0]
@@ -47,13 +47,13 @@ function buildΔ(system::System2D)
 
         stencil /= 25401600.0
 
-    elseif system.stencil == 13
+    elseif system.stencilΔ == 13
 
         @error "13-point stencil is not yet implemented for 2d calculations!"; exit()
 
     end
 
-    stencil[:,system.stencil÷2+2:end] = reverse(stencil[:,1:system.stencil÷2], dims=2)
+    stencil[:,system.stencilΔ÷2+2:end] = reverse(stencil[:,1:system.stencilΔ÷2], dims=2)
 
-    system.Δ = build_2d_stencil(system, n_datapoints, stencil)
+    system.Δ = build_2d_stencil(system, n_datapoints, stencil, system.stencilΔ)
 end

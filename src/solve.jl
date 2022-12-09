@@ -60,7 +60,7 @@ function build_hamiltonian_components(potential::Potential, system::System, k)
 
     if potential.reciprocal
         if potential.dimension == 1
-            ∇ = system.∇*k
+            ∇ = system.∇*k[1]
         elseif potential.dimension == 2
             if k[2] != 0.0
                 ∇ = system.∇ * k[2]
@@ -82,7 +82,7 @@ function build_hamiltonian_components(potential::Potential, system::System, k)
             stencil[system.stencil÷2+1,system.stencil÷2+1,:                 ] = ones(system.stencil)*k[3]
             stencil[system.stencil÷2+1,system.stencil÷2+1,system.stencil÷2+1] = 0.0
     
-            ∇ = system.∇ .* build_3d_stencil(system, potential.n_datapoints, stencil)
+            ∇ = system.∇ .* build_3d_stencil(system, potential.n_datapoints, stencil, system.stencil∇)
 
         end
     end

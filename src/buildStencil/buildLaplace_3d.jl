@@ -2,13 +2,13 @@ function buildΔ(system::System3D)
 
     n_datapoints   = system.n_datapoints
 
-    stencil = zeros(system.stencil^3)
+    stencil = zeros(system.stencilΔ^3)
 
-    if system.stencil == 3
+    if system.stencilΔ == 3
 
         @error "3-point stencil is not yet implemented for 3d calculations!"; exit()
 
-    elseif system.stencil == 5
+    elseif system.stencilΔ == 5
         
         stencil[ 12+1] =  -0.3333333333;
         stencil[ 31+1] =   1.0000000000;
@@ -44,7 +44,7 @@ function buildΔ(system::System3D)
         stencil[ 93+1] =   1.0000000000;
         stencil[112+1] =  -0.3333333333;
 
-    elseif system.stencil == 7
+    elseif system.stencilΔ == 7
         
         stencil[ 24+1] =   0.0444444444;
         stencil[ 59+1] =  -0.0138888889;
@@ -114,7 +114,7 @@ function buildΔ(system::System3D)
         stencil[283+1] =  -0.0138888889;
         stencil[318+1] =   0.0444444444;
 
-    elseif system.stencil == 9
+    elseif system.stencilΔ == 9
         
         stencil[ 40+1] =  -0.0071428571;
         stencil[ 94+1] =  -0.0002469136;
@@ -314,7 +314,7 @@ function buildΔ(system::System3D)
         stencil[634+1] =  -0.0002469136;
         stencil[688+1] =  -0.0071428571;
 
-    elseif system.stencil == 11
+    elseif system.stencilΔ == 11
         
         stencil[  60+1] =   0.0012698413;
         stencil[ 137+1] =  -0.0000063776;
@@ -756,13 +756,13 @@ function buildΔ(system::System3D)
         stencil[1193+1] =  -0.0000063776;
         stencil[1270+1] =   0.0012698413;
 
-    elseif system.stencil == 13
+    elseif system.stencilΔ == 13
 
         @error "13-point stencil is not yet implemented for 3d calculations!"; exit()
 
     end
 
-    stencil = reshape(stencil, (system.stencil, system.stencil, system.stencil))
+    stencil = reshape(stencil, (system.stencilΔ, system.stencilΔ, system.stencilΔ))
 
-    system.Δ = build_3d_stencil(system, n_datapoints, stencil)
+    system.Δ = build_3d_stencil(system, n_datapoints, stencil, system.stencilΔ)
 end
