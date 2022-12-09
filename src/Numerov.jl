@@ -41,14 +41,17 @@ module Numerov
     include("buildStencil/buildLaplace_3d.jl")
     include("buildStencil/buildNabla.jl")
 
+    include("printResults/printEigenvalues.jl")
+    include("printResults/printEigenvectors.jl")
+    include("printResults/printFrequencies.jl")
+    include("printResults/printBandStructure.jl")
+
     include("readInputFile.jl")
     include("readPotential.jl")
 
     include("setupSystem.jl")
 
     include("solve.jl")
-
-    include("printResults.jl")
 
     include("main.jl")
 

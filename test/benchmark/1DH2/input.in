@@ -1,4 +1,4 @@
-potential-file = potential_notshifted.dat
+potential-file = potential.dat
 stencil = 9
 reduced-mass = 0.503912515949
 mass-unit = g/mol

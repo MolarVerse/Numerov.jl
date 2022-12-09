@@ -1,5 +1,3 @@
-include("testsets/1DH2/test_1DH2.jl")
-
 function testsets()
     test_1DH2()
 end
@@ -28,6 +26,14 @@ function compare_frequenciesFiles(file1::String, file2::String)
     data1 = filter(x -> typeof(x) <: Float64, data1)
     data2 = filter(x -> typeof(x) <: Float64, data2)
 
-    @test data1 ≈ data2 atol = 1.0e-10
+    @test data1 ≈ data2 atol = 1.0e-9
     
+end
+
+function compare_eigenvectorFiles(file1::String, file2::String)
+    
+    data1 = readdlm(file1, comments=true)
+    data2 = readdlm(file2, comments=true)
+
+    @test abs.(data1[:,1:4]) ≈ abs.(data2[:,1:4]) atol = 1.0e-10
 end
