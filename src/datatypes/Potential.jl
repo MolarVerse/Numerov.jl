@@ -13,7 +13,7 @@ mutable struct Potential
     internalElemMass  ::Unitful.FreeUnits
 
     n_kpoints::Int64
-    kpoints  ::Vector{}
+    kpoints  ::Vector{Tuple}
 
     dimension::Int64
 

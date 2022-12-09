@@ -25,13 +25,12 @@ function setupSystem(potential::Potential, system::System1D)
     potential.n_kpoints != -1 ? system.reciprocal = true : system.reciprocal = false
     potential.reciprocal = system.reciprocal
 
-    !any(system.periodic) && system.reciprocal && (@error "You have defined a number of k-points - this option is only valid in combination with \"periodic = true\""; exit())
-
     if length(system.periodic) == 1 && potential.dimension != 1
         system.periodic = repeat(system.periodic, potential.dimension)
     end
 
-    any(n_datapoints .< system.stencil) && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
+    !any(system.periodic) && system.reciprocal && (@error "You have defined a number of k-points - this option is only valid in combination with \"periodic = true\""; exit())
+    any(system.n_datapoints .< system.stencil) && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
 
     return system
     

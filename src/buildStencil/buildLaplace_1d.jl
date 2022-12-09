@@ -1,9 +1,6 @@
 function buildΔ(system::System1D)
 
     n_datapoints = system.n_datapoints[1]
-    n_datapoints < system.stencil && (@error "The number of datapoints has at least to be equal to the stencil size!"; exit())
-
-    stencil = zeros(system.stencil)
 
     if system.stencil == 3
 
@@ -23,13 +20,11 @@ function buildΔ(system::System1D)
 
     elseif system.stencil == 11
 
-        stencil  = [8, -125, 1000, -6000, 42000, -73766, 42000, -6000, 1000, -125, 8]
-        stencil /= 25200
+        stencil  = [8, -125, 1000, -6000, 42000, -73766, 42000, -6000, 1000, -125, 8] ./ 25200
 
     elseif system.stencil == 13
 
-        stencil  = [-50, 864, -7425, 44000, -222750, 1425600, -2480478, 1425600, -222750, 44000, -7425, 864, -50]
-        stencil /= 831600
+        stencil  = [-50, 864, -7425, 44000, -222750, 1425600, -2480478, 1425600, -222750, 44000, -7425, 864, -50] ./ 831600
 
     end
 

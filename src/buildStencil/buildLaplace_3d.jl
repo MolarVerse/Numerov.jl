@@ -1,11 +1,6 @@
 function buildΔ(system::System3D)
 
     n_datapoints   = system.n_datapoints
-    system.laplace = spzeros(prod(n_datapoints), prod(n_datapoints))
-
-    n_datapoints[1] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
-    n_datapoints[2] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
-    n_datapoints[3] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
 
     stencil = zeros(system.stencil^3)
 

@@ -3,8 +3,6 @@ function checkInput(files::Files)
     checkTimingsFileName(files)
 end
 
-#combine all function to one wrapper!
-
 function checkLogFileName(files::Files)
     files.logFileName = isempty(inputDictionary["output-file"]) ? "Numerov.out" : inputDictionary["output-file"]
     files.logFile     = open(files.logFileName, "w")

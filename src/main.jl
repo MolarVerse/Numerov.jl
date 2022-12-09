@@ -12,18 +12,22 @@ function numerov(inputFileName::String)
         readInputFile(inputFileName)
         
         checkInput(potential)
+        checkInput(system)
         checkInput(files)
         checkInput(output)
 
         readPotential(potential)
 
-        checkInput(system)
         system = setupSystem(potential, system)
+
         buildΔ(system)
         build∇(system)
 
-
         isfile("eigenvalues.dat") && rm("eigenvalues.dat")
+
+        println(files.logFile, "Non zeros = ", length(system.Δ.nzval))
+        println(files.logFile, "zeros     = ", length(system.Δ) - length(system.Δ.nzval))
+        println(files.logFile, "Sparsity  = ", length(system.Δ.nzval) / length(system.Δ))
 
         @timeit files.to "loop" begin
             for (i, k) in enumerate(potential.kpoints)
@@ -47,6 +51,7 @@ function numerov(inputFileName::String)
 
     files.timingsFile = open(files.timingsFileName, "w")
     show(files.to)
+    println()
     show(files.timingsFile, files.to)
 
     close(files.timingsFile)

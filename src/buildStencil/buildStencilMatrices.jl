@@ -35,7 +35,6 @@ function build_2d_stencil(system, n_datapoints, stencil)
             range_j = ((cell_index-1)*n_datapoints[2] + 1):cell_index*n_datapoints[2]
 
             if cell_index < 1 || cell_index > n_datapoints[1]
-                
                 if system.periodic[end-1]
                     range_j = (range_j[1] - sign(cell_index-1)*total_points):(range_j[end] - sign(cell_index-1)*total_points)
                 else
@@ -70,7 +69,6 @@ function build_3d_stencil(system, n_datapoints, stencil)
             range_j = ((cell_index-1)*prod(n_datapoints[2:3]) + 1):cell_index*prod(n_datapoints[2:3])
 
             if cell_index < 1 || cell_index > n_datapoints[1]
-                
                 if system.periodic[end-2]
                     range_j = (range_j[1] - sign(cell_index-1)*total_points):(range_j[end] - sign(cell_index-1)*total_points)
                 else
