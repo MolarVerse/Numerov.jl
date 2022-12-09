@@ -1,13 +1,13 @@
 function buildNabla(system::System1D) #combine these two functions!
 
-    n_datapoints = system.n_datapoints
+    n_datapoints = system.n_datapoints[1]
     n_datapoints < system.stencil && (@error "The number of datapoints has at least to be equal to the stencil size!"; exit())
 
-    !system.reciprocal && (system.Δ = spzeros(n_datapoints, n_datapoints); return)
+    !system.reciprocal && (system.∇ = spzeros(n_datapoints, n_datapoints); return)
 
     stencil = get_1d_stencil(system)
 
-    system.Δ = build_1d_stencil(system, n_datapoints, stencil)
+    system.∇ = build_1d_stencil(system, n_datapoints, stencil)
 
 end
 
@@ -15,32 +15,32 @@ function buildNabla(system::System2D)
 
     n_datapoints = system.n_datapoints
 
-    !system.reciprocal && (system.Δ = spzeros(prod(n_datapoints), prod(n_datapoints)); return)
+    !system.reciprocal && (system.∇ = spzeros(prod(n_datapoints), prod(n_datapoints)); return)
     
     n_datapoints[1] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
     n_datapoints[2] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
 
-    system.Δ   = spzeros(prod(n_datapoints), prod(n_datapoints))
+    system.∇   = spzeros(prod(n_datapoints), prod(n_datapoints))
     stencil    = zeros(system.stencil, system.stencil)
     stencil_1d = get_1d_stencil(system)
 
     stencil[:,system.stencil÷2+1] = stencil_1d
     stencil[system.stencil÷2+1,:] = stencil_1d
 
-    system.Δ = build_2d_stencil(system, n_datapoints, stencil)
+    system.∇ = build_2d_stencil(system, n_datapoints, stencil)
 end
 
 function buildNabla(system::System3D)
 
     n_datapoints = system.n_datapoints
 
-    !system.reciprocal && (system.Δ = spzeros(prod(n_datapoints), prod(n_datapoints)); return)
+    !system.reciprocal && (system.∇ = spzeros(prod(n_datapoints), prod(n_datapoints)); return)
     
     n_datapoints[1] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
     n_datapoints[2] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
     n_datapoints[3] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
 
-    system.Δ   = spzeros(prod(n_datapoints), prod(n_datapoints))
+    system.∇   = spzeros(prod(n_datapoints), prod(n_datapoints))
     stencil    = zeros(system.stencil, system.stencil, system.stencil)
     stencil_1d = get_1d_stencil(system)
 # 
@@ -48,7 +48,7 @@ function buildNabla(system::System3D)
     stencil[system.stencil÷2+1,:                 ,system.stencil÷2+1] = stencil_1d
     stencil[system.stencil÷2+1,system.stencil÷2+1,:                 ] = stencil_1d
 # 
-    system.Δ = build_3d_stencil(system, n_datapoints, stencil)
+    system.∇ = build_3d_stencil(system, n_datapoints, stencil)
 
 end
 
