@@ -19,8 +19,8 @@ function numerov(inputFileName::String)
 
         checkInput(system)
         system = setupSystem(potential, system)
-        buildLaplace(system)
-        buildNabla(system)
+        buildΔ(system)
+        build∇(system)
 
 
         isfile("eigenvalues.dat") && rm("eigenvalues.dat")

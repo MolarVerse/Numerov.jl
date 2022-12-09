@@ -6,9 +6,8 @@ mutable struct System1D <: System
     reciprocal   ::Bool
     bandStructure::Bool
 
-    laplace::SparseMatrixCSC{Float64, Int64}
-
     ∇::SparseMatrixCSC{Float64, Int64}
+    Δ::SparseMatrixCSC{Float64, Int64}
 
     solver::SolverEnum
 
@@ -23,9 +22,8 @@ mutable struct System2D <: System
     reciprocal   ::Bool
     bandStructure::Bool
 
-    laplace::SparseMatrixCSC{Float64, Int64}
-
     ∇::SparseMatrixCSC{Float64, Int64}
+    Δ::SparseMatrixCSC{Float64, Int64}
 
     solver::SolverEnum
 
@@ -40,9 +38,8 @@ mutable struct System3D <: System
     reciprocal   ::Bool
     bandStructure::Bool
 
-    laplace::SparseMatrixCSC{Float64, Int64}
-
     ∇::SparseMatrixCSC{Float64, Int64}
+    Δ::SparseMatrixCSC{Float64, Int64}
 
     solver::SolverEnum
 

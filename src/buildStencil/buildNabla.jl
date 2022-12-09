@@ -1,7 +1,6 @@
-function buildNabla(system::System1D) #combine these two functions!
+function build∇(system::System1D) #combine these two functions!
 
     n_datapoints = system.n_datapoints[1]
-    n_datapoints < system.stencil && (@error "The number of datapoints has at least to be equal to the stencil size!"; exit())
 
     !system.reciprocal && (system.∇ = spzeros(n_datapoints, n_datapoints); return)
 
@@ -11,15 +10,12 @@ function buildNabla(system::System1D) #combine these two functions!
 
 end
 
-function buildNabla(system::System2D)
+function build∇(system::System2D)
 
     n_datapoints = system.n_datapoints
 
     !system.reciprocal && (system.∇ = spzeros(prod(n_datapoints), prod(n_datapoints)); return)
     
-    n_datapoints[1] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
-    n_datapoints[2] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
-
     system.∇   = spzeros(prod(n_datapoints), prod(n_datapoints))
     stencil    = zeros(system.stencil, system.stencil)
     stencil_1d = get_1d_stencil(system)
@@ -30,16 +26,12 @@ function buildNabla(system::System2D)
     system.∇ = build_2d_stencil(system, n_datapoints, stencil)
 end
 
-function buildNabla(system::System3D)
+function build∇(system::System3D)
 
     n_datapoints = system.n_datapoints
 
     !system.reciprocal && (system.∇ = spzeros(prod(n_datapoints), prod(n_datapoints)); return)
     
-    n_datapoints[1] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
-    n_datapoints[2] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
-    n_datapoints[3] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
-
     system.∇   = spzeros(prod(n_datapoints), prod(n_datapoints))
     stencil    = zeros(system.stencil, system.stencil, system.stencil)
     stencil_1d = get_1d_stencil(system)

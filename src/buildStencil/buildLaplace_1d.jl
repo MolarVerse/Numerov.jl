@@ -1,4 +1,4 @@
-function buildLaplace(system::System1D)
+function buildΔ(system::System1D)
 
     n_datapoints = system.n_datapoints[1]
     n_datapoints < system.stencil && (@error "The number of datapoints has at least to be equal to the stencil size!"; exit())
@@ -33,6 +33,6 @@ function buildLaplace(system::System1D)
 
     end
 
-    system.laplace = build_1d_stencil(system, n_datapoints, stencil)
+    system.Δ = build_1d_stencil(system, n_datapoints, stencil)
 
 end

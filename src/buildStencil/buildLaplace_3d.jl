@@ -1,4 +1,4 @@
-function buildLaplace(system::System3D)
+function buildΔ(system::System3D)
 
     n_datapoints   = system.n_datapoints
     system.laplace = spzeros(prod(n_datapoints), prod(n_datapoints))
@@ -769,5 +769,5 @@ function buildLaplace(system::System3D)
 
     stencil = reshape(stencil, (system.stencil, system.stencil, system.stencil))
 
-    system.laplace = build_3d_stencil(system, n_datapoints, stencil)
+    system.Δ = build_3d_stencil(system, n_datapoints, stencil)
 end

@@ -1,7 +1,7 @@
-function buildLaplace(system::System2D)
+function buildΔ(system::System2D)
 
     n_datapoints   = system.n_datapoints
-    system.laplace = spzeros(n_datapoints[1]*n_datapoints[2], n_datapoints[1]*n_datapoints[2])
+    system.Δ = spzeros(n_datapoints[1]*n_datapoints[2], n_datapoints[1]*n_datapoints[2])
 
     n_datapoints[1] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
     n_datapoints[2] < system.stencil && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
@@ -72,5 +72,5 @@ function buildLaplace(system::System2D)
 
     end
 
-    system.laplace = build_2d_stencil(system, n_datapoints, stencil)
+    system.Δ = build_2d_stencil(system, n_datapoints, stencil)
 end

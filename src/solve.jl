@@ -4,9 +4,9 @@ function solve(potential::Potential, system::System, output::Output, k, files::F
 
     k_squared, ∇ = build_hamiltonian_components(potential, system, k)
 
-    @timeit files.to "build Ham" Hamiltonian = 0.5 / potential.mass * (-system.laplace/intervall^2/2^(potential.dimension-1) - 2*im*∇/intervall + k_squared) + spdiagm(potential.potential)
+    @timeit files.to "build Ham" Hamiltonian = 0.5 / potential.mass * (-system.Δ/intervall^2/2^(potential.dimension-1) - 2*im*∇/intervall + k_squared) + spdiagm(potential.potential)
     
-    #move out of loop to laplace definition
+    #move out of loop to Δ definition
     if sum(k) == 0.0
         println(files.logFile, "Non zeros = ", length(Hamiltonian.nzval))
         println(files.logFile, "zeros     = ", length(Hamiltonian) - length(Hamiltonian.nzval))
