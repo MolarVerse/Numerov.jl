@@ -7,6 +7,8 @@ function numerov(inputFileName::String)
 
     files.to = TimerOutput()
 
+    [inputDictionary[key] = "" for key in keys(inputDictionary)] #to reset dict to default values if calculation started in same repl session
+
     @timeit files.to "main" begin
 
         readInputFile(inputFileName)

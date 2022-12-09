@@ -1,5 +1,6 @@
 function testsets()
-    test_1DH2()
+    @testset "1D H2" test_1DH2()
+    @testset "1D Harmonic Oscillator" test_1DHarmonicOscillator()
 end
 
 function compare_eigenvalueFiles(file1::String, file2::String)
@@ -26,7 +27,7 @@ function compare_frequenciesFiles(file1::String, file2::String)
     data1 = filter(x -> typeof(x) <: Float64, data1)
     data2 = filter(x -> typeof(x) <: Float64, data2)
 
-    @test data1 ≈ data2 atol = 1.0e-9
+    @test data1 ≈ data2 atol = 1.0e-6
     
 end
 
