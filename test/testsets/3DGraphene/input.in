@@ -1,0 +1,9 @@
+potential-file = potential.dat
+stencil = 9
+#reduced-mass = 0.98867959301
+mass-unit = g/mol
+coord-unit = angstrom
+n-eigenvalues = 8
+potential-unit = kj/mol
+datapoints = 63 53 61
+periodic = false true true

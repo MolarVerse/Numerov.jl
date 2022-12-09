@@ -1,0 +1,7 @@
+potential-file = potential.dat
+stencil = 9
+mass-unit = me
+coord-unit = bohr
+n-eigenvalues = 5
+datapoints = 51 51 51
+potential-unit = hartree

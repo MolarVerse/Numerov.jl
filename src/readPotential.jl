@@ -40,17 +40,18 @@ function readPotential(potential::Potential)
     end
 
     potential.kpoints = []
+    potential.intervall = potential.coords[end][2] - potential.coords[end][1]
 
     #bandstruture setup TODO: make seperate k path routines!
     if potential.n_kpoints != -1 && potential.dimension == 1
         
-        k_intervall = π / (potential.coords[1][end] - potential.coords[1][1]) / (potential.n_kpoints-1)
+        k_intervall = π / (potential.coords[1][end] - potential.coords[1][1] + potential.intervall) / (potential.n_kpoints-1)
         [push!(potential.kpoints, Tuple(k_intervall*(i-1))) for i in 1:potential.n_kpoints]
 
     elseif potential.n_kpoints != -1 && potential.dimension == 2
 
-        k_intervall_1 = π / (potential.coords[1][end] - potential.coords[1][1]) / (potential.n_kpoints-1)
-        k_intervall_2 = π / (potential.coords[2][end] - potential.coords[2][1]) / (potential.n_kpoints-1)
+        k_intervall_1 = π / (potential.coords[1][end] - potential.coords[1][1] + potential.intervall) / (potential.n_kpoints-1)
+        k_intervall_2 = π / (potential.coords[2][end] - potential.coords[2][1] + potential.intervall) / (potential.n_kpoints-1)
 
         if potential.bandStructure
             [push!(potential.kpoints, (0.0, (i-1)*k_intervall_2))                                   for i in 1:potential.n_kpoints]
@@ -64,9 +65,9 @@ function readPotential(potential::Potential)
         end
     elseif potential.n_kpoints != -1 && potential.dimension == 3
 
-        k_intervall_1 = π / (potential.coords[1][end] - potential.coords[1][1]) / (potential.n_kpoints-1)
-        k_intervall_2 = π / (potential.coords[2][end] - potential.coords[2][1]) / (potential.n_kpoints-1)
-        k_intervall_3 = π / (potential.coords[3][end] - potential.coords[3][1]) / (potential.n_kpoints-1)
+        k_intervall_1 = π / (potential.coords[1][end] - potential.coords[1][1] + potential.intervall) / (potential.n_kpoints-1)
+        k_intervall_2 = π / (potential.coords[2][end] - potential.coords[2][1] + potential.intervall) / (potential.n_kpoints-1)
+        k_intervall_3 = π / (potential.coords[3][end] - potential.coords[3][1] + potential.intervall) / (potential.n_kpoints-1)
 
         if potential.bandStructure
             [push!(potential.kpoints, (0.0, (i-1)*k_intervall_2, 0.0)) for i in 1:potential.n_kpoints]
@@ -99,11 +100,10 @@ function readPotential(potential::Potential)
 
     potential.shift     = minimum(potential.potential) #shift potential - sparse solver not capable of using not shifted potential!
     potential.potential = potential.potential .- potential.shift
-    potential.intervall = potential.coords[end][2] - potential.coords[end][1]
 
     #check if datapoints matches input dimensions
 
-    #check_spacing()
+    #check_spacing() ???
     #reorder ???? dont know if it should be user handled - ask thh
 
 end

@@ -41,7 +41,7 @@ function setupSystem(potential::Potential, system::System1D)
     end
 
     if system.stencilΔ == 0
-        system.stencilΔ = system.stencilΔ
+        system.stencilΔ = system.stencil
     end
 
     return system

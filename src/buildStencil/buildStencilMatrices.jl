@@ -8,7 +8,7 @@ function build_1d_stencil(system, n_datapoints, stencil, stencil_size)
         matrix += spdiagm(sub_matrix_index => ones(n_datapoints - abs(sub_matrix_index)) * stencil[j])
 
         if system.periodic[end] && sub_matrix_index != 0
-            matrix += spdiagm(sign(sub_matrix_index)*n_datapoints - sub_matrix_index => ones(abs(sub_matrix_index)) * stencil[j])
+            matrix += spdiagm(-(sign(sub_matrix_index)*n_datapoints - sub_matrix_index) => ones(abs(sub_matrix_index)) * stencil[j]) #no idea why -ones
         end
     end
 

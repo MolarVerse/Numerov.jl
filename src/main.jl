@@ -37,6 +37,8 @@ function numerov(inputFileName::String)
                 #shift potential back for output
                 potential.potential = potential.potential .+ potential.shift
 
+                k = ustrip.(uconvert.(potential.coordsUnit^(-1), k ./ potential.internalElemCoords))
+
                 printEigenvalues(potential, output, k)
                 printEigenvectors(potential, system, output, k)
                 printFrequencies(potential, system, output, k)
