@@ -1,13 +1,11 @@
-function printEigenvectors(potential::Potential, system::System, output::Output, k)   ###### probably not normalized!!!!!!!!!!!
+function printEigenvectors(potential::Potential, system::System, output::Output, files::Files, k)
+
+    file = open(files.eigenvectorFileName, "w")
+    file_shifted = open(files.eigenvectorShiftedFileName, "w")
 
     if system.reciprocal
-        file              = open("eigenvectors_k=$(k).dat", "w")
-        file_shifted      = open("eigenvectors_shifted_k=$(k).dat", "w")
-        imag_file         = open("imag_eigenvectors_k=$(k).dat", "w")
-        imag_file_shifted = open("imag_eigenvectors_shifted_k=$(k).dat", "w")
-    else
-        file         = open("eigenvectors.dat", "w")
-        file_shifted = open("eigenvectors_shifted.dat", "w")
+        imag_file = open(files.imag_eigenvectorFileName, "w")
+        imag_file_shifted = open(files.imag_eigenvectorShiftedFileName, "w")
     end
 
     #think of a clever way to handle shifted input potential for output

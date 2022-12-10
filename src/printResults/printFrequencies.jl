@@ -1,4 +1,4 @@
-function printFrequencies(potential::Potential, system::System, output::Output, k)
+function printFrequencies(potential::Potential, system::System, output::Output, files::Files, k)
 
     for i in 1:output.n_eigenvalues-1
         for j in i+1:output.n_eigenvalues
@@ -6,11 +6,7 @@ function printFrequencies(potential::Potential, system::System, output::Output, 
         end
     end
 
-    if system.reciprocal
-        file = open("frequencies_k=$(k).dat", "w")
-    else
-        file = open("frequencies.dat", "w")
-    end
+    file = open(files.frequencyFileName, "w")
 
     @printf(file, "#Lower triangular matrix for frequencies in cm^-1\n")
     

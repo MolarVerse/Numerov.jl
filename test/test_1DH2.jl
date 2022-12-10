@@ -5,7 +5,7 @@ function test_1DH2()
 
     cd(path)
 
-    Numerov.numerov("input.in")
+    @suppress Numerov.numerov("input.in")
 
     compare_eigenvalueFiles( "eigenvalues.dat"         , benchmark_path * "eigenvalues.dat")
     compare_frequenciesFiles("frequencies.dat"         , benchmark_path * "frequencies.dat")

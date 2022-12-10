@@ -34,6 +34,20 @@ function numerov(inputFileName::String)
         @timeit files.to "loop" begin
             for (i, k) in enumerate(potential.kpoints)
 
+                k_string = join(ustrip.(uconvert.(potential.coordsUnit^(-1), k ./ potential.internalElemCoords)), "_")
+
+                if system.reciprocal
+                    files.eigenvectorFileName             = "eigenvectors_k_$(k_string).dat"
+                    files.eigenvectorShiftedFileName      = "eigenvectors_shifted_k_$(k_string).dat"
+                    files.imag_eigenvectorFileName        = "imag_eigenvectors_k_$(k_string).dat"
+                    files.imag_eigenvectorShiftedFileName = "imag_eigenvectors_shifted_k_$(k_string).dat"
+                    files.frequencyFileName               = "frequencies_k_$(k_string).dat"
+                else
+                    files.eigenvectorFileName             = "eigenvectors.dat"
+                    files.eigenvectorShiftedFileName      = "eigenvectors_shifted.dat"
+                    files.frequencyFileName               = "frequencies.dat"
+                end
+
                 @timeit files.to "solve" solve(potential, system, output, k, files)
 
                 #shift potential back for output
@@ -42,8 +56,8 @@ function numerov(inputFileName::String)
                 k = ustrip.(uconvert.(potential.coordsUnit^(-1), k ./ potential.internalElemCoords))
 
                 printEigenvalues(potential, output, k)
-                printEigenvectors(potential, system, output, k)
-                printFrequencies(potential, system, output, k)
+                printEigenvectors(potential, system, output, files, k)
+                printFrequencies(potential, system, output, files, k)
 
                 println(i, "/", length(potential.kpoints), " Done")
             end

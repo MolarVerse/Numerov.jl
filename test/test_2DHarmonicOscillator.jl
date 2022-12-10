@@ -1,7 +1,7 @@
-function test_1DHarmonicOscillator()
+function test_2DHarmonicOscillator()
 
-    path           = base_path *  "/testsets/1DHarmonicOscillator/"
-    benchmark_path = base_path * "/benchmark/1DHarmonicOscillator/"
+    path           = base_path *  "/testsets/2DHarmonicOscillator/"
+    benchmark_path = base_path * "/benchmark/2DHarmonicOscillator/"
 
     cd(path)
 

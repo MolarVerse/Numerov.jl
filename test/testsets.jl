@@ -1,6 +1,15 @@
+include("test_1DH2.jl")
+include("test_1DHarmonicOscillator.jl")
+include("test_1DKronigPenney.jl")
+include("test_1DPhenolPeriodic.jl")
+include("test_2DHarmonicOscillator.jl")
+
 function testsets()
     @testset "1D H2" test_1DH2()
     @testset "1D Harmonic Oscillator" test_1DHarmonicOscillator()
+    @testset "1D Kronig Penney" test_1DKronigPenney()
+    @testset "1D Phenol Periodic" test_1DPhenolPeriodic()
+    @testset "2D Harmonic Oscillator" test_2DHarmonicOscillator()
 end
 
 function compare_eigenvalueFiles(file1::String, file2::String)
@@ -9,7 +18,7 @@ function compare_eigenvalueFiles(file1::String, file2::String)
     data2 = readdlm(file2; comments=true)
 
     for i in eachindex(data2[1,:])
-        tol = 1e-10
+        tol = 1e-9
         if length(split(string(data2[1,i]), ".")[2]) == 6
             tol = 1e-6
         end
@@ -27,7 +36,7 @@ function compare_frequenciesFiles(file1::String, file2::String)
     data1 = filter(x -> typeof(x) <: Float64, data1)
     data2 = filter(x -> typeof(x) <: Float64, data2)
 
-    @test data1 ≈ data2 atol = 1.0e-6
+    @test data1 ≈ data2 rtol = 1.0e-5
     
 end
 
@@ -36,5 +45,5 @@ function compare_eigenvectorFiles(file1::String, file2::String)
     data1 = readdlm(file1, comments=true)
     data2 = readdlm(file2, comments=true)
 
-    @test abs.(data1[:,1:4]) ≈ abs.(data2[:,1:4]) atol = 1.0e-10
+    @test abs.(data1) ≈ abs.(data2  ) atol = 1.0e-5
 end
