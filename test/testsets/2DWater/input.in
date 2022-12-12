@@ -1,4 +1,4 @@
-potential-file = e_ccsd_t_sym_asym.dat
+potential-file = potential.dat
 stencil = 9
 mass-unit = unit
 coord-unit = angstrom

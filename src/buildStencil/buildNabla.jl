@@ -63,3 +63,38 @@ function get_1d_stencil(system)
     
     return stencil_1d
 end
+
+function build∇_k(potential::Potential, system::System, k)
+    ∇ = spzeros(prod(potential.n_datapoints), prod(potential.n_datapoints))
+
+    if potential.reciprocal
+        if potential.dimension == 1
+            ∇ = system.∇*k[1]
+        elseif potential.dimension == 2
+            if k[2] != 0.0
+                ∇ = system.∇ * k[2]
+                for i in 1:potential.n_datapoints[1]
+                    ∇[(i-1)*potential.n_datapoints[2]+1:(i-1)*potential.n_datapoints[2]+potential.n_datapoints[2],(i-1)*potential.n_datapoints[2]+1:(i-1)*potential.n_datapoints[2]+potential.n_datapoints[2]] *= k[1]/k[2]
+                end
+            else
+                for i in 1:potential.n_datapoints[1]
+                    ∇[(i-1)*potential.n_datapoints[2]+1:(i-1)*potential.n_datapoints[2]+potential.n_datapoints[2],(i-1)*potential.n_datapoints[2]+1:(i-1)*potential.n_datapoints[2]+potential.n_datapoints[2]] = system.∇[(i-1)*potential.n_datapoints[2]+1:(i-1)*potential.n_datapoints[2]+potential.n_datapoints[2],(i-1)*potential.n_datapoints[2]+1:(i-1)*potential.n_datapoints[2]+potential.n_datapoints[2]] * k[1]
+                end
+            end
+
+        elseif potential.dimension == 3
+
+            stencil    = zeros(system.stencil, system.stencil, system.stencil)
+
+            stencil[:                 ,system.stencil÷2+1,system.stencil÷2+1] = ones(system.stencil)*k[1]
+            stencil[system.stencil÷2+1,:                 ,system.stencil÷2+1] = ones(system.stencil)*k[2]
+            stencil[system.stencil÷2+1,system.stencil÷2+1,:                 ] = ones(system.stencil)*k[3]
+            stencil[system.stencil÷2+1,system.stencil÷2+1,system.stencil÷2+1] = 0.0
+    
+            ∇ = system.∇ .* build_3d_stencil(system, potential.n_datapoints, stencil, system.stencil∇)
+
+        end
+    end
+
+    return ∇
+end

@@ -1,6 +1,6 @@
 potential-file = potential.dat
 stencil = 11
-reduced-mass = 23.06000881918738
+reduced-mass = 1
 mass-unit = me
 coord-unit = angstrom
 n-eigenvalues = 8

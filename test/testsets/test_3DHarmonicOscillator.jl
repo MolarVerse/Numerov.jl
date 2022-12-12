@@ -1,7 +1,7 @@
-function test_1DH2()
+function test_3DHarmonicOscillator()
 
-    path           = base_path *  "/testsets/1DH2/"
-    benchmark_path = base_path * "/benchmark/1DH2/"
+    path           = base_path *  "/testsets/3DHarmonicOscillator/"
+    benchmark_path = base_path * "/benchmark/3DHarmonicOscillator/"
 
     cd(path)
 
@@ -9,7 +9,7 @@ function test_1DH2()
 
     compare_eigenvalueFiles( "eigenvalues.dat"         , benchmark_path * "eigenvalues.dat")
     compare_frequenciesFiles("frequencies.dat"         , benchmark_path * "frequencies.dat")
-    compare_eigenvectorFiles("eigenvectors.dat"        , benchmark_path * "eigenvectors.dat")
+    @test_skip compare_eigenvectorFiles("eigenvectors.dat"        , benchmark_path * "eigenvectors.dat", 1)
 
     input_files = ["input.in", "potential.dat"]
     rm.(filter(x -> x ∉ input_files, readdir()))

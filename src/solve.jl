@@ -2,13 +2,16 @@ function solve(potential::Potential, system::System, output::Output, k, files::F
 
     intervall    = potential.intervall
 
-    k_squared, ∇ = build_hamiltonian_components(potential, system, k)
+    k_squared = spdiagm(ones(prod(potential.n_datapoints))*(norm(k)^2))
+
+    ∇ = build∇_k(potential, system, k)
 
     @timeit files.to "build Ham" Hamiltonian = 0.5 / potential.mass[1] * (-system.Δ/intervall^2/2^(potential.dimension-1) - 2*im*∇/intervall + k_squared) + spdiagm(potential.potential)
     
+    output.eigenvectors = Vector()
+
     eigenvalues, eigenvectors = solveWrapper(system, output, files, Hamiltonian)
 
-    output.eigenvectors = Vector()
     output.eigenvalues  = real.(eigenvalues[1:output.n_eigenvalues])
     output.frequencies  = zeros(output.n_eigenvalues-1, output.n_eigenvalues-1)
         
@@ -21,7 +24,11 @@ end
 function solveWrapper(system::System, output::Output, files::Files, Hamiltonian)
 
     if system.solver == ARPACK
-        @timeit files.to "Arpack" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues+5, which = :SM, maxiter=typemax(Int))
+        if isempty(output.eigenvectors)
+            @timeit files.to "Arpack" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues+5, which = :SM, maxiter=typemax(Int))
+        else
+            @timeit files.to "Arpack" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues+5, which = :SM, maxiter=typemax(Int), v0=output.eigenvectors[1])
+        end
     elseif system.solver == KRYLOV
         #check convergence of all eigenvalues with info
         @timeit files.to "Krylov" eigenvalues, eigenvectors, info = eigsolve(sparse(Hamiltonian), output.n_eigenvalues+5, :SR; ishermitian=true, maxiter=10000)
@@ -52,40 +59,4 @@ function normalize_eigenvectors(output::Output, intervall, dimension, potential)
 
         output.eigenvectors[i] = output.eigenvectors[i] ./ sqrt(norm)
     end
-end
-
-function build_hamiltonian_components(potential::Potential, system::System, k)
-    k_squared = spdiagm(ones(prod(potential.n_datapoints))*(norm(k)^2))
-    ∇         = spzeros(prod(potential.n_datapoints), prod(potential.n_datapoints))
-
-    if potential.reciprocal
-        if potential.dimension == 1
-            ∇ = system.∇*k[1]
-        elseif potential.dimension == 2
-            if k[2] != 0.0
-                ∇ = system.∇ * k[2]
-                for i in 1:potential.n_datapoints[1]
-                    ∇[(i-1)*potential.n_datapoints[2]+1:(i-1)*potential.n_datapoints[2]+potential.n_datapoints[2],(i-1)*potential.n_datapoints[2]+1:(i-1)*potential.n_datapoints[2]+potential.n_datapoints[2]] *= k[1]/k[2]
-                end
-            else
-                for i in 1:potential.n_datapoints[1]
-                    ∇[(i-1)*potential.n_datapoints[2]+1:(i-1)*potential.n_datapoints[2]+potential.n_datapoints[2],(i-1)*potential.n_datapoints[2]+1:(i-1)*potential.n_datapoints[2]+potential.n_datapoints[2]] = system.∇[(i-1)*potential.n_datapoints[2]+1:(i-1)*potential.n_datapoints[2]+potential.n_datapoints[2],(i-1)*potential.n_datapoints[2]+1:(i-1)*potential.n_datapoints[2]+potential.n_datapoints[2]] * k[1]
-                end
-            end
-
-        elseif potential.dimension == 3
-
-            stencil    = zeros(system.stencil, system.stencil, system.stencil)
-
-            stencil[:                 ,system.stencil÷2+1,system.stencil÷2+1] = ones(system.stencil)*k[1]
-            stencil[system.stencil÷2+1,:                 ,system.stencil÷2+1] = ones(system.stencil)*k[2]
-            stencil[system.stencil÷2+1,system.stencil÷2+1,:                 ] = ones(system.stencil)*k[3]
-            stencil[system.stencil÷2+1,system.stencil÷2+1,system.stencil÷2+1] = 0.0
-    
-            ∇ = system.∇ .* build_3d_stencil(system, potential.n_datapoints, stencil, system.stencil∇)
-
-        end
-    end
-
-    return k_squared, ∇
 end

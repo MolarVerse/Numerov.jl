@@ -1,7 +1,7 @@
-function test_1DKronigPenney()
+function test_3DKronigPenney()
 
-    path           = base_path *  "/testsets/1DKronigPenney/"
-    benchmark_path = base_path * "/benchmark/1DKronigPenney/"
+    path           = base_path *  "/testsets/3DKronigPenney/"
+    benchmark_path = base_path * "/benchmark/3DKronigPenney/"
 
     cd(path)
 
@@ -20,14 +20,14 @@ function test_1DKronigPenney()
     filesBenchmark = filter(x -> startswith(x, "eigenvectors_k"), readdir(benchmark_path))
 
     for i in eachindex(files)
-        compare_eigenvectorFiles(files[i], benchmark_path * filesBenchmark[i])
+        @test_skip compare_eigenvectorFiles(files[i], benchmark_path * filesBenchmark[i], 1)
     end
 
     files          = filter(x -> startswith(x, "imag_eigenvectors_k"), readdir())
     filesBenchmark = filter(x -> startswith(x, "imag_eigenvectors_k"), readdir(benchmark_path))
 
     for i in eachindex(files)
-        compare_eigenvectorFiles(files[i], benchmark_path * filesBenchmark[i])
+        @test_skip compare_eigenvectorFiles(files[i], benchmark_path * filesBenchmark[i], 1)
     end
 
     compare_eigenvalueFiles( "bandstructure.dat"         , benchmark_path * "bandstructure.dat")
