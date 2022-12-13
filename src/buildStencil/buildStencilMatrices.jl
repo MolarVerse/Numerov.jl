@@ -1,14 +1,17 @@
-function build_1d_stencil(system, n_datapoints, stencil, stencil_size)
+function build_1d_stencil(system, stencilCoefficients, stencil_size)
+    
+    n_datapoints = system.n_datapoints[end]
+
     matrix = zeros(n_datapoints, n_datapoints)
     
     for j in 1:stencil_size
 
-        sub_matrix_index = j - stencil_size÷2 - 1 
+        index = j - stencil_size÷2 - 1 
 
-        matrix += spdiagm(sub_matrix_index => ones(n_datapoints - abs(sub_matrix_index)) * stencil[j])
+        matrix += spdiagm(index => ones(n_datapoints - abs(index)) * stencilCoefficients[j])
 
-        if system.periodic[end] && sub_matrix_index != 0
-            matrix += spdiagm(-(sign(sub_matrix_index)*n_datapoints - sub_matrix_index) => ones(abs(sub_matrix_index)) * stencil[j]) #no idea why -ones
+        if system.periodic[end] && index != 0
+            matrix += spdiagm(-(sign(index)*n_datapoints - index) => ones(abs(index)) * stencilCoefficients[j]) #no idea why -ones
         end
     end
 
@@ -25,7 +28,7 @@ function build_2d_stencil(system, n_datapoints, stencil, stencil_size)
 
         sub_matrix_index = i - stencil_size÷2 - 1
 
-        matrix_1d = build_1d_stencil(system, n_datapoints[2], stencil[i,:], stencil_size)
+        matrix_1d = build_1d_stencil(system, stencil[i,:], stencil_size)
 
         for j in 1:n_datapoints[1]
 

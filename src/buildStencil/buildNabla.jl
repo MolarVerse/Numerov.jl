@@ -1,7 +1,7 @@
 function build∇(system::System1D) #combine these two functions!
 
     stencil  = get_1d_stencil(system)
-    system.∇ = build_1d_stencil(system, prod(system.n_datapoints), stencil, system.stencil∇)
+    system.∇ = build_1d_stencil(system, stencil, system.stencil∇)
 
 end
 
@@ -32,8 +32,6 @@ function build∇(system::System3D)
 end
 
 function get_1d_stencil(system)
-
-    stencil = zeros(system.stencil∇)
 
     if system.stencil∇ == 3
 

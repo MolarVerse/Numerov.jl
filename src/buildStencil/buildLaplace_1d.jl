@@ -29,6 +29,6 @@ function buildΔ(system::System1D)
 
     end
 
-    system.Δ = build_1d_stencil(system, n_datapoints, stencil, system.stencilΔ)
+    system.Δ = build_1d_stencil(system, stencil, system.stencilΔ)
 
 end
