@@ -24,11 +24,7 @@ end
 function solveWrapper(system::System, output::Output, files::Files, Hamiltonian)
 
     if system.solver == ARPACK
-        if isempty(output.eigenvectors)
-            @timeit files.to "Arpack" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues+5, which = :SM, maxiter=typemax(Int))
-        else
-            @timeit files.to "Arpack" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues+5, which = :SM, maxiter=typemax(Int), v0=output.eigenvectors[1])
-        end
+        @timeit files.to "Arpack" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues+5, which = :SM, maxiter=typemax(Int))
     elseif system.solver == KRYLOV
         #check convergence of all eigenvalues with info
         @timeit files.to "Krylov" eigenvalues, eigenvectors, info = eigsolve(sparse(Hamiltonian), output.n_eigenvalues+5, :SR; ishermitian=true, maxiter=10000)

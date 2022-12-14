@@ -2,7 +2,7 @@ function build_1d_stencil(system, stencilCoefficients, stencil_size)
     
     n_datapoints = system.n_datapoints[end]
 
-    matrix = zeros(n_datapoints, n_datapoints)
+    matrix = spzeros(n_datapoints, n_datapoints)
     
     for j in 1:stencil_size
 
