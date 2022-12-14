@@ -42,49 +42,34 @@ function readPotential(potential::Potential)
     potential.kpoints = []
     potential.intervall = potential.coords[end][2] - potential.coords[end][1]
 
-    k_intervalls = zeros(potential.dimension)
+    k_intervalls = [π / (potential.coords[i][end] - potential.coords[i][1] + potential.intervall) / (potential.n_kpoints-1) for i in 1:potential.dimension]
 
     #bandstruture setup TODO: make seperate k path routines!
     if potential.n_kpoints != -1 && potential.dimension == 1
         
-        k_intervall = π / (potential.coords[1][end] - potential.coords[1][1] + potential.intervall) / (potential.n_kpoints-1)
-        
-        potential.kpoints = [Tuple(k_intervall*(i-1)) for i in 1:potential.n_kpoints]
+        potential.kpoints = get_kpoints_1D(k_intervalls, potential.n_kpoints)
 
     elseif potential.n_kpoints != -1 && potential.dimension == 2
 
-        k_intervall_1 = π / (potential.coords[1][end] - potential.coords[1][1] + potential.intervall) / (potential.n_kpoints-1)
-        k_intervall_2 = π / (potential.coords[2][end] - potential.coords[2][1] + potential.intervall) / (potential.n_kpoints-1)
-
-        if potential.bandStructure
-            [push!(potential.kpoints, (0.0, (i-1)*k_intervall_2))                                   for i in 1:potential.n_kpoints]
-            [push!(potential.kpoints, ((i-1)*k_intervall_1, (potential.n_kpoints-1)*k_intervall_2)) for i in 2:potential.n_kpoints]
-            [push!(potential.kpoints, ((i-1)*k_intervall_1, (i-1)*k_intervall_2))                   for i in potential.n_kpoints-1:-1:1]
-        else
-            for i in 1:potential.n_kpoints
-                kx = k_intervall_1*(i-1)
-                [push!(potential.kpoints, (kx, k_intervall_2*(j-1))) for j in 1:potential.n_kpoints]
-            end
-        end
+        println("test")
+        potential.kpoints = get_kpoints_2D(k_intervalls, potential.n_kpoints, potential.bandStructure)
+        println("test")
+        
     elseif potential.n_kpoints != -1 && potential.dimension == 3
 
-        k_intervall_1 = π / (potential.coords[1][end] - potential.coords[1][1] + potential.intervall) / (potential.n_kpoints-1)
-        k_intervall_2 = π / (potential.coords[2][end] - potential.coords[2][1] + potential.intervall) / (potential.n_kpoints-1)
-        k_intervall_3 = π / (potential.coords[3][end] - potential.coords[3][1] + potential.intervall) / (potential.n_kpoints-1)
-
         if potential.bandStructure
-            [push!(potential.kpoints, (0.0, (i-1)*k_intervall_2, 0.0)) for i in 1:potential.n_kpoints]
-            [push!(potential.kpoints, ((i-1)*k_intervall_1, (potential.n_kpoints-1)*k_intervall_2, 0.0)) for i in 2:potential.n_kpoints]
-            [push!(potential.kpoints, ((i-1)*k_intervall_1, (i-1)*k_intervall_2, 0.0)) for i in potential.n_kpoints-1:-1:1]
-            [push!(potential.kpoints, ((i-1)*k_intervall_1, (i-1)*k_intervall_2, (i-1)*k_intervall_3)) for i in 2:potential.n_kpoints]
-            [push!(potential.kpoints, ((i-1)*k_intervall_1, (potential.n_kpoints-1)*k_intervall_2, (i-1)*k_intervall_3)) for i in potential.n_kpoints-1:-1:1]
-            [push!(potential.kpoints, ((potential.n_kpoints-1)*k_intervall_1, (potential.n_kpoints-1)*k_intervall_2, (i-1)*k_intervall_3)) for i in 1:potential.n_kpoints]
+            [push!(potential.kpoints, (0.0, (i-1)*k_intervalls[2], 0.0)) for i in 1:potential.n_kpoints]
+            [push!(potential.kpoints, ((i-1)*k_intervalls[1], (potential.n_kpoints-1)*k_intervalls[2], 0.0)) for i in 2:potential.n_kpoints]
+            [push!(potential.kpoints, ((i-1)*k_intervalls[1], (i-1)*k_intervalls[2], 0.0)) for i in potential.n_kpoints-1:-1:1]
+            [push!(potential.kpoints, ((i-1)*k_intervalls[1], (i-1)*k_intervalls[2], (i-1)*k_intervalls[3])) for i in 2:potential.n_kpoints]
+            [push!(potential.kpoints, ((i-1)*k_intervalls[1], (potential.n_kpoints-1)*k_intervalls[2], (i-1)*k_intervalls[3])) for i in potential.n_kpoints-1:-1:1]
+            [push!(potential.kpoints, ((potential.n_kpoints-1)*k_intervalls[1], (potential.n_kpoints-1)*k_intervalls[2], (i-1)*k_intervalls[3])) for i in 1:potential.n_kpoints]
         else
             for i in 1:potential.n_kpoints
-                kx = k_intervall_1*(i-1)
+                kx = k_intervalls[1]*(i-1)
                 for j in 1:potential.n_kpoints
-                    ky = k_intervall_2*(i-1)
-                    [push!(potential.kpoints, (kx, ky, k_intervall_3*(k-1))) for k in 1:potential.n_kpoints]
+                    ky = k_intervalls[2]*(i-1)
+                    [push!(potential.kpoints, (kx, ky, k_intervalls[3]*(k-1))) for k in 1:potential.n_kpoints]
                 end
             end
         end
@@ -111,6 +96,67 @@ function readPotential(potential::Potential)
 
 end
 
-function get_minimal_kpath_2D()
+function get_kpoints_1D(k_intervalls::Vector{Float64}, n_kpoints::Int64)
+
+    k_range = 0.0:k_intervalls[1]:k_intervalls[1]*(n_kpoints-1)
+
+    return collect(Iterators.product(k_range))
+
+end
+
+function get_kpoints_2D(k_intervalls::Vector{Float64}, n_kpoints::Int64, bandStructure::Bool)
+
+    k_points = Vector()
+
+    if bandStructure
+
+        Γ_X = [(0.0, k_intervalls[2]*i) for i in 0:n_kpoints-1]
+
+        X_M = [((n_kpoints-1)*k_intervalls[1], i*k_intervalls[2]) for i in 0:n_kpoints-1]
+        
+        M_Γ = [(i*k_intervalls[1], i*k_intervalls[2]) for i in n_kpoints-1:-1:0]
+
+        println(unique(vcat(Γ_X, X_M, M_Γ)))
+        
+        return unique(vcat(Γ_X, X_M, M_Γ))
+    else
+
+        k_range = [0:k_intervalls[i]:k_intervalls[i]*(n_kpoints - 1) for i in 1:2]
+
+        return sort(reshape(collect(Iterators.product(k_range...)), n_kpoints^2))
+
+    end
+    
+end
+
+function get_kpoints_3D(k_intervalls::Vector{Float64}, n_kpoints::Int64, bandStructure::Bool)
+
+    k_points = Vector()
+
+    if bandStructure
+
+        # [push!(potential.kpoints, ((i-1)*k_intervalls[1], (potential.n_kpoints-1)*k_intervalls[2], (i-1)*k_intervalls[3])) for i in potential.n_kpoints-1:-1:1]
+        # [push!(potential.kpoints, ((potential.n_kpoints-1)*k_intervalls[1], (potential.n_kpoints-1)*k_intervalls[2], (i-1)*k_intervalls[3])) for i in 1:potential.n_kpoints]
+
+        Γ_X = [(0.0, k_intervalls[2], 0.0) for i in 0:n_kpoints-1]
+
+        X_M = [(i*k_intervalls[1], (n_kpoints-1)*k_intervalls[2], 0.0) for i in 0:n_kpoints-1]
+        
+        M_Γ = [(i*k_intervalls[1], i*k_intervalls[2], 0.0) for i in n_kpoints-1:-1:0]
+
+        Γ_R = [(i*k_intervalls[1], i*k_intervalls[2], i*k_intervalls[3]) for i in 0:n_kpoints-1]
+
+        #R_X = [(,(n_kpoints-1)*k_intervalls[1],) for i in n_kpoints-1:-1:0]
+
+        #M_R
+
+        return unique(vcat(Γ_X, X_M, M_Γ, Γ_R)) #more complicated!!!!
+    else
+
+        k_range = [0:k_intervalls[i]:k_intervalls[i]*(n_kpoints - 1) for i in 1:length(k_intervalls)]
+
+        return sort(reshape(collect(Iterators.product(k_range...)), n_kpoints^length(k_intervalls)))
+
+    end
     
 end

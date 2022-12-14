@@ -15,14 +15,13 @@ function testsets()
     # @testset "1D Phenol Periodic" test_1DPhenolPeriodic()
     # @testset "2D Harmonic Oscillator" test_2DHarmonicOscillator()
     # @testset "2D Water" test_2DWater()
-    # @testset "2D Kronig Penney" test_2DKronigPenney()
+    @testset "2D Kronig Penney" test_2DKronigPenney()
+    @testset "2D Kronig Penney full" test_2DKronigPenney_full() #think of a way to combine this function with the one above
     # @testset "3D Harmonic Oscillator" test_3DHarmonicOscillator()
     # @testset "3D Kronig Penney" test_3DKronigPenney()
 end
 
 function compare_eigenvalueFiles(file1::String, file2::String)
-
-    println(file2)
 
     data1 = readdlm(file1; comments=true)
     data2 = readdlm(file2; comments=true)
