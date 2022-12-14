@@ -1,3 +1,4 @@
-**/eigen*.dat
-**/frequencies*.dat
-**/convergence/
+testsets/**/*eigen*.dat
+testsets/**/frequencies*.dat
+testset/**/bandstructure.dat
+testsets/convergence/

@@ -42,11 +42,14 @@ function readPotential(potential::Potential)
     potential.kpoints = []
     potential.intervall = potential.coords[end][2] - potential.coords[end][1]
 
+    k_intervalls = zeros(potential.dimension)
+
     #bandstruture setup TODO: make seperate k path routines!
     if potential.n_kpoints != -1 && potential.dimension == 1
         
         k_intervall = π / (potential.coords[1][end] - potential.coords[1][1] + potential.intervall) / (potential.n_kpoints-1)
-        [push!(potential.kpoints, Tuple(k_intervall*(i-1))) for i in 1:potential.n_kpoints]
+        
+        potential.kpoints = [Tuple(k_intervall*(i-1)) for i in 1:potential.n_kpoints]
 
     elseif potential.n_kpoints != -1 && potential.dimension == 2
 
@@ -106,4 +109,8 @@ function readPotential(potential::Potential)
     #check_spacing() ???
     #reorder ???? dont know if it should be user handled - ask thh
 
+end
+
+function get_minimal_kpath_2D()
+    
 end

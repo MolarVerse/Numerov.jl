@@ -9,18 +9,20 @@ include("testsets/test_3DHarmonicOscillator.jl")
 include("testsets/test_3DKronigPenney.jl")
 
 function testsets()
-    @testset "1D H2" test_1DH2()
-    @testset "1D Harmonic Oscillator" test_1DHarmonicOscillator()
+    # @testset "1D H2" test_1DH2()
+    # @testset "1D Harmonic Oscillator" test_1DHarmonicOscillator()
     @testset "1D Kronig Penney" test_1DKronigPenney()
-    @testset "1D Phenol Periodic" test_1DPhenolPeriodic()
-    @testset "2D Harmonic Oscillator" test_2DHarmonicOscillator()
-    @testset "2D Water" test_2DWater()
-    @testset "2D Kronig Penney" test_2DKronigPenney()
-    @testset "3D Harmonic Oscillator" test_3DHarmonicOscillator()
-    @testset "3D Kronig Penney" test_3DKronigPenney()
+    # @testset "1D Phenol Periodic" test_1DPhenolPeriodic()
+    # @testset "2D Harmonic Oscillator" test_2DHarmonicOscillator()
+    # @testset "2D Water" test_2DWater()
+    # @testset "2D Kronig Penney" test_2DKronigPenney()
+    # @testset "3D Harmonic Oscillator" test_3DHarmonicOscillator()
+    # @testset "3D Kronig Penney" test_3DKronigPenney()
 end
 
 function compare_eigenvalueFiles(file1::String, file2::String)
+
+    println(file2)
 
     data1 = readdlm(file1; comments=true)
     data2 = readdlm(file2; comments=true)
