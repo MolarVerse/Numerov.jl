@@ -5,6 +5,9 @@ function test_2DWater()
 
     cd(path)
 
+    input_files = ["input.in", "potential.dat"]
+    rm.(filter(x -> x ∉ input_files, readdir()))
+
     @suppress Numerov.numerov("input.in")
 
     compare_eigenvalueFiles( "eigenvalues.dat"         , benchmark_path * "eigenvalues.dat")

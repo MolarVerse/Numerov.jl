@@ -10,6 +10,7 @@ module Numerov
     using DelimitedFiles
     using TimerOutputs
     using KrylovKit
+    using StatsBase
     #using CUDA
     #using CUDA:CUSPARSE
     #using NumericalIntegration

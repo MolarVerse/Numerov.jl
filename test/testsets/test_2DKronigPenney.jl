@@ -5,7 +5,10 @@ function test_2DKronigPenney()
 
     cd(path)
 
-    Numerov.numerov("input.in")
+    input_files = ["input.in", "potential.dat"]
+    rm.(filter(x -> x ∉ input_files, readdir()))
+
+    @suppress Numerov.numerov("input.in")
 
     compare_eigenvalueFiles( "eigenvalues.dat"         , benchmark_path * "eigenvalues.dat")
 
@@ -43,6 +46,9 @@ function test_2DKronigPenney_full()
     benchmark_path = base_path * "/benchmark/2DKronigPenney_full/"
 
     cd(path)
+
+    input_files = ["input.in", "potential.dat"]
+    rm.(filter(x -> x ∉ input_files, readdir()))
 
     @suppress Numerov.numerov("input.in")
 

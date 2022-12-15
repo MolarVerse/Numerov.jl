@@ -51,9 +51,7 @@ function readPotential(potential::Potential)
 
     elseif potential.n_kpoints != -1 && potential.dimension == 2
 
-        println("test")
         potential.kpoints = get_kpoints_2D(k_intervalls, potential.n_kpoints, potential.bandStructure)
-        println("test")
         
     elseif potential.n_kpoints != -1 && potential.dimension == 3
 
@@ -110,15 +108,13 @@ function get_kpoints_2D(k_intervalls::Vector{Float64}, n_kpoints::Int64, bandStr
 
     if bandStructure
 
-        Γ_X = [(0.0, k_intervalls[2]*i) for i in 0:n_kpoints-1]
+        Γ_X = [(k_intervalls[1]*i, 0.0) for i in 0:n_kpoints-1]
 
         X_M = [((n_kpoints-1)*k_intervalls[1], i*k_intervalls[2]) for i in 0:n_kpoints-1]
         
         M_Γ = [(i*k_intervalls[1], i*k_intervalls[2]) for i in n_kpoints-1:-1:0]
 
-        println(unique(vcat(Γ_X, X_M, M_Γ)))
-        
-        return unique(vcat(Γ_X, X_M, M_Γ))
+        return rle(vcat(Γ_X, X_M, M_Γ))[1]
     else
 
         k_range = [0:k_intervalls[i]:k_intervalls[i]*(n_kpoints - 1) for i in 1:2]
@@ -135,22 +131,19 @@ function get_kpoints_3D(k_intervalls::Vector{Float64}, n_kpoints::Int64, bandStr
 
     if bandStructure
 
-        # [push!(potential.kpoints, ((i-1)*k_intervalls[1], (potential.n_kpoints-1)*k_intervalls[2], (i-1)*k_intervalls[3])) for i in potential.n_kpoints-1:-1:1]
-        # [push!(potential.kpoints, ((potential.n_kpoints-1)*k_intervalls[1], (potential.n_kpoints-1)*k_intervalls[2], (i-1)*k_intervalls[3])) for i in 1:potential.n_kpoints]
+        Γ_X = [(k_intervalls[1]*i, 0.0, 0.0) for i in 0:n_kpoints-1]
 
-        Γ_X = [(0.0, k_intervalls[2], 0.0) for i in 0:n_kpoints-1]
-
-        X_M = [(i*k_intervalls[1], (n_kpoints-1)*k_intervalls[2], 0.0) for i in 0:n_kpoints-1]
+        X_M = [((n_kpoints-1)*k_intervalls[1], i*k_intervalls[2], 0.0) for i in 0:n_kpoints-1]
         
         M_Γ = [(i*k_intervalls[1], i*k_intervalls[2], 0.0) for i in n_kpoints-1:-1:0]
 
         Γ_R = [(i*k_intervalls[1], i*k_intervalls[2], i*k_intervalls[3]) for i in 0:n_kpoints-1]
 
-        #R_X = [(,(n_kpoints-1)*k_intervalls[1],) for i in n_kpoints-1:-1:0]
-
-        #M_R
-
-        return unique(vcat(Γ_X, X_M, M_Γ, Γ_R)) #more complicated!!!!
+        R_X = [((n_kpoints-1)*k_intervalls[1], i*k_intervalls[2], i*k_intervalls[3]) for i in n_kpoints-1:-1:0]
+        
+        M_R = [(0.0, 0.0, k_intervalls[3]*i) for i in 0:n_kpoints-1]
+        
+        return rle(vcat(Γ_X, X_M, M_Γ, Γ_R, R_X, M_R))[1]
     else
 
         k_range = [0:k_intervalls[i]:k_intervalls[i]*(n_kpoints - 1) for i in 1:length(k_intervalls)]
