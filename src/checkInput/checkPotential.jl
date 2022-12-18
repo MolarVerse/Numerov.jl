@@ -7,6 +7,7 @@ function checkInput(potential::Potential)
     checkKPoints(potential)
     checkNDatapoints(potential)
     checkBandStructure(potential)
+    checkPeriodicity(potential)
 end
 
 function checkPotentialFile(potential::Potential)
@@ -62,8 +63,9 @@ function checkMassUnits(potential::Potential)
 end
 
 function checkMass(potential::Potential)
-    isempty(inputDictionary["reduced-mass"]) && (potential.mass = 1.0; return) #write to log file about default setting
-    potential.mass = parse(Float64, inputDictionary["reduced-mass"])
+    isempty(inputDictionary["reduced-mass"]) && (potential.mass = [1.0]; return) #write to log file about default setting
+    potential.mass = parse.(Float64, split(join(split(inputDictionary["reduced-mass"], ","), " ")))
+    length(potential.mass) == 0 && (@error "reduced-mass not correctly defined!"; exit())
 end
 
 function checkKPoints(potential::Potential)
@@ -82,4 +84,9 @@ function checkBandStructure(potential::Potential)
     isempty(inputDictionary["band-structure"]) && (potential.bandStructure = false; return) #write to log file about default setting
     inputDictionary["band-structure"] ∈ ["on","true"] && (potential.bandStructure = true; return)
     @error ""; exit()
+end
+
+function checkPeriodicity(potential::Potential)
+    isempty(inputDictionary["periodic"]) && (potential.periodic = [false]; return) #write to log file about default setting
+    potential.periodic = parse.(Bool, split(join(split(inputDictionary["periodic"], ","), " ")))
 end

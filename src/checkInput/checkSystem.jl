@@ -2,7 +2,6 @@ function checkInput(system::System)
     checkStencil(system)
     checkStencilLaplace(system)
     checkStencilNabla(system)
-    checkPeriodicity(system)
     checkSolver(system)
 end
 
@@ -25,11 +24,6 @@ function checkStencilNabla(system::System)
     system.stencil∇ = parse(Int64, inputDictionary["stencil-nabla"])
 
     system.stencil∇ ∉ [3,5,7,9,11] && (@error "stencil $(inputDictionary["stencil"]) not available -- possible entries are \"3,5,7,9,11,13\""; exit())
-end
-
-function checkPeriodicity(system::System)
-    isempty(inputDictionary["periodic"]) && (system.periodic = [false]; return) #write to log file about default setting
-    system.periodic = parse.(Bool, split(join(split(inputDictionary["periodic"], ","), " ")))
 end
 
 function checkSolver(system::System)

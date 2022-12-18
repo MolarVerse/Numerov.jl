@@ -8,7 +8,7 @@ function test_1DH2()
     input_files = ["input.in", "potential.dat"]
     rm.(filter(x -> x ∉ input_files, readdir()))
 
-    @suppress Numerov.numerov("input.in")
+     Numerov.numerov("input.in")
 
     compare_eigenvalueFiles( "eigenvalues.dat"         , benchmark_path * "eigenvalues.dat")
     compare_frequenciesFiles("frequencies.dat"         , benchmark_path * "frequencies.dat")

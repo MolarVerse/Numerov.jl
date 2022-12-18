@@ -39,9 +39,31 @@ function readPotential(potential::Potential)
         potential.coords[i]    = ustrip.(uconvert.(potential.internalElemCoords, potential.coords[i] * potential.coordsUnit))
     end
 
-    potential.intervall = potential.coords[end][2] - potential.coords[end][1]
+    uniquecoords = unique(potential.coords[i] for i in 1:potential.dimension)
 
-    k_intervalls = [π / (potential.coords[i][end] - potential.coords[i][1] + potential.intervall) / (potential.n_kpoints-1) for i in 1:potential.dimension]
+    potential.intervall = zeros(potential.dimension)
+
+    println(uniquecoords)
+    
+    [potential.intervall[i] = uniquecoords[i][2] - uniquecoords[i][1] for i in 1:potential.dimension]
+
+    k_intervalls = [π / (potential.coords[i][end] - potential.coords[i][1] + potential.intervall[i]) / (potential.n_kpoints-1) for i in 1:potential.dimension]
+
+    if length(potential.periodic) == 1
+        potential.periodic = repeat(potential.periodic, potential.dimension)
+    end
+
+    #mass check
+    if length(potential.mass) == 1
+        potential.mass = repeat(potential.mass, potential.dimension)
+    end
+
+    if length(potential.mass) != potential.dimension
+        @error "reduced-mass is not correctly defined regarding the potential dimension!"
+        exit()
+    end
+
+    potential.n_kpoints != -1 ? potential.reciprocal = true : potential.reciprocal = false
 
     #bandstruture setup TODO: make seperate k path routines!
     if potential.n_kpoints != -1 
@@ -67,6 +89,13 @@ function readPotential(potential::Potential)
         end
     else
         potential.kpoints = [Tuple(zeros(potential.dimension))]
+    end
+
+    #filter only periodic directions of potential!
+    for i in 1:potential.dimension
+        if !potential.periodic[i]
+            potential.kpoints = filter(x -> x[i] == 0.0, potential.kpoints)
+        end
     end
 
     if isempty(potential.n_datapoints)
