@@ -35,7 +35,5 @@ function test_3DKronigPenney()
 
     compare_eigenvalueFiles( "bandstructure.dat"         , benchmark_path * "bandstructure.dat")
 
-    input_files = ["input.in", "potential.dat"]
-    rm.(filter(x -> x ∉ input_files, readdir()))
-
+    cleanup_directory("input.in", "potential.dat")
 end

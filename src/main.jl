@@ -34,6 +34,10 @@ function numerov(inputFileName::String)
         @timeit files.to "loop" begin
             for (i, k) in enumerate(potential.kpoints)
 
+                @timeit files.to "solve" solve(potential, system, output, k, files)
+
+                k = k .* sqrt.(potential.mass)
+
                 k_string = join(ustrip.(uconvert.(potential.coordsUnit^(-1), k ./ potential.internalElemCoords)), "_")
 
                 if system.reciprocal
@@ -47,8 +51,6 @@ function numerov(inputFileName::String)
                     files.eigenvectorShiftedFileName      = "eigenvectors_shifted.dat"
                     files.frequencyFileName               = "frequencies.dat"
                 end
-
-                @timeit files.to "solve" solve(potential, system, output, k, files)
 
                 #shift potential back for output
                 potential.potential = potential.potential .+ potential.shift

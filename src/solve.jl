@@ -6,7 +6,8 @@ function solve(potential::Potential, system::System, output::Output, k, files::F
 
     ∇ = build∇_k(potential, system, k)
 
-    @timeit files.to "build Ham" Hamiltonian = 0.5 / potential.mass[1] * (-system.Δ/intervall^2/2^(potential.dimension-1) - 2*im*∇/intervall + k_squared) + spdiagm(potential.potential)
+    @timeit files.to "build Ham" Hamiltonian = 0.5 * (-system.Δ/intervall[1]^2/2^(potential.dimension-1) - 2*im*∇/intervall[1] + k_squared) + spdiagm(potential.potential)
+    # @timeit files.to "build Ham" Hamiltonian = 0.5 / potential.mass[1] * (-system.Δ/intervall[1]^2/2^(potential.dimension-1) - 2*im*∇/intervall[1] + k_squared) + spdiagm(potential.potential)
     
     output.eigenvectors = Vector()
 
@@ -17,7 +18,8 @@ function solve(potential::Potential, system::System, output::Output, k, files::F
         
     [push!(output.eigenvectors, eigenvectors[:,i]) for i in 1:output.n_eigenvalues]
 
-    normalize_eigenvectors(output, intervall, potential.dimension, potential)
+    #does not work in general for different spacings in x,y,z
+    normalize_eigenvectors(output, intervall[1]/sqrt(potential.mass[1]), potential.dimension, potential)
 
 end
 
@@ -42,6 +44,8 @@ function solveWrapper(system::System, output::Output, files::Files, Hamiltonian)
         #     CUSOLVER.csreigvsi(Hamiltonian, rand(T), CUDA.rand(T, prod(potential.n_datapoints)), Float32(1e-6), Cint(1000), 'O')
         # end
 
+    else
+        @timeit files.to "LU" eigenvalues, eigenvectors = eigen(Matrix(Hamiltonian))
     end
 
     return eigenvalues, eigenvectors

@@ -1,24 +1,46 @@
 function readPotential(potential::Potential)
 
+    #######################################
+    #                                     #
+    # setup internal units (atomic units) #
+    #                                     #
+    #######################################
+
     potential.internalElemEnergy = u"hartree"
     potential.internalElemCoords = u"bohr"
     potential.internalElemMass   = u"me"
 
+    ######################################################
+    #                                                    #
+    # prepare potential file for processing to read data #
+    #                                                    #
+    ######################################################
+
     file = open(potential.file, "r")
 
-    # removing all comments starting with #
-    lines = getindex.(split.(readlines(file), "#"), 1)
-
-    # removing all blank lines from input
-    filter!(x -> !isempty(strip(x)), lines)
+    lines = getindex.(split.(readlines(file), "#"), 1) # removing all comments starting with #
+    
+    filter!(x -> !isempty(strip(x)), lines) # removing all blank lines from input
 
     lineElements = split.(lines)
+
+    ############################################################
+    #                                                          #
+    # determine dimension of problem and initalize all vectors #
+    #                                                          #
+    ############################################################
 
     potential.dimension = length(lineElements[1]) - 1
     potential.coords    = Vector()
     potential.potential = Vector()
 
     [push!(potential.coords, []) for _ in 1:potential.dimension]
+
+    ##############################################################
+    #                                                            #
+    # read lines from potential file to get potential and coords #
+    #                                                            #
+    ##############################################################
 
     for line in lineElements
 
@@ -32,40 +54,78 @@ function readPotential(potential::Potential)
 
     end    
 
-    #convert values to internal units (atomic units)
+    ###############################################################################################################
+    #                                                                                                             #
+    # repeat periodic for higher dimensions - if only one periodic keyword given -> same periodicity for all DOFs #
+    #                                                                                                             #
+    # if more than one periodic keyword is given - periodicity for all dimensions has to be given                 #
+    #                                                                                                             #
+    ###############################################################################################################
+
+    length(potential.periodic) == 1 && (potential.periodic = repeat(potential.periodic, potential.dimension))
+
+    length(potential.periodic) != potential.dimension && (@error "periodic is not correctly defined regarding the potential dimension!"; exit())
+
+    ##########################################################################################
+    #                                                                                        #
+    # repeat masses for higher dimensions - if only one mass given -> same mass for all DOFs #
+    #                                                                                        #
+    # if more than one mass is given - masses for all dimensions have to be given            #
+    #                                                                                        #
+    ##########################################################################################
+
+    length(potential.mass) == 1 && (potential.mass = repeat(potential.mass, potential.dimension))
+
+    length(potential.mass) != potential.dimension && (@error "reduced-mass is not correctly defined regarding the potential dimension!"; exit())
+
+    #######################################################################
+    #                                                                     #
+    # convert potential, coords and mass to internal units (atomic units) #
+    #                                                                     #
+    #######################################################################
+
     potential.potential = ustrip.(uconvert.(potential.internalElemEnergy, potential.potential * potential.potentialUnit))
     potential.mass      = ustrip.(uconvert.(potential.internalElemMass  , potential.mass      * potential.massUnit))
     for i in eachindex(potential.coords)
         potential.coords[i]    = ustrip.(uconvert.(potential.internalElemCoords, potential.coords[i] * potential.coordsUnit))
     end
 
-    uniquecoords = unique(potential.coords[i] for i in 1:potential.dimension)
+    #################################################
+    #                                               #
+    # determine all unique coordinates for all DOFs # TODO: check spacing with tolerance keyword!
+    #                                               #
+    #################################################
+
+    uniquecoords = []
+    [push!(uniquecoords, unique(potential.coords[i])) for i in 1:potential.dimension]
+
+    ###################################################
+    #                                                 #
+    # calculate mass weighted intervalls for all DOFs #
+    #                                                 #
+    ###################################################
 
     potential.intervall = zeros(potential.dimension)
+    [potential.intervall[i] = (uniquecoords[i][2] - uniquecoords[i][1]) * sqrt(potential.mass[i]) for i in 1:potential.dimension]
 
-    println(uniquecoords)
-    
-    [potential.intervall[i] = uniquecoords[i][2] - uniquecoords[i][1] for i in 1:potential.dimension]
+    ########################################
+    #                                      #
+    # calculate mass weighted k intervalls #
+    #                                      #
+    ########################################
 
-    k_intervalls = [π / (potential.coords[i][end] - potential.coords[i][1] + potential.intervall[i]) / (potential.n_kpoints-1) for i in 1:potential.dimension]
-
-    if length(potential.periodic) == 1
-        potential.periodic = repeat(potential.periodic, potential.dimension)
-    end
-
-    #mass check
-    if length(potential.mass) == 1
-        potential.mass = repeat(potential.mass, potential.dimension)
-    end
-
-    if length(potential.mass) != potential.dimension
-        @error "reduced-mass is not correctly defined regarding the potential dimension!"
-        exit()
-    end
+    k_intervalls = [π / ((potential.coords[i][end] - potential.coords[i][1]) * sqrt(potential.mass[i]) + potential.intervall[i]) / (potential.n_kpoints-1) for i in 1:potential.dimension]
 
     potential.n_kpoints != -1 ? potential.reciprocal = true : potential.reciprocal = false
 
-    #bandstruture setup TODO: make seperate k path routines!
+    #############################################################################################################################
+    #                                                                                                                           #
+    # determine all k-points for which Schrödinger equation has to be solved                                                    #
+    #                                                                                                                           #
+    # depending on input no k-points are included or all possible combinations or the minimal k-path through the brioullin zone #
+    #                                                                                                                           #
+    #############################################################################################################################
+
     if potential.n_kpoints != -1 
         if potential.bandStructure
             if potential.dimension == 1
@@ -74,11 +134,11 @@ function readPotential(potential::Potential)
 
             elseif potential.dimension == 2
 
-                potential.kpoints = get_kpoints_2D(k_intervalls, potential.n_kpoints, potential.bandStructure)
+                potential.kpoints = get_kpoints_2D(k_intervalls, potential.n_kpoints)
         
             elseif potential.dimension == 3
 
-                potential.kpoints = get_kpoints_3D(k_intervalls, potential.n_kpoints, potential.bandStructure)
+                potential.kpoints = get_kpoints_3D(k_intervalls, potential.n_kpoints)
 
             end
         else
@@ -91,12 +151,23 @@ function readPotential(potential::Potential)
         potential.kpoints = [Tuple(zeros(potential.dimension))]
     end
 
-    #filter only periodic directions of potential!
+    #######################################################
+    #                                                     #
+    # filter for selecting kpoints only for periodic DOFs #
+    #                                                     #
+    #######################################################
+
     for i in 1:potential.dimension
         if !potential.periodic[i]
             potential.kpoints = filter(x -> x[i] == 0.0, potential.kpoints)
         end
     end
+
+    ################################################################################################################
+    #                                                                                                              #
+    # setup datapoints for calculation - for higher dimensions n_datapoints has to be explicitly set in input file #
+    #                                                                                                              #
+    ################################################################################################################
 
     if isempty(potential.n_datapoints)
         if potential.dimension > 1
@@ -107,48 +178,60 @@ function readPotential(potential::Potential)
         end
     end
 
-    potential.shift     = minimum(potential.potential) #shift potential - sparse solver not capable of using not shifted potential!
+    #######################################################################################
+    #                                                                                     #
+    # shift potential so that pot_min equals 0.0 - otherwise eigs solver has difficulties #
+    #                                                                                     #
+    #######################################################################################
+
+    potential.shift     = minimum(potential.potential)
     potential.potential = potential.potential .- potential.shift
-
-    #check if datapoints matches input dimensions
-
-    #check_spacing() ???
-    #reorder ???? dont know if it should be user handled - ask thh
 
 end
 
 function get_kpoints_1D(k_intervalls::Vector{Float64}, n_kpoints::Int64)
 
-    k_range = 0.0:k_intervalls[1]:k_intervalls[1]*(n_kpoints-1)
-
-    return collect(Iterators.product(k_range))
-
+    return map(x -> Tuple(x[1]), calc_Γ_X(k_intervalls, n_kpoints))
 end
 
-function get_kpoints_2D(k_intervalls::Vector{Float64}, n_kpoints::Int64, bandStructure::Bool)
+function get_kpoints_2D(k_intervalls::Vector{Float64}, n_kpoints::Int64)
 
-    Γ_X = [(k_intervalls[1]*i, 0.0) for i in 0:n_kpoints-1]
+    Γ_X = calc_Γ_X(k_intervalls, n_kpoints)
 
-    X_M = [((n_kpoints-1)*k_intervalls[1], i*k_intervalls[2]) for i in 0:n_kpoints-1]
+    X_M = calc_X_M(k_intervalls, n_kpoints)
     
-    M_Γ = [(i*k_intervalls[1], i*k_intervalls[2]) for i in n_kpoints-1:-1:0]
+    M_Γ = calc_M_Γ(k_intervalls, n_kpoints)
 
-    return rle(vcat(Γ_X, X_M, M_Γ))[1]
+    minimal_kpath = rle(vcat(Γ_X, X_M, M_Γ))[1]
+
+    return map(x -> Tuple(x[1:2]), minimal_kpath)
 end
 
-function get_kpoints_3D(k_intervalls::Vector{Float64}, n_kpoints::Int64, bandStructure::Bool)
+function get_kpoints_3D(k_intervalls::Vector{Float64}, n_kpoints::Int64)
 
-    Γ_X = [(k_intervalls[1]*i, 0.0, 0.0) for i in 0:n_kpoints-1]
+    Γ_X = calc_Γ_X(k_intervalls, n_kpoints)
 
-    X_M = [((n_kpoints-1)*k_intervalls[1], i*k_intervalls[2], 0.0) for i in 0:n_kpoints-1]
+    X_M = calc_X_M(k_intervalls, n_kpoints)
     
-    M_Γ = [(i*k_intervalls[1], i*k_intervalls[2], 0.0) for i in n_kpoints-1:-1:0]
+    M_Γ = calc_M_Γ(k_intervalls, n_kpoints)
 
-    Γ_R = [(i*k_intervalls[1], i*k_intervalls[2], i*k_intervalls[3]) for i in 0:n_kpoints-1]
+    Γ_R = calc_Γ_R(k_intervalls, n_kpoints)
 
-    R_X = [((n_kpoints-1)*k_intervalls[1], i*k_intervalls[2], i*k_intervalls[3]) for i in n_kpoints-1:-1:0]
+    R_X = calc_R_X(k_intervalls, n_kpoints)
     
-    M_R = [(0.0, 0.0, k_intervalls[3]*i) for i in 0:n_kpoints-1]
+    M_R = calc_M_R(k_intervalls, n_kpoints)
     
     return rle(vcat(Γ_X, X_M, M_Γ, Γ_R, R_X, M_R))[1]
 end
+
+calc_Γ_X(k_intervalls, n_kpoints) = [(k_intervalls[1]*i, 0.0, 0.0) for i in 0:n_kpoints-1]
+
+calc_X_M(k_intervalls, n_kpoints) = [((n_kpoints-1)*k_intervalls[1], i*k_intervalls[2], 0.0) for i in 0:n_kpoints-1]
+    
+calc_M_Γ(k_intervalls, n_kpoints) = [(i*k_intervalls[1], i*k_intervalls[2], 0.0) for i in n_kpoints-1:-1:0]
+
+calc_Γ_R(k_intervalls, n_kpoints) = [(i*k_intervalls[1], i*k_intervalls[2], i*k_intervalls[3]) for i in 0:n_kpoints-1]
+
+calc_R_X(k_intervalls, n_kpoints) = [((n_kpoints-1)*k_intervalls[1], i*k_intervalls[2], i*k_intervalls[3]) for i in n_kpoints-1:-1:0]
+    
+calc_M_R(k_intervalls, n_kpoints) = [(0.0, 0.0, k_intervalls[3]*i) for i in 0:n_kpoints-1]

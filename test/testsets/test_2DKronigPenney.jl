@@ -35,9 +35,7 @@ function test_2DKronigPenney()
 
     compare_eigenvalueFiles( "bandstructure.dat"         , benchmark_path * "bandstructure.dat")
 
-    input_files = ["input.in", "potential.dat"]
-    rm.(filter(x -> x ∉ input_files, readdir()))
-
+    cleanup_directory("input.in", "potential.dat")
 end
 
 function test_2DKronigPenney_full()
@@ -75,9 +73,5 @@ function test_2DKronigPenney_full()
         @test_skip compare_eigenvectorFiles(files[i], benchmark_path * filesBenchmark[i], 1)
     end
 
-    # compare_eigenvalueFiles( "bandstructure.dat"         , benchmark_path * "bandstructure.dat")
-
-    input_files = ["input.in", "potential.dat"]
-    rm.(filter(x -> x ∉ input_files, readdir()))
-
+    cleanup_directory("input.in", "potential.dat")
 end

@@ -60,3 +60,8 @@ function compare_eigenvectorFiles(file1::String, file2::String, dim::Int64)
         @test mean(abs.(data1[:,i])) ≈ mean(abs.(data2[:,i])) atol = 1.0e-6
     end
 end
+
+function cleanup_directory(input::String, potential::String)
+    input_files = [input, potential]
+    rm.(filter(x -> x ∉ input_files, readdir()))
+end

@@ -3,6 +3,17 @@ function test_1DKronigPenney()
     path           = base_path *  "/testsets/1DKronigPenney/"
     benchmark_path = base_path * "/benchmark/1DKronigPenney/"
 
+    test_1Dbandstructure(path, benchmark_path)
+
+    path           = base_path *  "/testsets/1DKronigPenney_23.5u/"
+    benchmark_path = base_path * "/benchmark/1DKronigPenney_23.5u/"
+
+    test_1Dbandstructure(path, benchmark_path)
+    
+
+end
+
+function test_1Dbandstructure(path, benchmark_path)
     cd(path)
 
     input_files = ["input.in", "potential.dat"]
@@ -35,7 +46,5 @@ function test_1DKronigPenney()
 
     compare_eigenvalueFiles( "bandstructure.dat"         , benchmark_path * "bandstructure.dat")
 
-    input_files = ["input.in", "potential.dat"]
-    rm.(filter(x -> x ∉ input_files, readdir()))
-
+    cleanup_directory("input.in", "potential.dat")
 end

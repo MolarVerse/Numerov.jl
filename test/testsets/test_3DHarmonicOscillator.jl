@@ -14,7 +14,5 @@ function test_3DHarmonicOscillator()
     compare_frequenciesFiles("frequencies.dat"         , benchmark_path * "frequencies.dat")
     @test_skip compare_eigenvectorFiles("eigenvectors.dat"        , benchmark_path * "eigenvectors.dat", 1)
 
-    input_files = ["input.in", "potential.dat"]
-    rm.(filter(x -> x ∉ input_files, readdir()))
-
+    cleanup_directory("input.in", "potential.dat")
 end
