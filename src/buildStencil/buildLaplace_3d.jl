@@ -1,7 +1,5 @@
 function buildΔ(system::System3D)
 
-    n_datapoints   = system.n_datapoints
-
     stencil = zeros(system.stencilΔ^3)
 
     if system.stencilΔ == 3
@@ -764,5 +762,5 @@ function buildΔ(system::System3D)
 
     stencil = reshape(stencil, (system.stencilΔ, system.stencilΔ, system.stencilΔ))
 
-    system.Δ = build_3d_stencil(system, n_datapoints, stencil, system.stencilΔ)
+    system.Δ = build_3d_stencil(system, system.n_datapoints, stencil, system.stencilΔ)
 end

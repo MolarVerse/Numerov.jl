@@ -1,38 +1,72 @@
 function solve(potential::Potential, system::System, output::Output, k, files::Files)
 
-    intervall    = potential.intervall
+    ###################################################
+    #                                                 #
+    # calculate k_squared matrix k² = kx² + ky² + kz² #
+    #                                                 #
+    ###################################################
 
     k_squared = spdiagm(ones(prod(potential.n_datapoints))*(norm(k)^2))
 
+    ###################################################
+    #                                                 #
+    # build ∇k matrix according to dxkx + dyky + dzkz #
+    #                                                 #
+    ###################################################
+
     ∇ = build∇_k(potential, system, k)
 
-    @timeit files.to "build Ham" Hamiltonian = 0.5 * (-system.Δ/intervall[1]^2/2^(potential.dimension-1) - 2*im*∇/intervall[1] + k_squared) + spdiagm(potential.potential)
-    # @timeit files.to "build Ham" Hamiltonian = 0.5 / potential.mass[1] * (-system.Δ/intervall[1]^2/2^(potential.dimension-1) - 2*im*∇/intervall[1] + k_squared) + spdiagm(potential.potential)
-    
-    output.eigenvectors = Vector()
+    ####################################################
+    #                                                  #
+    # setup total Hamiltonian which is then decomposed #
+    #                                                  #
+    ####################################################
 
+    @timeit files.to "build Ham" Hamiltonian = 0.5 * (-system.Δ/potential.intervall[1]^2/2^(potential.dimension-1) - 2*im*∇/potential.intervall[1] + k_squared) + spdiagm(potential.potential)
+
+    #####################
+    #                   #
+    # solve Hamiltonian #
+    #                   #
+    #####################
+    
     eigenvalues, eigenvectors = solveWrapper(system, output, files, Hamiltonian)
 
+    ######################################################
+    #                                                    #
+    # save eigenvalues and eigenvectors in output struct #
+    #                                                    #
+    ######################################################
+
     output.eigenvalues  = real.(eigenvalues[1:output.n_eigenvalues])
-    output.frequencies  = zeros(output.n_eigenvalues-1, output.n_eigenvalues-1)
-        
+    output.eigenvectors = Vector()
     [push!(output.eigenvectors, eigenvectors[:,i]) for i in 1:output.n_eigenvalues]
 
-    #does not work in general for different spacings in x,y,z
-    normalize_eigenvectors(output, intervall[1]/sqrt(potential.mass[1]), potential.dimension, potential)
+    #########################
+    #                       #
+    # normalizeeigenvectors #
+    #                       #
+    #########################
+    
+    normalize_eigenvectors(output, potential.intervall[1]/sqrt(potential.mass[1]), potential.dimension, potential) #does not work in general for different spacings in x,y,z
 
 end
 
 function solveWrapper(system::System, output::Output, files::Files, Hamiltonian)
 
     if system.solver == ARPACK
+
         @timeit files.to "Arpack" eigenvalues, eigenvectors = eigs(sparse(Hamiltonian), nev = output.n_eigenvalues+5, which = :SM, maxiter=typemax(Int))
+
     elseif system.solver == KRYLOV
+
         #check convergence of all eigenvalues with info
         @timeit files.to "Krylov" eigenvalues, eigenvectors, info = eigsolve(sparse(Hamiltonian), output.n_eigenvalues+5, :SR; ishermitian=true, maxiter=10000)
         @show(info)
         eigenvectors = mapreduce(permutedims, vcat, eigenvectors)'
+
     elseif system.solver == GPU
+
         @error "CUDA sparse solver not working yet!"
         exit()
 
@@ -45,18 +79,11 @@ function solveWrapper(system::System, output::Output, files::Files, Hamiltonian)
         # end
 
     else
+
         @timeit files.to "LU" eigenvalues, eigenvectors = eigen(Matrix(Hamiltonian))
+        
     end
 
     return eigenvalues, eigenvectors
 end
 
-function normalize_eigenvectors(output::Output, intervall, dimension, potential)
-    for i in 1:output.n_eigenvalues
-        density = output.eigenvectors[i].^2
-    
-        norm = sum(density) * ustrip(uconvert(potential.coordsUnit, intervall*potential.internalElemCoords))^dimension
-
-        output.eigenvectors[i] = output.eigenvectors[i] ./ sqrt(norm)
-    end
-end

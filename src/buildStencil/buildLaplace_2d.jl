@@ -1,7 +1,5 @@
 function buildΔ(system::System2D)
 
-    n_datapoints   = system.n_datapoints
-
     stencil = zeros(system.stencilΔ, system.stencilΔ)
 
     if system.stencilΔ == 3
@@ -55,5 +53,5 @@ function buildΔ(system::System2D)
 
     stencil[:,system.stencilΔ÷2+2:end] = reverse(stencil[:,1:system.stencilΔ÷2], dims=2)
 
-    system.Δ = build_2d_stencil(system, n_datapoints, stencil, system.stencilΔ)
+    system.Δ = build_2d_stencil(system, system.n_datapoints, stencil, system.stencilΔ)
 end

@@ -1,11 +1,14 @@
-function test_3DKronigPenney()
-
-    path           = base_path *  "/testsets/3DKronigPenney/"
-    benchmark_path = base_path * "/benchmark/3DKronigPenney/"
-
+function test_2D_reciprocal(path, benchmark_path)
     cd(path)
 
     cleanup_directory("input.in", "potential.dat")
+
+    @suppress Numerov.numerov("input.in")
+
+    compare_eigenvalueFiles( "eigenvalues.dat"         , benchmark_path * "eigenvalues.dat")
+
+    files          = filter(x -> startswith(x, "frequencies"), readdir())
+    filesBenchmark = filter(x -> startswith(x, "frequencies"), readdir(benchmark_path))
 
     @suppress Numerov.numerov("input.in")
 
@@ -25,8 +28,4 @@ function test_3DKronigPenney()
     filesBenchmark = filter(x -> startswith(x, "imag_eigenvectors_k"), readdir(benchmark_path))
 
     [@test_skip compare_eigenvectorFiles(files[i], benchmark_path * filesBenchmark[i], 1) for i in eachindex(files)]
-
-    compare_eigenvalueFiles( "bandstructure.dat"         , benchmark_path * "bandstructure.dat")
-
-    cleanup_directory("input.in", "potential.dat")
 end

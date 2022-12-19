@@ -1,32 +1,81 @@
 function build∇(system::System1D) #combine these two functions!
 
+    ####################################
+    #                                  #
+    # retrieve 1d stencil kernel array #
+    #                                  #
+    ####################################
+
     stencil  = get_1d_stencil(system)
+
+    #######################
+    #                     #
+    # build 1d ∇ operator #
+    #                     #
+    #######################
+
     system.∇ = build_1d_stencil(system, stencil, system.stencil∇)
 
 end
 
 function build∇(system::System2D)
 
-    system.∇   = spzeros(prod(system.n_datapoints), prod(system.n_datapoints))
-    stencil    = zeros(system.stencil∇, system.stencil∇)
+    ####################################
+    #                                  #
+    # retrieve 1d stencil kernel array #
+    #                                  #
+    ####################################
+
     stencil_1d = get_1d_stencil(system)
+
+    ###########################
+    #                         #
+    # build 2d stencil kernel #
+    #                         #
+    ###########################
+
+    stencil    = zeros(system.stencil∇, system.stencil∇)
 
     stencil[:,system.stencil∇÷2+1] = stencil_1d
     stencil[system.stencil∇÷2+1,:] = stencil_1d
+
+    #######################
+    #                     #
+    # build 2d ∇ operator #
+    #                     #
+    #######################
 
     system.∇ = build_2d_stencil(system, system.n_datapoints, stencil, system.stencil∇)
 end
 
 function build∇(system::System3D)
 
-    system.∇   = spzeros(prod(system.n_datapoints), prod(system.n_datapoints))
-    stencil    = zeros(system.stencil∇, system.stencil∇, system.stencil∇)
+    ####################################
+    #                                  #
+    # retrieve 1d stencil kernel array #
+    #                                  #
+    ####################################
+
     stencil_1d = get_1d_stencil(system)
+
+    ###########################
+    #                         #
+    # build 2d stencil kernel #
+    #                         #
+    ###########################
  
+    stencil    = zeros(system.stencil∇, system.stencil∇, system.stencil∇)
+
     stencil[:                 ,system.stencil∇÷2+1,system.stencil∇÷2+1] = stencil_1d
     stencil[system.stencil∇÷2+1,:                 ,system.stencil∇÷2+1] = stencil_1d
     stencil[system.stencil∇÷2+1,system.stencil∇÷2+1,:                 ] = stencil_1d
  
+    #######################
+    #                     #
+    # build 3d ∇ operator #
+    #                     #
+    #######################
+
     system.∇ = build_3d_stencil(system, system.n_datapoints, stencil, system.stencil∇)
 
 end

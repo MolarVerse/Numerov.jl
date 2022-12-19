@@ -5,8 +5,7 @@ function test_2DWater()
 
     cd(path)
 
-    input_files = ["input.in", "potential.dat"]
-    rm.(filter(x -> x ∉ input_files, readdir()))
+    cleanup_directory("input.in", "potential.dat")
 
     @suppress Numerov.numerov("input.in")
 

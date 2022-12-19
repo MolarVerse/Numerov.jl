@@ -178,14 +178,13 @@ function readPotential(potential::Potential)
         end
     end
 
-    #######################################################################################
-    #                                                                                     #
-    # shift potential so that pot_min equals 0.0 - otherwise eigs solver has difficulties #
-    #                                                                                     #
-    #######################################################################################
+    ####################################################################
+    #                                                                  #
+    # pot_min for shifting potential later - necessary for eigs solver #
+    #                                                                  #
+    ####################################################################
 
-    potential.shift     = minimum(potential.potential)
-    potential.potential = potential.potential .- potential.shift
+    potential.shift = minimum(potential.potential)
 
 end
 
