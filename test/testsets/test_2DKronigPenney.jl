@@ -3,75 +3,13 @@ function test_2DKronigPenney()
     path           = base_path *  "/testsets/2DKronigPenney/"
     benchmark_path = base_path * "/benchmark/2DKronigPenney/"
 
-    cd(path)
-
-    input_files = ["input.in", "potential.dat"]
-    rm.(filter(x -> x ∉ input_files, readdir()))
-
-    @suppress Numerov.numerov("input.in")
-
-    compare_eigenvalueFiles( "eigenvalues.dat"         , benchmark_path * "eigenvalues.dat")
-
-    files          = filter(x -> startswith(x, "frequencies"), readdir())
-    filesBenchmark = filter(x -> startswith(x, "frequencies"), readdir(benchmark_path))
-
-    for i in eachindex(files)
-        compare_frequenciesFiles(files[i], benchmark_path * filesBenchmark[i])
-    end
-
-    files          = filter(x -> startswith(x, "eigenvectors_k"), readdir())
-    filesBenchmark = filter(x -> startswith(x, "eigenvectors_k"), readdir(benchmark_path))
-
-    for i in eachindex(files)
-        @test_skip compare_eigenvectorFiles(files[i], benchmark_path * filesBenchmark[i], 1)
-    end
-
-    files          = filter(x -> startswith(x, "imag_eigenvectors_k"), readdir())
-    filesBenchmark = filter(x -> startswith(x, "imag_eigenvectors_k"), readdir(benchmark_path))
-
-    for i in eachindex(files)
-        @test_skip compare_eigenvectorFiles(files[i], benchmark_path * filesBenchmark[i], 1)
-    end
-
-    compare_eigenvalueFiles( "bandstructure.dat"         , benchmark_path * "bandstructure.dat")
-
+    test_2D_reciprocal(path, benchmark_path)
+    compare_eigenvalueFiles( "bandstructure.dat", benchmark_path * "bandstructure.dat")
     cleanup_directory("input.in", "potential.dat")
-end
-
-function test_2DKronigPenney_full()
 
     path           = base_path *  "/testsets/2DKronigPenney_full/"
     benchmark_path = base_path * "/benchmark/2DKronigPenney_full/"
 
-    cd(path)
-
-    input_files = ["input.in", "potential.dat"]
-    rm.(filter(x -> x ∉ input_files, readdir()))
-
-    @suppress Numerov.numerov("input.in")
-
-    compare_eigenvalueFiles( "eigenvalues.dat"         , benchmark_path * "eigenvalues.dat")
-
-    files          = filter(x -> startswith(x, "frequencies"), readdir())
-    filesBenchmark = filter(x -> startswith(x, "frequencies"), readdir(benchmark_path))
-
-    for i in eachindex(files)
-        compare_frequenciesFiles(files[i], benchmark_path * filesBenchmark[i])
-    end
-
-    files          = filter(x -> startswith(x, "eigenvectors_k"), readdir())
-    filesBenchmark = filter(x -> startswith(x, "eigenvectors_k"), readdir(benchmark_path))
-
-    for i in eachindex(files)
-        @test_skip compare_eigenvectorFiles(files[i], benchmark_path * filesBenchmark[i], 1)
-    end
-
-    files          = filter(x -> startswith(x, "imag_eigenvectors_k"), readdir())
-    filesBenchmark = filter(x -> startswith(x, "imag_eigenvectors_k"), readdir(benchmark_path))
-
-    for i in eachindex(files)
-        @test_skip compare_eigenvectorFiles(files[i], benchmark_path * filesBenchmark[i], 1)
-    end
-
+    test_2D_reciprocal(path, benchmark_path)
     cleanup_directory("input.in", "potential.dat")
 end

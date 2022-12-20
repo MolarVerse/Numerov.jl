@@ -5,9 +5,8 @@ function test_2DHarmonicOscillator()
 
     cd(path)
 
-    input_files = ["input.in", "potential.dat"]
-    rm.(filter(x -> x ∉ input_files, readdir()))
-
+    cleanup_directory("input.in", "potential.dat")
+    
     @suppress Numerov.numerov("input.in")
 
     compare_eigenvalueFiles( "eigenvalues.dat"         , benchmark_path * "eigenvalues.dat")

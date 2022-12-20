@@ -1,16 +1,26 @@
 function readInputFile(inputFileName::String)
 
+    ##################################################
+    #                                                #
+    # prepare input file for processing to read data #
+    #                                                #
+    ##################################################
+
     inputFile = open(inputFileName, "r")
 
     lines = readlines(inputFile)
     
-    # removing all comments starting with #
-    lines = getindex.(split.(lines, "#"), 1)
-
-    # removing all blank lines from input
-    filter!(x -> !isempty(strip(x)), lines)
+    lines = getindex.(split.(lines, "#"), 1) # removing all comments starting with #
+    
+    filter!(x -> !isempty(strip(x)), lines) # removing all blank lines from input
 
     lineElements = split.(lowercase.(lines))
+
+    ##############################################################################
+    #                                                                            #
+    # read line per line and save values assigned to keywords in inputDictionary #
+    #                                                                            #
+    ##############################################################################
 
     for line in lineElements
 

@@ -52,6 +52,8 @@ module Numerov
 
     include("setupSystem.jl")
 
+    include("normalize.jl")
+
     include("solve.jl")
 
     include("main.jl")

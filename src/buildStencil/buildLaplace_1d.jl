@@ -1,6 +1,5 @@
 function buildΔ(system::System1D)
 
-    n_datapoints = system.n_datapoints[1]
     stencil      = zeros(system.stencilΔ)
 
     if system.stencilΔ == 3
