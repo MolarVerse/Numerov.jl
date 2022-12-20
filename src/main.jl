@@ -1,4 +1,5 @@
 function numerov(inputFileName::String)
+    
 
     #########################################################################
     #                                                                       #
@@ -13,9 +14,9 @@ function numerov(inputFileName::String)
 
     files.to = TimerOutput()
 
-    [inputDictionary[key] = "" for key in keys(inputDictionary)] #to reset dict to default values if calculation started in same repl session
-
     @timeit files.to "main" begin
+
+        [inputDictionary[key] = "" for key in keys(inputDictionary)] #to reset dict to default values if calculation started in same repl session
 
         ###################
         #                 #
@@ -35,6 +36,14 @@ function numerov(inputFileName::String)
         checkInput(system)
         checkInput(files)
         checkInput(output)
+
+        #################################
+        #                               #
+        # print program info to logfile #
+        #                               #
+        #################################
+
+        init_logfile(files)
 
         #######################
         #                     #
@@ -67,9 +76,7 @@ function numerov(inputFileName::String)
         #                                        #
         ##########################################
 
-        println(files.logFile, "Non zeros = ", length(system.Δ.nzval))
-        println(files.logFile, "zeros     = ", length(system.Δ) - length(system.Δ.nzval))
-        println(files.logFile, "Sparsity  = ", length(system.Δ.nzval) / length(system.Δ))
+        sparseInfo(files, system)
 
         isfile("eigenvalues.dat") && rm("eigenvalues.dat") #rm eigenvalue file if it exists TODO: think of a way to restart calculation for different k
 

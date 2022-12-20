@@ -4,6 +4,8 @@ using DelimitedFiles
 using Suppressor
 using Statistics
 using SparseArrays
+using Unitful
+using UnitfulAtomic
 
 base_path = @__DIR__
 
@@ -12,4 +14,4 @@ include("unittests.jl")
 
 testsets()
 
-# unittests()
+unittests()

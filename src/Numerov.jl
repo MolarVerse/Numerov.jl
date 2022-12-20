@@ -47,13 +47,16 @@ module Numerov
     include("printResults/printFrequencies.jl")
     include("printResults/printBandStructure.jl")
 
+    include("printLogFile/init_logfile.jl")
+    include("printLogFile/sparseInfo.jl")
+
+    include("k_paths.jl")
     include("readInputFile.jl")
     include("readPotential.jl")
 
     include("setupSystem.jl")
 
     include("normalize.jl")
-
     include("solve.jl")
 
     include("main.jl")
