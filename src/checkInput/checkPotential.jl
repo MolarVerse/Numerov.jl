@@ -1,5 +1,4 @@
 function checkInput(potential::Potential)
-    checkPotentialFile(potential)
     checkPotentialUnits(potential)
     checkCoordsUnits(potential)
     checkMassUnits(potential)
@@ -8,11 +7,6 @@ function checkInput(potential::Potential)
     checkNDatapoints(potential)
     checkBandStructure(potential)
     checkPeriodicity(potential)
-end
-
-function checkPotentialFile(potential::Potential)
-    isempty(inputDictionary["potential-file"]) && (@error "No potential input file name given"; exit())
-    potential.file = inputDictionary["potential-file"]
 end
 
 function checkPotentialUnits(potential::Potential)
