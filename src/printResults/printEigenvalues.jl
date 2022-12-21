@@ -1,4 +1,4 @@
-function printEigenvalues(potential::Potential, output::Output, k)
+function printEigenvalues(potential::Potential, output::Output, files::Files, k)
 
     #########################################################################
     #                                                                       #
@@ -6,9 +6,9 @@ function printEigenvalues(potential::Potential, output::Output, k)
     #                                                                       #
     #########################################################################
 
-    file = open("eigenvalues.dat", "a")
+    file = open(files.eigenvalueFileName, "a")
 
-    filesize("eigenvalues.dat") == 0 && println(file, "#Eigenvalues given in chosen input unit - $(potential.potentialUnit)")
+    filesize(files.eigenvalueFileName) == 0 && println(file, "#Eigenvalues given in chosen input unit - $(potential.potentialUnit)")
 
     ##########################################################################
     #                                                                        #

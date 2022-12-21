@@ -32,13 +32,13 @@ function init_logfile(files::Files)
     "       | USER AND SYSTEM INFORMATION                                                |   " * "\n" *
     "       ------------------------------------------------------------------------------   " * "\n" *
     "                                                                                        " * "\n" *
-    "         user             : $user                                                       " * "\n" *
-    "         hostname         : $hostname                                                   " * "\n" *
-    "         number of threads: $nthreads                                                   " * "\n" *
-    "         total RAM        : $(@sprintf("%.2f",ram)) GB                                  " * "\n" *
-    "         kernel           : $kernel                                                     " * "\n" *
-    "         machine          : $machine                                                    " * "\n" *
-    "         julia version    : $VERSION                                                    " * "\n" *
+    "         user              : $user                                                      " * "\n" *
+    "         hostname          : $hostname                                                  " * "\n" *
+    "         number of threads : $nthreads                                                  " * "\n" *
+    "         total RAM         : $(@sprintf("%.2f",ram)) GB                                 " * "\n" *
+    "         kernel            : $kernel                                                    " * "\n" *
+    "         machine           : $machine                                                   " * "\n" *
+    "         julia version     : $VERSION                                                   " * "\n" *
     "                                                                                        " * "\n"
 
     print(files.logFile, stringbuffer)

@@ -1,8 +1,8 @@
-function printBandStructure(potential::Potential, k_points)
+function printBandStructure(potential::Potential, files::Files, k_points)
 
-    file = open("bandstructure.dat", "w")
+    file = open(files.bandStructureFileName, "w")
 
-    data = readdlm("eigenvalues.dat"; skipstart=1)
+    data = readdlm(files.eigenvalueFileName; skipstart=1)
 
     a = copy(k_points)
     b = copy(k_points)

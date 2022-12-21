@@ -78,11 +78,13 @@ function numerov(inputFileName::String)
         #                                        #
         ##########################################
 
-        fileInfo(files, system)
+        files.eigenvalueFileName = "eigenvalues.dat"
+        files.bandStructureFileName = "bandstructure.dat"
+        fileInfo(files, potential, system)
 
         sparseInfo(files, system)
 
-        isfile("eigenvalues.dat") && rm("eigenvalues.dat") #rm eigenvalue file if it exists TODO: think of a way to restart calculation for different k
+        isfile(files.eigenvalueFileName) && rm(files.eigenvalueFileName) #rm eigenvalue file if it exists TODO: think of a way to restart calculation for different k
 
         ########################################################################################
         #                                                                                      #
@@ -159,7 +161,7 @@ function numerov(inputFileName::String)
                 #                                                          #
                 ############################################################
 
-                printEigenvalues(potential, output, k)
+                printEigenvalues(potential, output, files, k)
                 printEigenvectors(potential, system, output, files, k)
                 printFrequencies(potential, system, output, files, k)
 
@@ -173,7 +175,7 @@ function numerov(inputFileName::String)
         #                                                              #
         ################################################################
 
-        potential.bandStructure && printBandStructure(potential, potential.kpoints)
+        potential.bandStructure && printBandStructure(potential, files, potential.kpoints)
 
     end
 
