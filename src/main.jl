@@ -80,11 +80,14 @@ function numerov(inputFileName::String)
 
         files.eigenvalueFileName = "eigenvalues.dat"
         files.bandStructureFileName = "bandstructure.dat"
-        fileInfo(files, potential, system)
-
-        sparseInfo(files, system)
 
         isfile(files.eigenvalueFileName) && rm(files.eigenvalueFileName) #rm eigenvalue file if it exists TODO: think of a way to restart calculation for different k
+
+        fileInfo(files, potential, system)
+
+        systemInfo(files, potential, system)
+
+        sparseInfo(files, system)
 
         ########################################################################################
         #                                                                                      #
