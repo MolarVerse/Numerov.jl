@@ -1,4 +1,4 @@
-function readPotential(potential::Potential)
+function readPotential(potential::Potential, files::Files)
 
     #######################################
     #                                     #
@@ -14,7 +14,7 @@ function readPotential(potential::Potential)
     #                                                    #
     ######################################################
 
-    file = open(potential.file, "r")
+    file = open(files.PotentialFileName, "r")
 
     lines = getindex.(split.(readlines(file), "#"), 1) # removing all comments starting with #
     

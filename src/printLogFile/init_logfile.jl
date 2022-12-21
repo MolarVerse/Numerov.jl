@@ -7,8 +7,9 @@ function init_logfile(files::Files)
     kernel   = Sys.KERNEL
     machine  = Sys.MACHINE
     
-    stringbuffer = "\n" *
-                   "\n" *
+    stringbuffer = 
+    "                                                                                        " * "\n" *
+    "                                                                                        " * "\n" *
     "   #####################################################################################" * "\n" *
     "   #                                                                                   #" * "\n" *
     "   #   #      #                                                                        #" * "\n" *
@@ -23,6 +24,10 @@ function init_logfile(files::Files)
     "   #####################################################################################" * "\n" *
     "                                                                                        " * "\n" *
     "                                                                                        " * "\n" *
+    "                            main-developer: Jakob Gamper                                " * "\n" *
+    "                            Email         : 97gamjak@gmail.com                          " * "\n" *
+    "                                                                                        " * "\n" *
+    "                                                                                        " * "\n" *
     "       ------------------------------------------------------------------------------   " * "\n" *
     "       | USER AND SYSTEM INFORMATION                                                |   " * "\n" *
     "       ------------------------------------------------------------------------------   " * "\n" *
@@ -30,7 +35,7 @@ function init_logfile(files::Files)
     "         user             : $user                                                       " * "\n" *
     "         hostname         : $hostname                                                   " * "\n" *
     "         number of threads: $nthreads                                                   " * "\n" *
-    "         total RAM        : $(ram)GB                                                    " * "\n" *
+    "         total RAM        : $(@sprintf("%.2f",ram)) GB                                  " * "\n" *
     "         kernel           : $kernel                                                     " * "\n" *
     "         machine          : $machine                                                    " * "\n" *
     "         julia version    : $VERSION                                                    " * "\n" *

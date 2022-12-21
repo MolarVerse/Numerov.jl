@@ -6,11 +6,14 @@ mutable struct Files
     imag_eigenvectorShiftedFileName::String
     frequencyFileName              ::String
 
-    logFileName    ::String
-    timingsFileName::String
+    inputFileName    ::String
+    PotentialFileName::String
 
+    logFileName::String
     logFile    ::IOStream
-    timingsFile::IOStream
+
+    timingsFileName::String
+    timingsFile    ::IOStream
 
     to::TimerOutput
 

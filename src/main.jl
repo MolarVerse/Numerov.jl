@@ -18,6 +18,8 @@ function numerov(inputFileName::String)
 
         [inputDictionary[key] = "" for key in keys(inputDictionary)] #to reset dict to default values if calculation started in same repl session
 
+        files.inputFileName = inputFileName
+
         ###################
         #                 #
         # read input file #
@@ -44,14 +46,14 @@ function numerov(inputFileName::String)
         #################################
 
         init_logfile(files)
-
+        
         #######################
         #                     #
         # read potential file #
         #                     #
         #######################
 
-        readPotential(potential)
+        readPotential(potential, files)
 
         ################
         #              #
@@ -72,9 +74,11 @@ function numerov(inputFileName::String)
 
         ##########################################
         #                                        #
-        # print sparsity information to log file #
+        # print sparsity information to log file # TODO: modify this comment box
         #                                        #
         ##########################################
+
+        fileInfo(files, system)
 
         sparseInfo(files, system)
 

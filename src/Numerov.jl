@@ -49,6 +49,7 @@ module Numerov
 
     include("printLogFile/init_logfile.jl")
     include("printLogFile/sparseInfo.jl")
+    include("printLogFile/fileInfo.jl")
 
     include("k_paths.jl")
     include("readInputFile.jl")

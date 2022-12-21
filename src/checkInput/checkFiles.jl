@@ -1,6 +1,12 @@
 function checkInput(files::Files)
+    checkPotentialFile(files)
     checkLogFileName(files)
     checkTimingsFileName(files)
+end
+
+function checkPotentialFile(files::Files)
+    isempty(inputDictionary["potential-file"]) && (@error "No potential input file name given"; exit())
+    files.PotentialFileName = inputDictionary["potential-file"]
 end
 
 function checkLogFileName(files::Files)
