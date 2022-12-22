@@ -8,7 +8,7 @@ function numerov(inputFileName::String)
     #########################################################################
 
     potential = Potential()
-    system    = System1D() #default setup but gets overridden later!
+    system    = System() #default setup but gets overridden later!
     output    = Output()
     files     = Files()
 
@@ -61,7 +61,7 @@ function numerov(inputFileName::String)
         #              #
         ################
 
-        system = setupSystem(potential, system)
+        setupSystem(potential, system)
 
         ################################################################################
         #                                                                              #
@@ -69,8 +69,8 @@ function numerov(inputFileName::String)
         #                                                                              #
         ################################################################################
 
-        buildΔ(system)
-        build∇(system)
+        buildΔ(system, potential)
+        build∇(system, potential)
 
         ##########################################
         #                                        #

@@ -1,4 +1,4 @@
-mutable struct System1D <: System
+mutable struct System
     stencil     ::Int64
     stencil∇    ::Int64
     stencilΔ    ::Int64
@@ -13,41 +13,5 @@ mutable struct System1D <: System
 
     solver::SolverEnum
 
-    System1D() = new()
-end
-
-mutable struct System2D <: System
-    stencil     ::Int64
-    stencil∇    ::Int64
-    stencilΔ    ::Int64
-    n_datapoints::Vector{Int64}
-
-    periodic     ::Vector{Bool}
-    reciprocal   ::Bool
-    bandStructure::Bool
-
-    ∇::SparseMatrixCSC{Float64, Int64}
-    Δ::SparseMatrixCSC{Float64, Int64}
-
-    solver::SolverEnum
-
-    System2D() = new()
-end
-
-mutable struct System3D <: System
-    stencil     ::Int64
-    stencil∇    ::Int64
-    stencilΔ    ::Int64
-    n_datapoints::Vector{Int64}
-
-    periodic     ::Vector{Bool}
-    reciprocal   ::Bool
-    bandStructure::Bool
-
-    ∇::SparseMatrixCSC{Float64, Int64}
-    Δ::SparseMatrixCSC{Float64, Int64}
-
-    solver::SolverEnum
-
-    System3D() = new()
+    System() = new()
 end

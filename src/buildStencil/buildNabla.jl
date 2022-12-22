@@ -1,4 +1,10 @@
-function build∇(system::System1D) #combine these two functions!
+function build∇(system::System, potential::Potential)
+    potential.dimension == 1 && build∇_1D(system)
+    potential.dimension == 2 && build∇_2D(system)
+    potential.dimension == 3 && build∇_3D(system)
+end
+
+function build∇_1D(system::System) #combine these two functions!
 
     ####################################
     #                                  #
@@ -18,7 +24,7 @@ function build∇(system::System1D) #combine these two functions!
 
 end
 
-function build∇(system::System2D)
+function build∇_2D(system::System)
 
     ####################################
     #                                  #
@@ -48,7 +54,7 @@ function build∇(system::System2D)
     system.∇ = build_2d_stencil(system, system.n_datapoints, stencil, system.stencil∇)
 end
 
-function build∇(system::System3D)
+function build∇_3D(system::System)
 
     ####################################
     #                                  #
@@ -80,7 +86,7 @@ function build∇(system::System3D)
 
 end
 
-function get_1d_stencil(system)
+function get_1d_stencil(system::System)
 
     if system.stencil∇ == 3
 

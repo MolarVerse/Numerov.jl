@@ -1,4 +1,4 @@
-function buildΔ(system::System2D)
+function buildΔ_2D(system::System)
 
     stencil = zeros(system.stencilΔ, system.stencilΔ)
 

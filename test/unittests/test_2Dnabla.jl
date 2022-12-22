@@ -1,11 +1,17 @@
 function test_2D∇()
-    system = Numerov.System2D()
+    system = Numerov.System()
 
     system.stencil∇ = 5
     system.n_datapoints = [6,7]
     system.periodic = [false, false]
 
-    ∇ = Numerov.build∇(system)
+    potential = Numerov.Potential()
+    
+    potential.dimension = 2
+
+    Numerov.build∇(system, potential)
+    
+    ∇ = system.∇
 
     stencil = zeros(system.stencil∇, system.stencil∇)
     stencil[:,1] = [ 0.0,  0.0,  1,  0.0,  0.0]
@@ -40,7 +46,9 @@ function test_2D∇()
 
     system.periodic = [true, true]
 
-    ∇ = Numerov.build∇(system)
+    Numerov.build∇(system, potential)
+    
+    ∇ = system.∇
 
     for j in 0:2
         for i in 0:n1-1-j

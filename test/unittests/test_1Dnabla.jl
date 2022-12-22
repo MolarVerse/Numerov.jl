@@ -1,5 +1,5 @@
 function test_1D∇()
-    system = Numerov.System1D()
+    system = Numerov.System()
 
     system.stencil∇ = 3
     system.n_datapoints = [10]
@@ -9,7 +9,13 @@ function test_1D∇()
                   0 => zeros(10),
                   1 =>  ones( 9)*( 0.5))
     
-    @test Numerov.build∇(system) == ∇
+    potential = Numerov.Potential()
+    
+    potential.dimension = 1
+
+    Numerov.build∇(system, potential)
+
+    @test system.∇ == ∇
 
     system.periodic = [true]
 
@@ -19,6 +25,8 @@ function test_1D∇()
                   1 =>  ones(9)*( 0.5),
                   9 =>  ones(1)*(-0.5),)
 
-    @test Numerov.build∇(system) == ∇
+    Numerov.build∇(system, potential)
+
+    @test system.∇ == ∇
 
 end

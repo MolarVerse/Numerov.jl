@@ -1,5 +1,5 @@
 function test_1DΔ()
-    system = Numerov.System1D()
+    system = Numerov.System()
 
     system.stencilΔ = 3
     system.n_datapoints = [10]
@@ -8,8 +8,14 @@ function test_1DΔ()
     Δ = spdiagm( -1 => ones(9),
                   0 => ones(10)*(-2),
                   1 => ones(9))
+
+    potential = Numerov.Potential()
     
-    @test Numerov.buildΔ(system) == Δ
+    potential.dimension = 1
+    
+    Numerov.buildΔ(system, potential)
+
+    @test system.Δ == Δ
 
     system.periodic = [true]
 
@@ -19,6 +25,8 @@ function test_1DΔ()
                   1 => ones(9),
                   9 => ones(1),)
 
-    @test Numerov.buildΔ(system) == Δ
+    Numerov.buildΔ(system, potential)
+
+    @test system.Δ == Δ
 
 end

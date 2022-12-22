@@ -22,8 +22,6 @@ module Numerov
 
     MyUnits.__init__()
 
-    abstract type System end
-
     include("datatypes/SolverEnum.jl")
     include("datatypes/InputDictionary.jl")
     include("datatypes/Potential.jl")
@@ -40,6 +38,7 @@ module Numerov
     include("buildStencil/buildLaplace_1d.jl")
     include("buildStencil/buildLaplace_2d.jl")
     include("buildStencil/buildLaplace_3d.jl")
+    include("buildStencil/buildLaplace.jl")
     include("buildStencil/buildNabla.jl")
 
     include("printResults/printEigenvalues.jl")

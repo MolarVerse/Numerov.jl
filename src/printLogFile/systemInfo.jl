@@ -19,5 +19,9 @@ function systemInfo(files::Files, potential::Potential, system::System)
     "         potential unit = $(potentialUnit)                                              " * "\n" *
     "                                                                                        " * "\n"
 
+    tmpbuffer = ""
+
+    #TODO_
+
     print(files.logFile, stringbuffer)
 end

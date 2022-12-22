@@ -1,12 +1,18 @@
 #test for 2d [true,false]-periodic for laplace and nabla and vice versa
 function test_2DΔ()
-    system = Numerov.System2D()
+    system = Numerov.System()
 
     system.stencilΔ = 5
     system.n_datapoints = [6,7]
     system.periodic = [false, false]
 
-    Δ = Numerov.buildΔ(system)
+    potential = Numerov.Potential()
+    
+    potential.dimension = 2
+
+    Numerov.buildΔ(system, potential)
+
+    Δ = system.Δ
 
     stencil = zeros(system.stencilΔ, system.stencilΔ)
     stencil[:,1] = [ 0.0,  0.0,  -1.0,  0.0,  0.0]
@@ -33,7 +39,9 @@ function test_2DΔ()
 
     system.periodic = [true, true]
 
-    Δ = Numerov.buildΔ(system)
+    Numerov.buildΔ(system, potential)
+
+    Δ = system.Δ
 
     for j in 0:2
         for i in 0:n1-1-j
