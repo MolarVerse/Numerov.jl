@@ -1,6 +1,6 @@
 function buildΔ_3D(system::System)
 
-    stencil = zeros(system.stencilΔ^3)
+    stencil = spzeros(system.stencilΔ^3)
 
     if system.stencilΔ == 3
 

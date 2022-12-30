@@ -102,6 +102,12 @@ function readPotential(potential::Potential, files::Files)
     potential.intervall = zeros(potential.dimension)
     [potential.intervall[i] = (uniquecoords[i][2] - uniquecoords[i][1]) * sqrt(potential.mass[i]) for i in 1:potential.dimension]
 
+    #############TODO:###############
+
+    if files.k_pointsFileName != "" && !potential.read_kpoints
+        @warn "You have defined a k-points file but not set read kpoints to true"
+    end #TODO: write reading logic and integrate it
+
     ########################################
     #                                      #
     # calculate mass weighted k intervalls #

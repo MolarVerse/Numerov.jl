@@ -40,7 +40,7 @@ function build∇_2D(system::System)
     #                         #
     ###########################
 
-    stencil    = zeros(system.stencil∇, system.stencil∇)
+    stencil    = spzeros(system.stencil∇, system.stencil∇)
 
     stencil[:,system.stencil∇÷2+1] = stencil_1d
     stencil[system.stencil∇÷2+1,:] = stencil_1d
@@ -70,7 +70,7 @@ function build∇_3D(system::System)
     #                         #
     ###########################
  
-    stencil    = zeros(system.stencil∇, system.stencil∇, system.stencil∇)
+    stencil    = spzeros(system.stencil∇, system.stencil∇, system.stencil∇)
 
     stencil[:                 ,system.stencil∇÷2+1,system.stencil∇÷2+1] = stencil_1d
     stencil[system.stencil∇÷2+1,:                 ,system.stencil∇÷2+1] = stencil_1d
@@ -137,7 +137,7 @@ function build∇_k(potential::Potential, system::System, k)
 
         elseif potential.dimension == 3
 
-            stencil    = zeros(system.stencil, system.stencil, system.stencil)
+            stencil    = spzeros(system.stencil, system.stencil, system.stencil)
 
             stencil[:                 ,system.stencil÷2+1,system.stencil÷2+1] = ones(system.stencil)*k[1]
             stencil[system.stencil÷2+1,:                 ,system.stencil÷2+1] = ones(system.stencil)*k[2]

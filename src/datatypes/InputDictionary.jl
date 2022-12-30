@@ -19,4 +19,7 @@ inputDictionary = Dict(
 
     "output-file"     => "",
     "timings-file"    => "",
+
+    "read-k-points"   => "",
+    "k-points-file"   => ""
 )

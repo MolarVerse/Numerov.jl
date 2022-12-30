@@ -2,6 +2,7 @@ function checkInput(files::Files)
     checkPotentialFile(files)
     checkLogFileName(files)
     checkTimingsFileName(files)
+    checkKPointsFile(files)
 end
 
 function checkPotentialFile(files::Files)
@@ -17,4 +18,8 @@ end
 function checkTimingsFileName(files::Files)
     files.timingsFileName = isempty(inputDictionary["timings-file"]) ? "timings.out" : inputDictionary["timings-file"]
     files.timingsFile     = open(files.timingsFileName, "w")
+end
+
+function checkKPointsFile(files::Files)
+    files.k_pointsFileName = inputDictionary["k-points-file"]
 end

@@ -7,6 +7,7 @@ function checkInput(potential::Potential)
     checkNDatapoints(potential)
     checkBandStructure(potential)
     checkPeriodicity(potential)
+    checkReadKPoints(potential)
 end
 
 function checkPotentialUnits(potential::Potential)
@@ -83,4 +84,18 @@ end
 function checkPeriodicity(potential::Potential)
     isempty(inputDictionary["periodic"]) && (potential.periodic = [false]; return) #write to log file about default setting
     potential.periodic = parse.(Bool, split(join(split(inputDictionary["periodic"], ","), " ")))
+end
+
+function checkReadKPoints(potential::Potential)
+    isempty(inputDictionary["read-k-points"]) && (potential.read_kpoints == false; return)
+    potential.read_kpoints = parse(Bool, inputDictionary["read-k-points"])
+    if potential.read_kpoints
+        if !isempty(inputDictionary["k-points"])
+            @error "reading from k-points file is only allowed if no k-points are given!"
+            exit()
+        elseif isempty(inputDictionary["k-points-file"])
+            @error "to choose option to read from k-points file you have to specify the file in the input file via the keyword \"k-points-file\"!"
+            exit()
+        end
+    end
 end

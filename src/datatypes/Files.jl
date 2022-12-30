@@ -17,6 +17,8 @@ mutable struct Files
     timingsFileName::String
     timingsFile    ::IOStream
 
+    k_pointsFileName::String
+
     to::TimerOutput
 
     Files() = new()
