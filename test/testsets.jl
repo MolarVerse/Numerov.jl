@@ -25,6 +25,6 @@ function testsets()
     @testset "2D Harmonic Oscillator" test_2DHarmonicOscillator()
     @testset "2D Water" test_2DWater()
     @testset "2D Kronig Penney" test_2DKronigPenney()
-    # @testset "3D Harmonic Oscillator" test_3DHarmonicOscillator()
-    # @testset "3D Kronig Penney" test_3DKronigPenney()
+    @testset "3D Harmonic Oscillator" test_3DHarmonicOscillator()
+    @testset "3D Kronig Penney" test_3DKronigPenney()
 end

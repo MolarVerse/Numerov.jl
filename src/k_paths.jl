@@ -40,7 +40,7 @@ function get_kpoints_2D_rectangle(k_intervalls::Vector{Float64}, n_kpoints::Int6
     return map(x -> Tuple(x[1:2]), minimal_kpath)
 end
 
-function get_kpoints_3D_cube(k_intervalls, n_kpoints)
+function get_kpoints_3D(k_intervalls, n_kpoints)
     if isapprox(k_intervalls[1], k_intervalls[2], atol=1e-9)
 
         if isapprox(k_intervalls[1], k_intervalls[3], atol=1e-9)

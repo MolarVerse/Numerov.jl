@@ -18,7 +18,7 @@ function printBandStructure(potential::Potential, files::Files, k_points)
         brioullin_path += spacing
         @printf(file, "%lf ", brioullin_path)
         for j in length(k_points[1])+1:length(data[1,:])
-            @printf(file, "%20.14lf ", data[i,j])
+            @printf(file, "%.18e ", data[i,j])
         end
         @printf(file, "\n")
         if i == length(diff) - potential.n_kpoints && potential.dimension == 3
@@ -32,7 +32,7 @@ function printBandStructure(potential::Potential, files::Files, k_points)
         end
         @printf(file, "%lf ", brioullin_path)
         for j in length(k_points[1])+1:length(data[1,:])
-            @printf(file, "%20.14lf ", data[i,j])
+            @printf(file, "%.18e ", data[i,j])
         end
         @printf(file, "\n")
         brioullin_path += spacing

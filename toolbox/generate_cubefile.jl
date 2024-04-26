@@ -1,37 +1,47 @@
 using DelimitedFiles
-using Printf
 
-function generate_cubefile(filename::String, x::Int, y::Int, z::Int; outputfilename="mycube.cube", column=4)
-    data = readdlm(filename)
+function gen_cubfile(input_file, output_file, npoints)
 
-    step = data[2,3] - data[1,3]
+	infile = readdlm(input_file)
 
-    file = open(outputfilename, "w")
+	outfile = open(output_file, "w")
 
-    println(file, "my cube file")
-    println(file, "###")
-    println(file, "1        0.0         0.0         0.0")
-    println(file, x, "     ", step, "   0.0    0.0")
-    println(file, y, "      0.0       ", step, "    0.0")
-    println(file, z, "      0.0         0.0      ", step)
-    println(file, "1 0.0 0.0 0.0")
+	dimension = infile[2, 3] - infile[1, 3]
+	boxsize = dimension * npoints / 2
 
-    count = 0
-    for i in 1:size(data)[1]
+	println(outfile, "CUBE FILE")
+	println(outfile, "OUTER LOOP: X, MIDDLE LOOP: Y, INNER LOOP: Z")
+	println(outfile, "   1   0.000000   0.000000   0.000000")
+	println(outfile, "   $npoints   $dimension   0.000000   0.000000")
+	println(outfile, "   $npoints   0.000000   $dimension   0.000000")
+	println(outfile, "   $npoints   0.000000   0.000000   $dimension")
+	println(outfile, "1 0.0 $boxsize $boxsize $boxsize")
 
-        count += 1
+	counter = 1
+	for i in 1:npoints
+		for j in 1:npoints
+			for k in 1:npoints
+				print(outfile, infile[counter, 4])
+				if k % 6 == 0
+					println(outfile)
+				else
+					print(outfile, " ")
+				end
+				counter += 1
+			end
+			println(outfile)
+		end
+	end
 
-        @printf(file, "%.6e ", data[i,column])
-
-        if count % 6 == 0 || count % z == 0
-            println(file)
-        end
-
-        if count % z == 0
-            count = 0
-        end
-    end
-
-    close(file)
-        
+	close(outfile)
 end
+
+function main()
+	input_file = ARGS[1]
+	output_file = ARGS[2]
+	npoints = parse(Int64, ARGS[3])
+	gen_cubfile(input_file, output_file, npoints)
+end
+
+main()
+

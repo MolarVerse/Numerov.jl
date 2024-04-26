@@ -1,4 +1,6 @@
 testsets/**/*eigen*.dat
 testsets/**/frequencies*.dat
-testset/**/bandstructure.dat
+testsets/**/bandstructure.dat
 testsets/convergence/
+paper
+testsets/**/timings.out
