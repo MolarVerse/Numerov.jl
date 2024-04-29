@@ -1,38 +1,25 @@
-function setupSystem(potential::Potential, system::System1D)
+function setupSystem(potential::Potential, system::System)
 
-    if potential.dimension == 1
+    system.periodic     = potential.periodic
+    system.n_datapoints = potential.n_datapoints
+    system.reciprocal   = potential.reciprocal
 
-        system.n_datapoints = length(potential.potential)
-    
-    elseif potential.dimension == 2
-        
-        stencil = system.stencil
-        periodic = system.periodic
-        
-        system = System2D()
+    ##############################################################################################
+    #                                                                                            #
+    # check if system is periodic if k-points are set and minimal length of potential datapoints #
+    #                                                                                            #
+    ##############################################################################################
 
-        system.stencil = stencil
-        system.periodic = periodic
-        system.n_datapoints = potential.n_datapoints
-    elseif potential.dimension == 3
+    system.reciprocal && !any(system.periodic) && (@error "You have defined a number of k-points - this option is only valid in combination with \"periodic = true\""; exit())
+    any(system.n_datapoints .< system.stencil) && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
 
-        stencil = system.stencil
-        periodic = system.periodic
+    ###############################################################
+    #                                                             #
+    # set stencil for laplace and nabla if not defined seperately #
+    #                                                             #
+    ###############################################################
 
-        system = System3D()
+    system.stencil∇ == 0 && (system.stencil∇ = system.stencil)
+    system.stencilΔ == 0 && (system.stencilΔ = system.stencil)
 
-        system.stencil = stencil
-        system.periodic = periodic
-        system.n_datapoints = potential.n_datapoints
-    end
-
-    system.Δ = spzeros(prod(potential.n_datapoints), prod(potential.n_datapoints))
-
-    potential.n_kpoints != -1 ? system.reciprocal = true : system.reciprocal = false
-    potential.reciprocal = system.reciprocal
-
-    !system.periodic && system.reciprocal && (@error "You have defined a number of k-points - this option is only valid in combination with \"periodic = true\""; exit())
-
-    return system
-    
 end

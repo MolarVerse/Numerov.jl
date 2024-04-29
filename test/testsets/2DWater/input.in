@@ -1,0 +1,7 @@
+potential-file = potential.dat
+stencil = 9
+mass-unit = unit
+coord-unit = angstrom
+n-eigenvalues = 5
+datapoints = 66 53
+potential-unit = kcal/mol

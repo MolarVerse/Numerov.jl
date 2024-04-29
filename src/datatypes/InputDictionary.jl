@@ -3,12 +3,23 @@ inputDictionary = Dict(
     "potential-unit"  => "",
     "coord-unit"      => "",
     "mass-unit"       => "",
+
     "stencil"         => "",
+    "stencil-laplace" => "",
+    "stencil-nabla"   => "",
+
     "reduced-mass"    => "",
     "periodic"        => "",
     "n-eigenvalues"   => "",
-    "shift-potential" => "",
     "k-points"        => "",
     "datapoints"      => "",
-    "band-structure"  => ""
+    "band-structure"  => "",
+
+    "solver"          => "",
+
+    "output-file"     => "",
+    "timings-file"    => "",
+
+    "read-k-points"   => "",
+    "k-points-file"   => ""
 )

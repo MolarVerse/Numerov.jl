@@ -3,7 +3,7 @@ mutable struct Output
     
     eigenvalues::Vector{Float64}
 
-    eigenvectors::Vector{Vector{Float64}}
+    eigenvectors::Vector{Vector{ComplexF64}}
 
     frequencies::Matrix{Float64}
 

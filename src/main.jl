@@ -1,45 +1,205 @@
-using TimerOutputs
-
 function numerov(inputFileName::String)
+    
 
-    to = TimerOutput()
-
-    @timeit to "main" begin
+    #########################################################################
+    #                                                                       #
+    # initialize structs and timeroutput + reset inputdictionary to default #
+    #                                                                       #
+    #########################################################################
 
     potential = Potential()
-    system    = System1D()     #default setup but gets overridden later!
+    system    = System() #default setup but gets overridden later!
     output    = Output()
+    files     = Files()
 
-    readInputFile(inputFileName)
-    checkInput(potential)
-    readPotential(potential)
+    files.to = TimerOutput()
 
-    checkInput(system)
-    system = setupSystem(potential, system)
-    buildLaplace(system)
-    buildNabla(system)
+    @timeit files.to "main" begin
 
-    checkInput(output)
+        [inputDictionary[key] = "" for key in keys(inputDictionary)] #to reset dict to default values if calculation started in same repl session
 
-    isfile("eigenvalues.dat") && rm("eigenvalues.dat")
+        files.inputFileName = inputFileName
 
-    @timeit to "loop" begin
-    for (i, k) in enumerate(potential.kpoints)
+        ###################
+        #                 #
+        # read input file #
+        #                 #
+        ###################
 
-        @timeit to "solve" solve(potential, system, output, k, to)
+        readInputFile(inputFileName)
+        
+        #########################
+        #                       #
+        # parse and check input #
+        #                       #
+        #########################
 
-        @timeit to "print1" printEigenvalues(potential, output, k)
-        @timeit to "print2" printEigenvectors(potential, system, output, k)
-        @timeit to "print3" printFrequencies(potential, system, output, k)
+        checkInput(potential)
+        checkInput(system)
+        checkInput(files)
+        checkInput(output)
 
-        println(i, "/", length(potential.kpoints), " Done")
+        #################################
+        #                               #
+        # print program info to logfile #
+        #                               #
+        #################################
+
+        init_logfile(files)
+        
+        #######################
+        #                     #
+        # read potential file #
+        #                     #
+        #######################
+
+        readPotential(potential, files)
+
+        ################
+        #              #
+        # setup system #
+        #              #
+        ################
+
+        setupSystem(potential, system)
+
+        ################################################################################
+        #                                                                              #
+        # build ∇ and Δ matrix - caution ∇ matrix later modified according to k-points #
+        #                                                                              #
+        ################################################################################
+
+        buildΔ(system, potential)
+        build∇(system, potential)
+
+        ##########################################
+        #                                        #
+        # print sparsity information to log file # TODO: modify this comment box
+        #                                        #
+        ##########################################
+
+        files.eigenvalueFileName = "eigenvalues.dat"
+        files.bandStructureFileName = "bandstructure.dat"
+
+        isfile(files.eigenvalueFileName) && rm(files.eigenvalueFileName) #rm eigenvalue file if it exists TODO: think of a way to restart calculation for different k
+
+        fileInfo(files, potential, system)
+
+        systemInfo(files, potential, system)
+
+        sparseInfo(files, system)
+
+        ########################################################################################
+        #                                                                                      #
+        # loop over all k-points (for non reciprocal system only one single point calculation) #
+        #                                                                                      #
+        ########################################################################################
+
+        @timeit files.to "loop" begin
+            for (i, k) in enumerate(potential.kpoints)
+
+                #########################################
+                #                                       #
+                # shift potential to pot_min equals 0.0 #
+                #                                       #
+                #########################################
+
+                potential.potential = potential.potential .- potential.shift
+
+                ##############################
+                #                            #
+                # solve Schrödinger equation #
+                #                            #
+                ##############################
+
+                @timeit files.to "solve" solve(potential, system, output, k, files)
+
+                ####################################
+                #                                  #
+                # calculate k from mass weighted k #
+                #                                  #
+                ####################################
+
+                k = k .* sqrt.(potential.mass)
+
+                #############################################################
+                #                                                           #
+                # setup all file names depending on the momentanous k-point #
+                #                                                           #
+                #############################################################
+
+                k_string = join(ustrip.(uconvert.(potential.coordsUnit^(-1), k ./ potential.internalElemCoords)), "_")
+
+                if system.reciprocal
+                    files.eigenvectorFileName             = "eigenvectors_k_$(k_string).dat"
+                    files.eigenvectorShiftedFileName      = "eigenvectors_shifted_k_$(k_string).dat"
+                    files.imag_eigenvectorFileName        = "imag_eigenvectors_k_$(k_string).dat"
+                    files.imag_eigenvectorShiftedFileName = "imag_eigenvectors_shifted_k_$(k_string).dat"
+                    files.frequencyFileName               = "frequencies_k_$(k_string).dat"
+                else
+                    files.eigenvectorFileName             = "eigenvectors.dat"
+                    files.eigenvectorShiftedFileName      = "eigenvectors_shifted.dat"
+                    files.frequencyFileName               = "frequencies.dat"
+                end
+
+                ########################################
+                #                                      #
+                # shift potential back to input values #
+                #                                      #
+                ########################################
+
+                potential.potential = potential.potential .+ potential.shift
+
+                #######################################
+                #                                     #
+                # convert k-values back to input unit #
+                #                                     #
+                #######################################
+
+                k = ustrip.(uconvert.(potential.coordsUnit^(-1), k ./ potential.internalElemCoords))
+
+                ############################################################
+                #                                                          #
+                # print eigenvalues, eigenvectors and frequencies to files #
+                #                                                          #
+                ############################################################
+
+                printEigenvalues(potential, output, files, k)
+                printEigenvectors(potential, system, output, files, k)
+                printFrequencies(potential, system, output, files, k)
+
+                println(i, "/", length(potential.kpoints), " Done")
+            end
+        end
+
+        ################################################################
+        #                                                              #
+        # if bandstructure is requested than write band structure file #
+        #                                                              #
+        ################################################################
+
+        potential.bandStructure && printBandStructure(potential, files, potential.kpoints)
+
     end
-    end
 
-    potential.bandStructure && printBandStructure(potential.kpoints)
+    ################################
+    #                              #
+    # print timings of calculation #
+    #                              #
+    ################################
 
-    end
+    files.timingsFile = open(files.timingsFileName, "w")
+    show(files.to)
+    println()
+    show(files.timingsFile, files.to)
 
-    show(to)
+    ############
+    #          #
+    # clean up #
+    #          #
+    ############
+
+    close(files.timingsFile)
+    close(files.logFile)
 
 end

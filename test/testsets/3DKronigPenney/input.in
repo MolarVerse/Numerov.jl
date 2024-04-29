@@ -1,0 +1,11 @@
+potential-file = potential.dat
+stencil = 5
+reduced-mass = 10.0
+mass-unit = me
+coord-unit = angstrom
+n-eigenvalues = 8
+potential-unit = ev
+periodic = true
+k-points = 2
+band-structure = on
+datapoints = 20, 20, 20

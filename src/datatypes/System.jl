@@ -1,44 +1,17 @@
-mutable struct System1D <: System
+mutable struct System
     stencil     ::Int64
-    n_datapoints::Int64
-
-    periodic     ::Bool
-    reciprocal   ::Bool
-    bandStructure::Bool
-
-    laplace::SparseMatrixCSC{Float64, Int64}
-
-    Δ::SparseMatrixCSC{Float64, Int64}
-
-    System1D() = new()
-end
-
-mutable struct System2D <: System
-    stencil     ::Int64
+    stencil∇    ::Int64
+    stencilΔ    ::Int64
     n_datapoints::Vector{Int64}
 
-    periodic     ::Bool
+    periodic     ::Vector{Bool}
     reciprocal   ::Bool
     bandStructure::Bool
 
-    laplace::SparseMatrixCSC{Float64, Int64}
-
+    ∇::SparseMatrixCSC{Float64, Int64}
     Δ::SparseMatrixCSC{Float64, Int64}
 
-    System2D() = new()
-end
+    solver::SolverEnum
 
-mutable struct System3D <: System
-    stencil     ::Int64
-    n_datapoints::Vector{Int64}
-
-    periodic     ::Bool
-    reciprocal   ::Bool
-    bandStructure::Bool
-
-    laplace::SparseMatrixCSC{Float64, Int64}
-
-    Δ::SparseMatrixCSC{Float64, Int64}
-
-    System3D() = new()
+    System() = new()
 end

@@ -1,2 +1,9 @@
-**/eigen*.dat
-**/frequencies*.dat
+testsets/**/*eigen*.dat
+testsets/**/frequencies*.dat
+testsets/**/bandstructure.dat
+testsets/convergence/
+paper/
+testsets/**/timings.out
+
+Manifest.toml
+hgg/
