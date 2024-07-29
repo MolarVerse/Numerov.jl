@@ -1,5 +1,6 @@
 module Numerov
-
+    
+    using Comonicon
     using Unitful
     using UnitfulAtomic
     using SparseArrays

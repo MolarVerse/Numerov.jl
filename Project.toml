@@ -6,6 +6,7 @@ version = "0.1.0"
 [deps]
 Arpack = "7d9fca2a-8960-54d3-9f78-7d1dccf2cb97"
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+Comonicon = "863f3e99-da2a-4334-8734-de3dacbe5542"
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 KrylovKit = "0b1a1467-8014-51b9-945f-bf0ae24f4b77"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
@@ -22,4 +23,5 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 UnitfulAtomic = "a7773ee8-282e-5fa2-be4e-bd808c38a91a"
 
 [compat]
+Comonicon = "1"
 julia = "1"
