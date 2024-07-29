@@ -1,4 +1,15 @@
-function numerov(inputFileName::String)
+"""
+numerov - CLI for solving the Schrödinger equation using the Numerov method.
+
+# Description
+
+CLI for solving the Schrödinger equation using the Numerov method.
+
+# Args 
+- `inputFileName::String`: The name of the input file.
+
+"""
+@main function numerov(inputFileName::String)
     
 
     #########################################################################
