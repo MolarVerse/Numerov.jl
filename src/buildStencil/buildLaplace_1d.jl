@@ -1,33 +1,91 @@
+"""
+	buildΔ_1D(system::System)
+
+Build the Laplace operator for a 1D system. The Laplace operator is built using a finite
+difference stencil of the order `system.stencilΔ`. The Laplace operator is stored in `system.Δ`.
+Stencil size options are 3, 5, 7, 9, 11 and 13 points.
+
+# Arguments
+
+	- `system::System`: The system to build the Laplace operator for.
+"""
 function buildΔ_1D(system::System)
 
-    stencil      = spzeros(system.stencilΔ)
+	stencil = spzeros(system.stencilΔ)
 
-    if system.stencilΔ == 3
+	if system.stencilΔ == 3
 
-        stencil = [1, -2, 1]
+		stencil = [1, -2, 1]
 
-    elseif system.stencilΔ == 5
-        
-        stencil = [-1/12, 4/3, -5/2, 4/3, -1/12]
+	elseif system.stencilΔ == 5
 
-    elseif system.stencilΔ == 7
+		stencil = [-1 / 12, 4 / 3, -5 / 2, 4 / 3, -1 / 12]
 
-        stencil = [1/90, -3/20, 3/2, -49/18, 3/2, -3/20, 1/90]
-        
-    elseif system.stencilΔ == 9
-        
-        stencil = [-1/560, 8/315, -1/5, 8/5, -205/72, 8/5, -1/5, 8/315, -1/560]
+	elseif system.stencilΔ == 7
 
-    elseif system.stencilΔ == 11
+		stencil = [
+			1 / 90,
+			-3 / 20,
+			3 / 2,
+			-49 / 18,
+			3 / 2,
+			-3 / 20,
+			1 / 90,
+		]
 
-        stencil  = [8, -125, 1000, -6000, 42000, -73766, 42000, -6000, 1000, -125, 8] ./ 25200
+	elseif system.stencilΔ == 9
 
-    elseif system.stencilΔ == 13
+		stencil = [
+			-1 / 560,
+			8 / 315,
+			-1 / 5,
+			8 / 5,
+			-205 / 72,
+			8 / 5,
+			-1 / 5,
+			8 / 315,
+			-1 / 560,
+		]
 
-        stencil  = [-50, 864, -7425, 44000, -222750, 1425600, -2480478, 1425600, -222750, 44000, -7425, 864, -50] ./ 831600
+	elseif system.stencilΔ == 11
 
-    end
+		stencil =
+			[
+				8,
+				-125,
+				1000,
+				-6000,
+				42000,
+				-73766,
+				42000,
+				-6000,
+				1000,
+				-125,
+				8,
+			] ./ 25200
 
-    system.Δ = build_1d_stencil(system, stencil, system.stencilΔ)
+	elseif system.stencilΔ == 13
+
+		stencil =
+			[
+				-50,
+				864,
+				-7425,
+				44000,
+				-222750,
+				1425600,
+				-2480478,
+				1425600,
+				-222750,
+				44000,
+				-7425,
+				864,
+				-50,
+			] ./ 831600
+
+	end
+
+	system.Δ =
+		build_1d_stencil(system, stencil, system.stencilΔ)
 
 end

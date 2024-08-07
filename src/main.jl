@@ -5,212 +5,261 @@ numerov - CLI for solving the Schrödinger equation using the Numerov method.
 
 CLI for solving the Schrödinger equation using the Numerov method.
 
-# Args 
-- `inputFileName`: The name of the input file. 
+# Usage
 
+# Args
+
+	- `inputFileName`: The name of the input file.
 """
 @main function numerov(inputFileName::String)
-    
 
-    #########################################################################
-    #                                                                       #
-    # initialize structs and timeroutput + reset inputdictionary to default #
-    #                                                                       #
-    #########################################################################
 
-    potential = Potential()
-    system    = System() #default setup but gets overridden later!
-    output    = Output()
-    files     = Files()
+	#########################################################################
+	#                                                                       #
+	# initialize structs and timeroutput + reset inputdictionary to default #
+	#                                                                       #
+	#########################################################################
 
-    files.to = TimerOutput()
+	potential = Potential()
+	system    = System() #default setup but gets overridden later!
+	output    = Output()
+	files     = Files()
 
-    @timeit files.to "main" begin
+	files.to = TimerOutput()
 
-        [inputDictionary[key] = "" for key in keys(inputDictionary)] #to reset dict to default values if calculation started in same repl session
+	@timeit files.to "main" begin
 
-        files.inputFileName = inputFileName
+		[
+			inputDictionary[key] = "" for
+			key in keys(inputDictionary)
+		] #to reset dict to default values if calculation started in same repl session
 
-        ###################
-        #                 #
-        # read input file #
-        #                 #
-        ###################
+		files.inputFileName = inputFileName
 
-        readInputFile(inputFileName)
-        
-        #########################
-        #                       #
-        # parse and check input #
-        #                       #
-        #########################
+		###################
+		#                 #
+		# read input file #
+		#                 #
+		###################
 
-        checkInput(potential)
-        checkInput(system)
-        checkInput(files)
-        checkInput(output)
+		readInputFile(inputFileName)
 
-        #################################
-        #                               #
-        # print program info to logfile #
-        #                               #
-        #################################
+		#########################
+		#                       #
+		# parse and check input #
+		#                       #
+		#########################
 
-        init_logfile(files)
-        
-        #######################
-        #                     #
-        # read potential file #
-        #                     #
-        #######################
+		checkInput(potential)
+		checkInput(system)
+		checkInput(files)
+		checkInput(output)
 
-        readPotential(potential, files)
+		#################################
+		#                               #
+		# print program info to logfile #
+		#                               #
+		#################################
 
-        ################
-        #              #
-        # setup system #
-        #              #
-        ################
+		init_logfile(files)
 
-        setupSystem(potential, system)
+		#######################
+		#                     #
+		# read potential file #
+		#                     #
+		#######################
 
-        ################################################################################
-        #                                                                              #
-        # build ∇ and Δ matrix - caution ∇ matrix later modified according to k-points #
-        #                                                                              #
-        ################################################################################
+		readPotential(potential, files)
 
-        buildΔ(system, potential)
-        build∇(system, potential)
+		################
+		#              #
+		# setup system #
+		#              #
+		################
 
-        ##########################################
-        #                                        #
-        # print sparsity information to log file # TODO: modify this comment box
-        #                                        #
-        ##########################################
+		setupSystem(potential, system)
 
-        files.eigenvalueFileName = "eigenvalues.dat"
-        files.bandStructureFileName = "bandstructure.dat"
+		################################################################################
+		#                                                                              #
+		# build ∇ and Δ matrix - caution ∇ matrix later modified according to k-points #
+		#                                                                              #
+		################################################################################
 
-        isfile(files.eigenvalueFileName) && rm(files.eigenvalueFileName) #rm eigenvalue file if it exists TODO: think of a way to restart calculation for different k
+		buildΔ(system, potential)
+		build∇(system, potential)
 
-        fileInfo(files, potential, system)
+		##########################################
+		#                                        #
+		# print sparsity information to log file # TODO: modify this comment box
+		#                                        #
+		##########################################
 
-        systemInfo(files, potential, system)
+		files.eigenvalueFileName = "eigenvalues.dat"
+		files.bandStructureFileName = "bandstructure.dat"
 
-        sparseInfo(files, system)
+		isfile(files.eigenvalueFileName) &&
+			rm(files.eigenvalueFileName) #rm eigenvalue file if it exists TODO: think of a way to restart calculation for different k
 
-        ########################################################################################
-        #                                                                                      #
-        # loop over all k-points (for non reciprocal system only one single point calculation) #
-        #                                                                                      #
-        ########################################################################################
+		fileInfo(files, potential, system)
 
-        @timeit files.to "loop" begin
-            for (i, k) in enumerate(potential.kpoints)
+		systemInfo(files, potential, system)
 
-                #########################################
-                #                                       #
-                # shift potential to pot_min equals 0.0 #
-                #                                       #
-                #########################################
+		sparseInfo(files, system)
 
-                potential.potential = potential.potential .- potential.shift
+		########################################################################################
+		#                                                                                      #
+		# loop over all k-points (for non reciprocal system only one single point calculation) #
+		#                                                                                      #
+		########################################################################################
 
-                ##############################
-                #                            #
-                # solve Schrödinger equation #
-                #                            #
-                ##############################
+		@timeit files.to "loop" begin
+			for (i, k) in enumerate(potential.kpoints)
 
-                @timeit files.to "solve" solve(potential, system, output, k, files)
+				#########################################
+				#                                       #
+				# shift potential to pot_min equals 0.0 #
+				#                                       #
+				#########################################
 
-                ####################################
-                #                                  #
-                # calculate k from mass weighted k #
-                #                                  #
-                ####################################
+				potential.potential =
+					potential.potential .- potential.shift
 
-                k = k .* sqrt.(potential.mass)
+				##############################
+				#                            #
+				# solve Schrödinger equation #
+				#                            #
+				##############################
 
-                #############################################################
-                #                                                           #
-                # setup all file names depending on the momentanous k-point #
-                #                                                           #
-                #############################################################
+				@timeit files.to "solve" solve(
+					potential,
+					system,
+					output,
+					k,
+					files,
+				)
 
-                k_string = join(ustrip.(uconvert.(potential.coordsUnit^(-1), k ./ potential.internalElemCoords)), "_")
+				####################################
+				#                                  #
+				# calculate k from mass weighted k #
+				#                                  #
+				####################################
 
-                if system.reciprocal
-                    files.eigenvectorFileName             = "eigenvectors_k_$(k_string).dat"
-                    files.eigenvectorShiftedFileName      = "eigenvectors_shifted_k_$(k_string).dat"
-                    files.imag_eigenvectorFileName        = "imag_eigenvectors_k_$(k_string).dat"
-                    files.imag_eigenvectorShiftedFileName = "imag_eigenvectors_shifted_k_$(k_string).dat"
-                    files.frequencyFileName               = "frequencies_k_$(k_string).dat"
-                else
-                    files.eigenvectorFileName             = "eigenvectors.dat"
-                    files.eigenvectorShiftedFileName      = "eigenvectors_shifted.dat"
-                    files.frequencyFileName               = "frequencies.dat"
-                end
+				k = k .* sqrt.(potential.mass)
 
-                ########################################
-                #                                      #
-                # shift potential back to input values #
-                #                                      #
-                ########################################
+				#############################################################
+				#                                                           #
+				# setup all file names depending on the momentanous k-point #
+				#                                                           #
+				#############################################################
 
-                potential.potential = potential.potential .+ potential.shift
+				k_string = join(
+					ustrip.(
+						uconvert.(
+							potential.coordsUnit^(-1),
+							k ./ potential.internalElemCoords,
+						)
+					),
+					"_",
+				)
 
-                #######################################
-                #                                     #
-                # convert k-values back to input unit #
-                #                                     #
-                #######################################
+				if system.reciprocal
+					files.eigenvectorFileName             = "eigenvectors_k_$(k_string).dat"
+					files.eigenvectorShiftedFileName      = "eigenvectors_shifted_k_$(k_string).dat"
+					files.imag_eigenvectorFileName        = "imag_eigenvectors_k_$(k_string).dat"
+					files.imag_eigenvectorShiftedFileName = "imag_eigenvectors_shifted_k_$(k_string).dat"
+					files.frequencyFileName               = "frequencies_k_$(k_string).dat"
+				else
+					files.eigenvectorFileName        = "eigenvectors.dat"
+					files.eigenvectorShiftedFileName = "eigenvectors_shifted.dat"
+					files.frequencyFileName          = "frequencies.dat"
+				end
 
-                k = ustrip.(uconvert.(potential.coordsUnit^(-1), k ./ potential.internalElemCoords))
+				########################################
+				#                                      #
+				# shift potential back to input values #
+				#                                      #
+				########################################
 
-                ############################################################
-                #                                                          #
-                # print eigenvalues, eigenvectors and frequencies to files #
-                #                                                          #
-                ############################################################
+				potential.potential =
+					potential.potential .+ potential.shift
 
-                printEigenvalues(potential, output, files, k)
-                printEigenvectors(potential, system, output, files, k)
-                printFrequencies(potential, system, output, files, k)
+				#######################################
+				#                                     #
+				# convert k-values back to input unit #
+				#                                     #
+				#######################################
 
-                println(i, "/", length(potential.kpoints), " Done")
-            end
-        end
+				k =
+					ustrip.(
+						uconvert.(
+							potential.coordsUnit^(-1),
+							k ./ potential.internalElemCoords,
+						)
+					)
 
-        ################################################################
-        #                                                              #
-        # if bandstructure is requested than write band structure file #
-        #                                                              #
-        ################################################################
+				############################################################
+				#                                                          #
+				# print eigenvalues, eigenvectors and frequencies to files #
+				#                                                          #
+				############################################################
 
-        potential.bandStructure && printBandStructure(potential, files, potential.kpoints)
+				printEigenvalues(potential, output, files, k)
+				printEigenvectors(
+					potential,
+					system,
+					output,
+					files,
+					k,
+				)
+				printFrequencies(
+					potential,
+					system,
+					output,
+					files,
+					k,
+				)
 
-    end
+				println(
+					i,
+					"/",
+					length(potential.kpoints),
+					" Done",
+				)
+			end
+		end
 
-    ################################
-    #                              #
-    # print timings of calculation #
-    #                              #
-    ################################
+		################################################################
+		#                                                              #
+		# if bandstructure is requested than write band structure file #
+		#                                                              #
+		################################################################
 
-    files.timingsFile = open(files.timingsFileName, "w")
-    show(files.to)
-    println()
-    show(files.timingsFile, files.to)
+		potential.bandStructure && printBandStructure(
+			potential,
+			files,
+			potential.kpoints,
+		)
 
-    ############
-    #          #
-    # clean up #
-    #          #
-    ############
+	end
 
-    close(files.timingsFile)
-    close(files.logFile)
+	################################
+	#                              #
+	# print timings of calculation #
+	#                              #
+	################################
+
+	files.timingsFile = open(files.timingsFileName, "w")
+	show(files.to)
+	println()
+	show(files.timingsFile, files.to)
+
+	############
+	#          #
+	# clean up #
+	#          #
+	############
+
+	close(files.timingsFile)
+	close(files.logFile)
 
 end
