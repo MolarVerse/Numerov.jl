@@ -1,5 +1,6 @@
 using Numerov
 using Test
+using Aqua
 using DelimitedFiles
 using Suppressor
 using Statistics
@@ -12,6 +13,12 @@ base_path = @__DIR__
 include("testsets.jl")
 include("unittests.jl")
 
-testsets()
+@testset "Numerov.jl" begin
+    @testset "Aqua" begin
+        Aqua.test_all(Numerov)
+    end
 
-unittests()
+    testsets()
+
+    unittests()
+end
