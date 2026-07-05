@@ -3,5 +3,5 @@ stencil = 9
 mass-unit = me
 coord-unit = bohr
 n-eigenvalues = 5
-datapoints = 51 51 51
+datapoints = 81 81
 potential-unit = hartree

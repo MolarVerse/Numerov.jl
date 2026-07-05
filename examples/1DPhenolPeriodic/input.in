@@ -1,0 +1,8 @@
+potential-file = potential.dat
+stencil = 9
+reduced-mass = 0.98867959301
+mass-unit = g/mol
+coord-unit = angstrom
+n-eigenvalues = 8
+potential-unit = kcal/mol
+periodic = true

@@ -1,9 +1,13 @@
-testsets/**/*eigen*.dat
-testsets/**/frequencies*.dat
-testsets/**/bandstructure.dat
-testsets/convergence/
-paper/
-testsets/**/timings.out
-
 Manifest.toml
-hgg/
+
+# Solver outputs written into a case directory during local runs
+test/testsets/**/Numerov.out
+test/testsets/**/timings.out
+test/testsets/**/*eigen*.dat
+test/testsets/**/frequencies*.dat
+test/testsets/**/bandstructure.dat
+examples/**/Numerov.out
+examples/**/timings.out
+examples/**/*eigen*.dat
+examples/**/frequencies*.dat
+examples/**/bandstructure.dat

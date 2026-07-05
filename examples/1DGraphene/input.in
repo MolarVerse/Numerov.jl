@@ -1,0 +1,6 @@
+potential-file = potential_shifted_kjmol.dat
+stencil = 9
+mass-unit = unit
+coord-unit = angstrom
+potential-unit = kj/mol
+n-eigenvalues = 10
