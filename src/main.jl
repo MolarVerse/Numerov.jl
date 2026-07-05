@@ -13,9 +13,9 @@ eigenvalues are written.
 
 # Args
 
-	- `inputFileName`: The name of the input file.
+- `inputFileName`: The name of the input file.
 """
-@main function numerov(inputFileName::String)
+Comonicon.@main function numerov(inputFileName::String)
 
 
 	#########################################################################
