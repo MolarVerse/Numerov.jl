@@ -10,7 +10,10 @@ import PhysicalConstants.CODATA2018: h, ħ, N_A, c_0
 @unit me        "m_e"     electronMass   5.48579909065e-4*u"u" true
 
 function __init__()
-    Unitful.register(MyUnits)
+    # Guard against double registration: this is called explicitly at include
+    # time (so that u"..." macros in later source files can resolve these units
+    # during precompilation) and again automatically when the module is loaded.
+    MyUnits in Unitful.unitmodules || Unitful.register(MyUnits)
 end
 
 end

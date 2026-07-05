@@ -110,9 +110,13 @@ function get_1d_stencil(system::System)
 
     elseif system.stencil∇ == 13
 
-        system.reciprocal && (@error "13-point stencil is not yet implemented for reciprocal calculation!"; exit())
+        throw(ArgumentError("13-point stencil is not supported for the ∇ operator - use 3, 5, 7, 9 or 11!"))
 
-    end   
+    else
+
+        error("unsupported ∇ stencil size $(system.stencil∇) - use 3, 5, 7, 9 or 11!")
+
+    end
     
     return stencil_1d
 end

@@ -14,7 +14,7 @@ function readInputFile(inputFileName::String)
     
     filter!(x -> !isempty(strip(x)), lines) # removing all blank lines from input
 
-    lineElements = split.(lowercase.(lines))
+    lineElements = split.(lines) # values are kept verbatim - only the keyword is lowercased below
 
     ##############################################################################
     #                                                                            #
@@ -25,20 +25,22 @@ function readInputFile(inputFileName::String)
     for line in lineElements
 
         keyFound = false
-        
-        length(line) < 3   && (@error "There are to few entries in line $(line)"; exit())
-        line[2]     != "=" && (@error "Parsing error in inputfile -- second entry in a line has to be a \"=\"" ; exit())
+
+        length(line) < 3   && throw(ArgumentError("There are too few entries in line $(line)"))
+        line[2]     != "=" && throw(ArgumentError("Parsing error in inputfile -- second entry in a line has to be a \"=\""))
+
+        keyword = lowercase(line[1])
 
         for (key, _) in inputDictionary
-            if key == line[1] && keyFound == false
+            if key == keyword && keyFound == false
                 inputDictionary[key] = join(line[3:end], " ")
                 keyFound = true
-            elseif key == line[1]
-                @error "You have defined the keyword $(line[1]) multiple times" ; exit()
+            elseif key == keyword
+                throw(ArgumentError("You have defined the keyword $(keyword) multiple times"))
             end
         end
 
-        keyFound == false && (@error "Keyword $(line[1]) not defined!" ; exit())
+        keyFound == false && throw(ArgumentError("Keyword $(line[1]) not defined!"))
 
     end
 

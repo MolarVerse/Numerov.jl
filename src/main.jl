@@ -1,5 +1,20 @@
+"""
+    numerov(inputFileName::String)
+
+Run a full Numerov calculation: reads the Numerov input file, solves the 1D, 2D or 3D
+time-independent Schrödinger equation on the grid potential defined therein and writes
+the resulting eigenvalues, eigenvectors and frequencies - and, if requested, the band
+structure - to `.dat` files together with a log file (default: `Numerov.out`).
+
+# Arguments
+- `inputFileName::String`: path to the Numerov input file.
+
+!!! note
+    All output files are written to the current working directory. An existing
+    `eigenvalues.dat` file is deleted before the new eigenvalues are written.
+"""
 function numerov(inputFileName::String)
-    
+
 
     #########################################################################
     #                                                                       #
@@ -72,11 +87,11 @@ function numerov(inputFileName::String)
         buildΔ(system, potential)
         build∇(system, potential)
 
-        ##########################################
-        #                                        #
-        # print sparsity information to log file # TODO: modify this comment box
-        #                                        #
-        ##########################################
+        ###########################################################
+        #                                                         #
+        # print file, system and sparsity information to log file #
+        #                                                         #
+        ###########################################################
 
         files.eigenvalueFileName = "eigenvalues.dat"
         files.bandStructureFileName = "bandstructure.dat"

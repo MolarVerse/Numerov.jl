@@ -105,7 +105,7 @@ function get_kpoints_3D_noncube_xysym(k_intervalls::Vector{Float64}, n_kpoints::
 
     S_R = calc_S_R(k_intervalls, n_kpoints-1)
     
-    return rle(vcat(Γ_X, X_S, S_Γ, Γ_Z, Z_T, T_R, Z_R, T_R, Z_R, X_T, S_R))[1]
+    return rle(vcat(Γ_X, X_S, S_Γ, Γ_Z, Z_T, T_R, Z_R, X_T, S_R))[1]
 end
 
 function get_kpoints_3D_noncube_xzsym(k_intervalls::Vector{Float64}, n_kpoints::Int64)
@@ -128,7 +128,7 @@ function get_kpoints_3D_noncube_xzsym(k_intervalls::Vector{Float64}, n_kpoints::
 
     T_R = calc_T_R(k_intervalls, n_kpoints-1)
     
-    return rle(vcat(Γ_X, X_T, T_Γ, Γ_Y, Y_S, S_R, Y_R, T_R, Z_R, X_S, S_R, T_R))[1]
+    return rle(vcat(Γ_X, X_T, T_Γ, Γ_Y, Y_S, S_R, Y_R, X_S, T_R))[1]
 end
 
 function get_kpoints_3D_noncube_yzsym(k_intervalls::Vector{Float64}, n_kpoints::Int64)
@@ -141,7 +141,7 @@ function get_kpoints_3D_noncube_yzsym(k_intervalls::Vector{Float64}, n_kpoints::
 
     Γ_X = calc_Γ_X(k_intervalls, n_kpoints-1)
 
-    Z_S = calc_X_S(k_intervalls, n_kpoints-1)
+    X_S = calc_X_S(k_intervalls, n_kpoints-1)
 
     S_R = calc_S_R(k_intervalls, n_kpoints-1)
 
@@ -209,7 +209,7 @@ end
 
 calc_Γ_Z(k, n) = [(   0.0,    0.0, i*k[3]) for i in 0:n]
 
-calc_Γ_Y(k, n) = [(   0.0, i*k[3],    0.0) for i in 0:n]
+calc_Γ_Y(k, n) = [(   0.0, i*k[2],    0.0) for i in 0:n]
 
 calc_Z_U(k, n) = [(   0.0, i*k[2], n*k[3]) for i in 0:n]
 
@@ -223,9 +223,9 @@ calc_Γ_R(k, n) = [(i*k[1], i*k[2], i*k[3]) for i in 0:n]
 
 calc_Y_S(k, n) = [(i*k[1], n*k[2],    0.0) for i in 0:n]
 
-calc_Y_R(k, n) = [(i*k[1], n*k[2], i*k[2]) for i in 0:n]
+calc_Y_R(k, n) = [(i*k[1], n*k[2], i*k[3]) for i in 0:n]
 
-calc_U_R(k, n) = [(i*k[1], n*k[2], n*k[2]) for i in 0:n]
+calc_U_R(k, n) = [(i*k[1], n*k[2], n*k[3]) for i in 0:n]
 
 calc_X_T(k, n) = [(n*k[1],    0.0, i*k[3]) for i in 0:n]
 
