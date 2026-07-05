@@ -8,6 +8,7 @@ include("unittests/test_2Dnabla.jl")
 include("unittests/test_k_paths.jl")
 
 include("unittests/test_internalUnits.jl")
+include("unittests/test_inputValidation.jl")
 
 function unittests()
     @testset "test 1D laplace operator" test_1DΔ()
@@ -33,6 +34,8 @@ function unittests()
     @testset "test 3D k-path sym consistency" test_get_kpoints_3D_sym_consistency(n_kpoints)
 
     @testset "test internal units" test_internalUnits()
+
+    @testset "test input validation" test_inputValidation()
 end
 
 # function test_convert_to_internalUnits()

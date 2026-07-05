@@ -15,6 +15,8 @@ include("testsets/test_2DWater.jl")
 include("testsets/test_2DKronigPenney.jl")
 include("testsets/test_3DHarmonicOscillator.jl")
 include("testsets/test_3DKronigPenney.jl")
+include("testsets/test_3Dsmoke.jl")
+include("testsets/test_solverVariants.jl")
 
 """
     run_testcase(f, case)
@@ -41,6 +43,8 @@ function testsets()
     @testset "2D Harmonic Oscillator" test_2DHarmonicOscillator()
     @testset "2D Water" test_2DWater()
     @testset "2D Kronig Penney" test_2DKronigPenney()
+    @testset "3D smoke (analytic harmonic oscillator)" test_3Dsmoke()
+    @testset "Solver variants" test_solverVariants()
 
     if get(ENV, "NUMEROV_TEST_FULL", "") == "true"
         @testset "3D Harmonic Oscillator" test_3DHarmonicOscillator()
