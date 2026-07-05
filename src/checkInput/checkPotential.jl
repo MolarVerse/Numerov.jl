@@ -45,7 +45,7 @@ function checkMassUnits(potential::Potential)
     isempty(massUnit)   && (potential.massUnit = u"u" ; return) #write to log file about default setting
     massUnit == "unit"  && (potential.massUnit = u"u" ; return)
     massUnit == "g/mol" && (potential.massUnit = u"u" ; return)
-    massUnit == "me"    && (potential.massUnit = u"me"; return)
+    massUnit == "me"    && (potential.massUnit = u"m_e"; return)
 
     throw(ArgumentError("\nThe given mass-unit $(inputDictionary["mass-unit"]) was not recognised!\n" *
                         "Valid options are:                                                       \n" *

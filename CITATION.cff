@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Numerov.jl"
+type: software
+authors:
+  - family-names: Gamper
+    given-names: Jakob
+repository-code: "https://github.com/MolarVerse/Numerov.jl"
+license: MIT

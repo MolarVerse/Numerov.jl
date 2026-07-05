@@ -194,7 +194,7 @@ end
 function set_internalUnits(potential::Potential)
     potential.internalElemEnergy = u"hartree"
     potential.internalElemCoords = u"bohr"
-    potential.internalElemMass   = u"me"
+    potential.internalElemMass   = u"m_e"
 end
 
 function convert_to_internalUnits(potential::Potential)

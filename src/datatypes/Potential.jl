@@ -32,7 +32,7 @@ mutable struct Potential
                       false, false, false,                # reciprocal, bandStructure, read_kpoints
                       [false],                            # periodic
                       u"hartree", u"angstrom", u"u",      # potentialUnit, coordsUnit, massUnit
-                      u"hartree", u"bohr", u"me",         # internalElemEnergy, internalElemCoords, internalElemMass
+                      u"hartree", u"bohr", u"m_e",         # internalElemEnergy, internalElemCoords, internalElemMass
                       -1, 0,                              # n_kpoints, dimension
                       0.0,                                # shift
                       Vector{Int64}(),                    # n_datapoints
