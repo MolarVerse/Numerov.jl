@@ -74,8 +74,8 @@ The only required keyword is `potential-file`. All others have defaults:
 | `potential-unit` | Energy unit of the potential values | `hartree`, `ev`, `kj/mol`, `kcal/mol` | `hartree` |
 | `coord-unit` | Length unit of the grid coordinates | `angstrom`, `nm`, `bohr` | `angstrom` |
 | `mass-unit` | Unit of the reduced masses (`unit` and `g/mol` both mean the atomic mass unit, `me`/`m_e` is the electron mass) | `unit`, `g/mol`, `me`, `m_e` | `unit` |
-| `stencil` | Number of finite-difference stencil points | `3`, `5`, `7`, `9`, `11`, `13` | `9` |
-| `stencil-laplace` | Stencil size for the Laplacian only (overrides `stencil`) | `3`, `5`, `7`, `9`, `11`, `13` | value of `stencil` |
+| `stencil` | Number of finite-difference stencil points [^1] | `3`, `5`, `7`, `9`, `11`, `13` | `9` |
+| `stencil-laplace` | Stencil size for the Laplacian only (overrides `stencil`) [^1] | `3`, `5`, `7`, `9`, `11`, `13` | value of `stencil` |
 | `stencil-nabla` | Stencil size for the gradient only (overrides `stencil`; the gradient matrix is used for periodic/k-point runs) | `3`, `5`, `7`, `9`, `11` | value of `stencil` |
 | `reduced-mass` | Reduced mass per dimension, comma- or space-separated; a single value is applied to all dimensions | real numbers | `1.0` |
 | `periodic` | Periodic boundary conditions per dimension, comma- or space-separated; a single value is applied to all dimensions | `true`, `false` | `false` |
@@ -88,6 +88,11 @@ The only required keyword is `potential-file`. All others have defaults:
 | `timings-file` | Name of the timings file | file path | `timings.out` |
 | `read-k-points` | Read the k-points from a file instead of generating them. **Accepted but not yet implemented** | `true`, `false` | `false` |
 | `k-points-file` | k-point file for `read-k-points`. **Accepted but not yet implemented** -- the file is ignored with a warning | file path | not set |
+
+[^1]: Not every stencil size is implemented for every dimensionality: the
+    13-point Laplacian is not available in 2D or 3D, and the 3-point Laplacian
+    is not available in 3D. Unsupported combinations throw an `ArgumentError`
+    when the operator matrix is built.
 
 An annotated example (based on `examples/1DKronigPenney/input.in`):
 

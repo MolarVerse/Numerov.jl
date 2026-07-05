@@ -22,25 +22,20 @@ function readInputFile(inputFileName::String)
     #                                                                            #
     ##############################################################################
 
-    for line in lineElements
+    seenKeywords = Set{String}()
 
-        keyFound = false
+    for line in lineElements
 
         length(line) < 3   && throw(ArgumentError("There are too few entries in line $(line)"))
         line[2]     != "=" && throw(ArgumentError("Parsing error in inputfile -- second entry in a line has to be a \"=\""))
 
         keyword = lowercase(line[1])
 
-        for (key, _) in inputDictionary
-            if key == keyword && keyFound == false
-                inputDictionary[key] = join(line[3:end], " ")
-                keyFound = true
-            elseif key == keyword
-                throw(ArgumentError("You have defined the keyword $(keyword) multiple times"))
-            end
-        end
+        haskey(inputDictionary, keyword) || throw(ArgumentError("Keyword $(line[1]) not defined!"))
+        keyword in seenKeywords          && throw(ArgumentError("You have defined the keyword $(keyword) multiple times"))
 
-        keyFound == false && throw(ArgumentError("Keyword $(line[1]) not defined!"))
+        inputDictionary[keyword] = join(line[3:end], " ")
+        push!(seenKeywords, keyword)
 
     end
 
