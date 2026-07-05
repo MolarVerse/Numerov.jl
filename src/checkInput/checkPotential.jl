@@ -46,12 +46,13 @@ function checkMassUnits(potential::Potential)
     massUnit == "unit"  && (potential.massUnit = u"u" ; return)
     massUnit == "g/mol" && (potential.massUnit = u"u" ; return)
     massUnit == "me"    && (potential.massUnit = u"m_e"; return)
+    massUnit == "m_e"   && (potential.massUnit = u"m_e"; return)
 
     throw(ArgumentError("\nThe given mass-unit $(inputDictionary["mass-unit"]) was not recognised!\n" *
                         "Valid options are:                                                       \n" *
                         "    - unit                                                               \n" *
                         "    - g/mol                                                              \n" *
-                        "    - me            #stands for electron mass                            \n"))
+                        "    - me (or m_e)   #stands for electron mass                            \n"))
 end
 
 function checkMass(potential::Potential)

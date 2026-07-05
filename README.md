@@ -73,7 +73,7 @@ The only required keyword is `potential-file`. All others have defaults:
 | `potential-file` | Path to the grid-potential file | file path | **required** |
 | `potential-unit` | Energy unit of the potential values | `hartree`, `ev`, `kj/mol`, `kcal/mol` | `hartree` |
 | `coord-unit` | Length unit of the grid coordinates | `angstrom`, `nm`, `bohr` | `angstrom` |
-| `mass-unit` | Unit of the reduced masses (`unit` and `g/mol` both mean the atomic mass unit, `me` is the electron mass) | `unit`, `g/mol`, `me` | `unit` |
+| `mass-unit` | Unit of the reduced masses (`unit` and `g/mol` both mean the atomic mass unit, `me`/`m_e` is the electron mass) | `unit`, `g/mol`, `me`, `m_e` | `unit` |
 | `stencil` | Number of finite-difference stencil points | `3`, `5`, `7`, `9`, `11`, `13` | `9` |
 | `stencil-laplace` | Stencil size for the Laplacian only (overrides `stencil`) | `3`, `5`, `7`, `9`, `11`, `13` | value of `stencil` |
 | `stencil-nabla` | Stencil size for the gradient only (overrides `stencil`; the gradient matrix is used for periodic/k-point runs) | `3`, `5`, `7`, `9`, `11` | value of `stencil` |
