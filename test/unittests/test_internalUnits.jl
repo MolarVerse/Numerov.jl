@@ -5,5 +5,5 @@ function test_internalUnits()
  
     @test potential.internalElemEnergy == u"hartree"
     @test potential.internalElemCoords == u"bohr"
-    @test potential.internalElemMass   == u"me"
+    @test potential.internalElemMass   == u"m_e"
  end

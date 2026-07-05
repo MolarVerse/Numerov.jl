@@ -19,8 +19,7 @@ function buildΔ_3D(system::System)
 
 	if system.stencilΔ == 3
 
-		@error "3-point stencil is not yet implemented for 3d calculations!"
-		exit()
+		throw(ArgumentError("3-point stencil is not yet implemented for 3d calculations!"))
 
 	elseif system.stencilΔ == 5
 
@@ -772,8 +771,7 @@ function buildΔ_3D(system::System)
 
 	elseif system.stencilΔ == 13
 
-		@error "13-point stencil is not yet implemented for 3d calculations!"
-		exit()
+		throw(ArgumentError("13-point stencil is not yet implemented for 3d calculations!"))
 
 	end
 

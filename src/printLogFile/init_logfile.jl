@@ -1,6 +1,6 @@
 function init_logfile(files::Files)
 
-    user     = ENV["USER"]
+    user     = get(ENV, "USER", get(ENV, "USERNAME", "unknown"))
     hostname = gethostname()
     nthreads = Sys.CPU_THREADS
     ram      = Sys.total_memory() / 10.0^9

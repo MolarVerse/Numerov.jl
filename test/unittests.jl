@@ -25,6 +25,13 @@ function unittests()
     @testset "test R_X" test_calc_R_X(k_intervalls, n_kpoints)
     @testset "test M_R" test_calc_M_R(k_intervalls, n_kpoints)
 
+    @testset "test 3D k-path cube"            test_get_kpoints_3D_cube([1.0, 1.0, 1.0], n_kpoints)
+    @testset "test 3D k-path noncube xysym"   test_get_kpoints_3D_noncube_xysym([1.0, 1.0, 2.0], n_kpoints)
+    @testset "test 3D k-path noncube xzsym"   test_get_kpoints_3D_noncube_xzsym([1.0, 2.0, 1.0], n_kpoints)
+    @testset "test 3D k-path noncube yzsym"   test_get_kpoints_3D_noncube_yzsym([2.0, 1.0, 1.0], n_kpoints)
+    @testset "test 3D k-path noncube"         test_get_kpoints_3D_noncube([1.0, 2.0, 3.0], n_kpoints)
+    @testset "test 3D k-path sym consistency" test_get_kpoints_3D_sym_consistency(n_kpoints)
+
     @testset "test internal units" test_internalUnits()
 end
 

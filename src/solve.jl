@@ -60,23 +60,12 @@ function solveWrapper(system::System, output::Output, files::Files, Hamiltonian)
 
     elseif system.solver == KRYLOV
 
-        #check convergence of all eigenvalues with info
         @timeit files.to "Krylov" eigenvalues, eigenvectors, info = eigsolve(sparse(Hamiltonian), output.n_eigenvalues + 5, :SR; ishermitian=true, maxiter=10000)
-        @show(info)
         eigenvectors = mapreduce(permutedims, vcat, eigenvectors)'
 
     elseif system.solver == GPU
 
-        @error "CUDA sparse solver not working yet!"
-        exit()
-
-        # @timeit files.to "diagonalize CUDA" begin
-        #     # CUDA.device!(1)
-        #     T = ComplexF32
-        #     Hamiltonian = SparseMatrixCSC{ComplexF32, Int32}(Hamiltonian)
-        #     Hamiltonian = CUSPARSE.CuSparseMatrixCSR(Hamiltonian)
-        #     CUSOLVER.csreigvsi(Hamiltonian, rand(T), CUDA.rand(T, prod(potential.n_datapoints)), Float32(1e-6), Cint(1000), 'O')
-        # end
+        throw(ArgumentError("cuda solver is not implemented"))
 
     else
 

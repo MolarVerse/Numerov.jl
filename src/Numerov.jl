@@ -12,11 +12,10 @@ module Numerov
     using TimerOutputs
     using KrylovKit
     using StatsBase
-    #using CUDA
-    #using CUDA:CUSPARSE
-    #using NumericalIntegration
 
     import PhysicalConstants.CODATA2018: h, ħ, N_A, c_0
+
+    export numerov
 
     include("MyUnits.jl")
     using .MyUnits

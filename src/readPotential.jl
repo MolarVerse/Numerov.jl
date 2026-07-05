@@ -42,7 +42,7 @@ function readPotential(potential::Potential, files::Files)
 
     for line in lineElements
 
-        length(line)-1 != potential.dimension && (@error "Potential has inconsistent dimensionality"; exit())
+        length(line)-1 != potential.dimension && throw(ArgumentError("Potential has inconsistent dimensionality"))
 
         for i in 1:length(line)-1
             push!(potential.coords[i], parse(Float64, line[i]))
@@ -62,7 +62,7 @@ function readPotential(potential::Potential, files::Files)
 
     length(potential.periodic) == 1 && (potential.periodic = repeat(potential.periodic, potential.dimension))
 
-    length(potential.periodic) != potential.dimension && (@error "periodic is not correctly defined regarding the potential dimension!"; exit())
+    length(potential.periodic) != potential.dimension && throw(ArgumentError("periodic is not correctly defined regarding the potential dimension!"))
 
     ##########################################################################################
     #                                                                                        #
@@ -74,7 +74,7 @@ function readPotential(potential::Potential, files::Files)
 
     length(potential.mass) == 1 && (potential.mass = repeat(potential.mass, potential.dimension))
 
-    length(potential.mass) != potential.dimension && (@error "reduced-mass is not correctly defined regarding the potential dimension!"; exit())
+    length(potential.mass) != potential.dimension && throw(ArgumentError("reduced-mass is not correctly defined regarding the potential dimension!"))
 
     #######################################################################
     #                                                                     #
@@ -102,11 +102,15 @@ function readPotential(potential::Potential, files::Files)
     potential.intervall = zeros(potential.dimension)
     [potential.intervall[i] = (uniquecoords[i][2] - uniquecoords[i][1]) * sqrt(potential.mass[i]) for i in 1:potential.dimension]
 
-    #############TODO:###############
+    ##################################################################
+    #                                                                #
+    # reading k-points from a file is not yet implemented            # TODO: write reading logic and integrate it
+    #                                                                #
+    ##################################################################
 
-    if files.k_pointsFileName != "" && !potential.read_kpoints
-        @warn "You have defined a k-points file but not set read kpoints to true"
-    end #TODO: write reading logic and integrate it
+    if files.k_pointsFileName != ""
+        @warn "Reading k-points from a file (keywords \"read-k-points\"/\"k-points-file\") is not yet implemented -- the file \"$(files.k_pointsFileName)\" is ignored"
+    end
 
     ########################################
     #                                      #
@@ -171,8 +175,7 @@ function readPotential(potential::Potential, files::Files)
 
     if isempty(potential.n_datapoints)
         if potential.dimension > 1
-            @error "If the dimension is higher than one the number of datapoints per dimension has to be given explicitly in the input file e.g. datapoints = 20, 30"
-            exit()
+            throw(ArgumentError("If the dimension is higher than one the number of datapoints per dimension has to be given explicitly in the input file e.g. datapoints = 20, 30"))
         else
             potential.n_datapoints = [length(potential.potential)]
         end
@@ -191,7 +194,7 @@ end
 function set_internalUnits(potential::Potential)
     potential.internalElemEnergy = u"hartree"
     potential.internalElemCoords = u"bohr"
-    potential.internalElemMass   = u"me"
+    potential.internalElemMass   = u"m_e"
 end
 
 function convert_to_internalUnits(potential::Potential)

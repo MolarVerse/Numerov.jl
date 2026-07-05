@@ -185,8 +185,7 @@ function buildΔ_2D(system::System)
 
 	elseif system.stencilΔ == 13
 
-		@error "13-point stencil is not yet implemented for 2d calculations!"
-		exit()
+		throw(ArgumentError("13-point stencil is not yet implemented for 2d calculations!"))
 
 	end
 

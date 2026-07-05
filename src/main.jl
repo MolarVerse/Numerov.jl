@@ -1,11 +1,15 @@
 """
-numerov - CLI for solving the Schrödinger equation using the Numerov method.
+numerov - solve the Schrödinger equation using the Numerov method.
 
 # Description
 
-CLI for solving the Schrödinger equation using the Numerov method.
-
-# Usage
+Runs a full Numerov calculation: reads the input file, solves the 1D, 2D or 3D
+time-independent Schrödinger equation on the grid potential defined therein and
+writes the resulting eigenvalues, eigenvectors and frequencies - and, if
+requested, the band structure - to `.dat` files together with a log file
+(default: `Numerov.out`). All output files are written to the current working
+directory; an existing `eigenvalues.dat` file is deleted before the new
+eigenvalues are written.
 
 # Args
 

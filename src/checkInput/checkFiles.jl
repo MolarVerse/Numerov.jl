@@ -6,7 +6,7 @@ function checkInput(files::Files)
 end
 
 function checkPotentialFile(files::Files)
-    isempty(inputDictionary["potential-file"]) && (@error "No potential input file name given"; exit())
+    isempty(inputDictionary["potential-file"]) && throw(ArgumentError("No potential input file name given"))
     files.PotentialFileName = inputDictionary["potential-file"]
 end
 

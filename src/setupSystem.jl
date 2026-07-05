@@ -10,8 +10,8 @@ function setupSystem(potential::Potential, system::System)
     #                                                                                            #
     ##############################################################################################
 
-    system.reciprocal && !any(system.periodic) && (@error "You have defined a number of k-points - this option is only valid in combination with \"periodic = true\""; exit())
-    any(system.n_datapoints .< system.stencil) && (@error "The number of datapoints in each dimension has at least to be equal to the stencil size!"; exit())
+    system.reciprocal && !any(system.periodic) && throw(ArgumentError("You have defined a number of k-points - this option is only valid in combination with \"periodic = true\""))
+    any(system.n_datapoints .< system.stencil) && throw(ArgumentError("The number of datapoints in each dimension has at least to be equal to the stencil size!"))
 
     ###############################################################
     #                                                             #
