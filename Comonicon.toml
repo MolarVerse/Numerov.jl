@@ -1,4 +1,4 @@
-name = "vibrationalanalysis"
+name = "numerov"
 
 [install]
 completion = true

@@ -1,7 +1,7 @@
 """
 numerov - solve the Schrödinger equation using the Numerov method.
 
-# Description
+# Intro
 
 Runs a full Numerov calculation: reads the input file, solves the 1D, 2D or 3D
 time-independent Schrödinger equation on the grid potential defined therein and
