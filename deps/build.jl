@@ -1,2 +1,2 @@
 using Numerov
-Numerov.comonicon_install()
+Numerov.CLI.comonicon_install()

@@ -1,21 +1,20 @@
 """
-numerov - solve the Schrödinger equation using the Numerov method.
+    numerov(inputFileName::String)
 
-# Intro
+Run a full Numerov calculation: reads the Numerov input file, solves the 1D, 2D
+or 3D time-independent Schrödinger equation on the grid potential defined
+therein and writes the resulting eigenvalues, eigenvectors and frequencies -
+and, if requested, the band structure - to `.dat` files together with a log
+file (default: `Numerov.out`).
 
-Runs a full Numerov calculation: reads the input file, solves the 1D, 2D or 3D
-time-independent Schrödinger equation on the grid potential defined therein and
-writes the resulting eigenvalues, eigenvectors and frequencies - and, if
-requested, the band structure - to `.dat` files together with a log file
-(default: `Numerov.out`). All output files are written to the current working
-directory; an existing `eigenvalues.dat` file is deleted before the new
-eigenvalues are written.
+# Arguments
+- `inputFileName::String`: path to the Numerov input file.
 
-# Args
-
-- `inputFileName`: The name of the input file.
+!!! note
+    All output files are written to the current working directory. An existing
+    `eigenvalues.dat` file is deleted before the new eigenvalues are written.
 """
-Comonicon.@main function numerov(inputFileName::String)
+function numerov(inputFileName::String)
 
 
 	#########################################################################
@@ -267,3 +266,50 @@ Comonicon.@main function numerov(inputFileName::String)
 	close(files.logFile)
 
 end
+
+
+"""
+CLI entry point. Lives in a submodule so the command can be named `numerov`
+without clashing with the library function of the same name; user errors are
+printed as a single line instead of a stacktrace.
+"""
+module CLI
+
+using Comonicon
+import ..Numerov
+
+# Comonicon reads this for --version, since the submodule itself carries no
+# Project.toml version.
+const COMMAND_VERSION = pkgversion(Numerov)
+
+"""
+numerov - solve the Schrödinger equation using the Numerov method.
+
+# Intro
+
+Runs a full Numerov calculation: reads the input file, solves the 1D, 2D or 3D
+time-independent Schrödinger equation on the grid potential defined therein and
+writes the resulting eigenvalues, eigenvectors and frequencies - and, if
+requested, the band structure - to `.dat` files together with a log file
+(default: `Numerov.out`). All output files are written to the current working
+directory; an existing `eigenvalues.dat` file is deleted before the new
+eigenvalues are written.
+
+# Args
+
+- `inputFileName`: The name of the input file.
+"""
+Comonicon.@main function numerov(inputFileName::String)
+	try
+		Numerov.numerov(inputFileName)
+	catch e
+		if e isa ArgumentError || e isa SystemError
+			println(stderr, "error: ", sprint(showerror, e))
+			exit(1)
+		else
+			rethrow()
+		end
+	end
+end
+
+end # module CLI
