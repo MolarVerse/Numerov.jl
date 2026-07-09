@@ -73,6 +73,28 @@ A small launcher script is also provided:
 julia --project=<Numerov.jl dir> <Numerov.jl dir>/bin/numerov.jl input.in
 ```
 
+## Command-line interface
+
+Numerov.jl ships a [Comonicon](https://github.com/comonicon/Comonicon.jl)-based
+command-line interface. Install the `numerov` command once:
+
+```julia-repl
+julia> using Numerov
+julia> Numerov.CLI.comonicon_install()
+```
+
+This places a `numerov` executable in `~/.julia/bin` (add that directory to
+your `PATH`). Then:
+
+```sh
+numerov input.in      # run a calculation
+numerov --help        # usage and argument description
+numerov --version     # package version
+```
+
+Invalid input prints a single-line error message and exits with a nonzero
+status instead of a stacktrace.
+
 ## Input file
 
 The input file consists of `keyword = value` lines. `#` starts a comment and
