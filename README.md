@@ -1,5 +1,6 @@
 # Numerov.jl
 
+[![version](https://juliahub.com/docs/General/Numerov/stable/version.svg)](https://juliahub.com/ui/Packages/General/Numerov)
 [![CI](https://github.com/MolarVerse/Numerov.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/MolarVerse/Numerov.jl/actions/workflows/CI.yml)
 [![codecov](https://codecov.io/gh/MolarVerse/Numerov.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/MolarVerse/Numerov.jl)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -22,12 +23,11 @@ model from `examples/1DKronigPenney`.*
 
 ## Installation
 
-Requires Julia 1.10 or later. The package is not yet registered in the Julia
-General registry (registration is under way); until then, install it directly
-from GitHub:
+Requires Julia 1.10 or later. Numerov.jl is registered in the Julia General
+registry:
 
 ```julia-repl
-pkg> add https://github.com/MolarVerse/Numerov.jl
+pkg> add Numerov
 ```
 
 Installing this way is all you need to use the package. The ready-to-run
