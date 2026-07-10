@@ -1,9 +1,31 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+message: "If you use this software, please cite the article below."
 title: "Numerov.jl"
 type: software
 authors:
   - family-names: Gamper
     given-names: Jakob
+    orcid: "https://orcid.org/0000-0003-1136-2536"
 repository-code: "https://github.com/MolarVerse/Numerov.jl"
 license: MIT
+preferred-citation:
+  type: article
+  title: "Accessing Position Space Wave Functions in Band Structure Calculations of Periodic Systems — A Generalized, Adapted Numerov Implementation for One-, Two-, and Three-Dimensional Quantum Problems"
+  authors:
+    - family-names: Gamper
+      given-names: Jakob
+      orcid: "https://orcid.org/0000-0003-1136-2536"
+    - family-names: Kluibenschedl
+      given-names: Florian
+    - family-names: Weiss
+      given-names: Alexander K. H.
+    - family-names: Hofer
+      given-names: Thomas S.
+      orcid: "https://orcid.org/0000-0002-6559-1513"
+  journal: "The Journal of Physical Chemistry Letters"
+  year: 2023
+  volume: 14
+  issue: 33
+  start: 7395
+  end: 7403
+  doi: "10.1021/acs.jpclett.3c01707"

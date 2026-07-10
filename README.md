@@ -214,9 +214,17 @@ the environment variable `NUMEROV_TEST_FULL=true` to include them.
 
 ## Citing
 
-If you use Numerov.jl in your research, please cite this repository — citation
-metadata is provided in [`CITATION.cff`](CITATION.cff) (GitHub's "Cite this
-repository" button generates BibTeX from it).
+If you use Numerov.jl in your research, please cite:
+
+> J. Gamper, F. Kluibenschedl, A. K. H. Weiss, T. S. Hofer,
+> *Accessing Position Space Wave Functions in Band Structure Calculations of
+> Periodic Systems — A Generalized, Adapted Numerov Implementation for One-,
+> Two-, and Three-Dimensional Quantum Problems*,
+> J. Phys. Chem. Lett. **2023**, 14, 33, 7395–7403.
+> [doi:10.1021/acs.jpclett.3c01707](https://doi.org/10.1021/acs.jpclett.3c01707)
+
+Citation metadata is also provided in [`CITATION.cff`](CITATION.cff) (GitHub's
+"Cite this repository" button generates BibTeX from it).
 
 ## Contributing
 
