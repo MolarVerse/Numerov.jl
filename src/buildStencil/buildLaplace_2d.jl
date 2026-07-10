@@ -1,57 +1,203 @@
+"""
+	buildΔ_2D(system::System)
+
+Build the Laplace operator for a 2D system. The Laplace operator is built using a finite difference
+stencil of the order `system.stencilΔ`. The Laplace operator is stored in `system.Δ`. Stencil size
+options are 3, 5, 7, 9 and 11 points.
+
+# Arguments
+
+	- `system::System`: The system to build the Laplace operator for.
+
+# Returns
+
+	- `nothing`
+"""
 function buildΔ_2D(system::System)
 
-    stencil = spzeros(system.stencilΔ, system.stencilΔ)
+	stencil = spzeros(system.stencilΔ, system.stencilΔ)
 
-    if system.stencilΔ == 3
+	if system.stencilΔ == 3
 
-        stencil[:,1] = [1.0,  0.0, 1.0]
-        stencil[:,2] = [0.0, -4.0, 0.0]
+		stencil[:, 1] = [1.0, 0.0, 1.0]
+		stencil[:, 2] = [0.0, -4.0, 0.0]
 
-    elseif system.stencilΔ == 5
-        
-        stencil[:,1] = [ 0.0,  0.0,  -1.0,  0.0,  0.0]
-        stencil[:,2] = [ 0.0,  0.0,  16.0,  0.0,  0.0]
-        stencil[:,3] = [-1.0, 16.0, -60.0, 16.0, -1.0]
+	elseif system.stencilΔ == 5
 
-        stencil /= 6.0
+		stencil[:, 1] = [0.0, 0.0, -1.0, 0.0, 0.0]
+		stencil[:, 2] = [0.0, 0.0, 16.0, 0.0, 0.0]
+		stencil[:, 3] = [-1.0, 16.0, -60.0, 16.0, -1.0]
 
-    elseif system.stencilΔ == 7
-        
-        stencil[:,1] = [ 0.0,    0.0,    0.0,    16.0,    0.0,    0.0,  0.0]
-        stencil[:,2] = [ 0.0,   -5.0,   20.0,  -246.0,   20.0,   -5.0,  0.0]
-        stencil[:,3] = [ 0.0,   20.0,  -80.0,  2280.0,  -80.0,   20.0,  0.0]
-        stencil[:,4] = [16.0, -246.0, 2280.0, -8020.0, 2280.0, -246.0, 16.0]
+		stencil /= 6.0
 
-        stencil /= 720.0
+	elseif system.stencilΔ == 7
 
-    elseif system.stencilΔ == 9
-        
-        stencil[:,1] = [    0.0,     0.0,       0.0,       0.0,    -1620.0,       0.0,       0.0,     0.0,     0.0]
-        stencil[:,2] = [    0.0,   -56.0,     231.0,    -420.0,    23530.0,    -420.0,     231.0,   -56.0,     0.0]
-        stencil[:,3] = [    0.0,   231.0,    -756.0,     945.0,  -182280.0,     945.0,    -756.0,   231.0,     0.0]
-        stencil[:,4] = [    0.0,  -420.0,     945.0,       0.0,  1450470.0,       0.0,     945.0,  -420.0,     0.0]
-        stencil[:,5] = [-1620.0, 23530.0, -182280.0, 1450470.0, -5163200.0, 1450470.0, -182280.0, 23530.0, -1620.0]
+		stencil[:, 1] = [0.0, 0.0, 0.0, 16.0, 0.0, 0.0, 0.0]
+		stencil[:, 2] =
+			[0.0, -5.0, 20.0, -246.0, 20.0, -5.0, 0.0]
+		stencil[:, 3] =
+			[0.0, 20.0, -80.0, 2280.0, -80.0, 20.0, 0.0]
+		stencil[:, 4] = [
+			16.0,
+			-246.0,
+			2280.0,
+			-8020.0,
+			2280.0,
+			-246.0,
+			16.0,
+		]
 
-        stencil /= 453600.0
+		stencil /= 720.0
 
-    elseif system.stencilΔ == 11
-        
-        stencil[:, 1] = [    0.0,       0.0,       0.0,         0.0,        0.0,      16128.0,        0.0,         0.0,       0.0,       0.0,     0.0]
-        stencil[:, 2] = [    0.0,     -81.0,     466.0,     -1281.0,     2226.0,    -254660.0,     2226.0,     -1281.0,     466.0,     -81.0,     0.0]
-        stencil[:, 3] = [    0.0,     466.0,   -2468.0,      6328.0,   -10556.0,    2028460.0,   -10556.0,      6328.0,   -2468.0,     466.0,     0.0]
-        stencil[:, 4] = [    0.0,   -1281.0,    6328.0,    -15288.0,    24696.0,  -12124910.0,    24696.0,    -15288.0,    6328.0,   -1281.0,     0.0]
-        stencil[:, 5] = [    0.0,    2226.0,  -10556.0,     24696.0,   -39396.0,   84718060.0,   -39396.0,     24696.0,  -10556.0,    2226.0,     0.0]
-        stencil[:, 6] = [16128.0, -254660.0, 2028460.0, -12124910.0, 84718060.0, -297478412.0, 84718060.0, -12124910.0, 2028460.0, -254660.0, 16128.0]
+	elseif system.stencilΔ == 9
 
-        stencil /= 25401600.0
+		stencil[:, 1] =
+			[0.0, 0.0, 0.0, 0.0, -1620.0, 0.0, 0.0, 0.0, 0.0]
+		stencil[:, 2] = [
+			0.0,
+			-56.0,
+			231.0,
+			-420.0,
+			23530.0,
+			-420.0,
+			231.0,
+			-56.0,
+			0.0,
+		]
+		stencil[:, 3] = [
+			0.0,
+			231.0,
+			-756.0,
+			945.0,
+			-182280.0,
+			945.0,
+			-756.0,
+			231.0,
+			0.0,
+		]
+		stencil[:, 4] = [
+			0.0,
+			-420.0,
+			945.0,
+			0.0,
+			1450470.0,
+			0.0,
+			945.0,
+			-420.0,
+			0.0,
+		]
+		stencil[:, 5] = [
+			-1620.0,
+			23530.0,
+			-182280.0,
+			1450470.0,
+			-5163200.0,
+			1450470.0,
+			-182280.0,
+			23530.0,
+			-1620.0,
+		]
 
-    elseif system.stencilΔ == 13
+		stencil /= 453600.0
 
-        throw(ArgumentError("13-point stencil is not yet implemented for 2d calculations!"))
+	elseif system.stencilΔ == 11
 
-    end
+		stencil[:, 1] = [
+			0.0,
+			0.0,
+			0.0,
+			0.0,
+			0.0,
+			16128.0,
+			0.0,
+			0.0,
+			0.0,
+			0.0,
+			0.0,
+		]
+		stencil[:, 2] = [
+			0.0,
+			-81.0,
+			466.0,
+			-1281.0,
+			2226.0,
+			-254660.0,
+			2226.0,
+			-1281.0,
+			466.0,
+			-81.0,
+			0.0,
+		]
+		stencil[:, 3] = [
+			0.0,
+			466.0,
+			-2468.0,
+			6328.0,
+			-10556.0,
+			2028460.0,
+			-10556.0,
+			6328.0,
+			-2468.0,
+			466.0,
+			0.0,
+		]
+		stencil[:, 4] = [
+			0.0,
+			-1281.0,
+			6328.0,
+			-15288.0,
+			24696.0,
+			-12124910.0,
+			24696.0,
+			-15288.0,
+			6328.0,
+			-1281.0,
+			0.0,
+		]
+		stencil[:, 5] = [
+			0.0,
+			2226.0,
+			-10556.0,
+			24696.0,
+			-39396.0,
+			84718060.0,
+			-39396.0,
+			24696.0,
+			-10556.0,
+			2226.0,
+			0.0,
+		]
+		stencil[:, 6] = [
+			16128.0,
+			-254660.0,
+			2028460.0,
+			-12124910.0,
+			84718060.0,
+			-297478412.0,
+			84718060.0,
+			-12124910.0,
+			2028460.0,
+			-254660.0,
+			16128.0,
+		]
 
-    stencil[:,system.stencilΔ÷2+2:end] = reverse(stencil[:,1:system.stencilΔ÷2], dims=2)
+		stencil /= 25401600.0
 
-    system.Δ = build_2d_stencil(system, system.n_datapoints, stencil, system.stencilΔ)
+	elseif system.stencilΔ == 13
+
+		throw(ArgumentError("13-point stencil is not yet implemented for 2d calculations!"))
+
+	end
+
+	stencil[:, system.stencilΔ÷2+2:end] =
+		reverse(stencil[:, 1:system.stencilΔ÷2], dims = 2)
+
+	system.Δ = build_2d_stencil(
+		system,
+		system.n_datapoints,
+		stencil,
+		system.stencilΔ,
+	)
+
+	return nothing
 end
