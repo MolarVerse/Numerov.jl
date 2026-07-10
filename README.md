@@ -1,7 +1,8 @@
 # Numerov.jl
 
 [![version](https://juliahub.com/docs/General/Numerov/stable/version.svg)](https://juliahub.com/ui/Packages/General/Numerov)
-[![docs](https://img.shields.io/badge/docs-stable-blue.svg)](https://molarverse.github.io/Numerov.jl/stable/)
+[![docs stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://molarverse.github.io/Numerov.jl/stable/)
+[![docs dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://molarverse.github.io/Numerov.jl/dev/)
 [![CI](https://github.com/MolarVerse/Numerov.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/MolarVerse/Numerov.jl/actions/workflows/CI.yml)
 [![codecov](https://codecov.io/gh/MolarVerse/Numerov.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/MolarVerse/Numerov.jl)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
