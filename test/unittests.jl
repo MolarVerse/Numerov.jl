@@ -9,6 +9,7 @@ include("unittests/test_k_paths.jl")
 
 include("unittests/test_internalUnits.jl")
 include("unittests/test_inputValidation.jl")
+include("unittests/test_solve.jl")
 
 function unittests()
     @testset "test 1D laplace operator" test_1DΔ()
@@ -36,6 +37,8 @@ function unittests()
     @testset "test internal units" test_internalUnits()
 
     @testset "test input validation" test_inputValidation()
+
+    @testset "test solveWrapper" test_solveWrapper()
 end
 
 # function test_convert_to_internalUnits()
