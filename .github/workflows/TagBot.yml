@@ -30,3 +30,6 @@ jobs:
       - uses: JuliaRegistries/TagBot@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          # SSH key so tag pushes succeed when the tagged commit touches
+          # workflow files, and so pushed tags trigger CI (stable docs)
+          ssh: ${{ secrets.DOCUMENTER_KEY }}
