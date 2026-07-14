@@ -6,6 +6,7 @@ makedocs(
     modules  = [Numerov],
     pages    = [
         "Home"                   => "index.md",
+        "Library usage"          => "library.md",
         "Input file reference"   => "input.md",
         "Command-line interface" => "cli.md",
         "API reference"          => "api.md",

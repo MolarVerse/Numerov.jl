@@ -4,6 +4,10 @@
 
 ```@docs
 numerov
+solve_schrodinger
+band_structure
+SchrodingerSolution
+BandStructure
 ```
 
 ## Internals

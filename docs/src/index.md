@@ -38,6 +38,23 @@ julia> using Numerov
 julia> numerov("input.in")
 ```
 
+or purely programmatically: [`solve_schrodinger`](@ref) takes the potential
+as an array and the grid axes as ranges, and returns the results as plain
+Julia values without touching any files —
+
+```julia-repl
+julia> x = range(-5.0, 5.0; length = 201);
+
+julia> solve_schrodinger(0.5 .* x .^ 2, x; n_eigenvalues = 3).energies
+3-element Vector{Float64}:
+ 0.500000000049189
+ 1.5000000024036095
+ 2.5000000561274294
+```
+
+See [library usage](library.md) for 2D/3D problems, periodic systems, band
+structures and units.
+
 The input file names a grid-potential file and sets calculation options — see
 the [input file reference](input.md). Ready-to-run cases live in the
 [`examples/`](https://github.com/MolarVerse/Numerov.jl/tree/main/examples)
