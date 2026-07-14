@@ -12,16 +12,6 @@ function test_3DKronigPenney()
 
         [compare_frequenciesFiles(files[i], benchmark_path * filesBenchmark[i]) for i in eachindex(files)]
 
-        files          = filter(x -> startswith(x, "eigenvectors_k"), readdir())
-        filesBenchmark = filter(x -> startswith(x, "eigenvectors_k"), readdir(benchmark_path))
-
-        [@test_skip compare_eigenvectorFiles(files[i], benchmark_path * filesBenchmark[i], 1) for i in eachindex(files)]
-
-        files          = filter(x -> startswith(x, "imag_eigenvectors_k"), readdir())
-        filesBenchmark = filter(x -> startswith(x, "imag_eigenvectors_k"), readdir(benchmark_path))
-
-        [@test_skip compare_eigenvectorFiles(files[i], benchmark_path * filesBenchmark[i], 1) for i in eachindex(files)]
-
         compare_eigenvalueFiles( "bandstructure.dat"         , benchmark_path * "bandstructure.dat")
     end
 end

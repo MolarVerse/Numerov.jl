@@ -10,6 +10,8 @@ include("unittests/test_k_paths.jl")
 include("unittests/test_internalUnits.jl")
 include("unittests/test_inputValidation.jl")
 include("unittests/test_solve.jl")
+include("unittests/test_api.jl")
+include("unittests/test_subspaces.jl")
 
 function unittests()
     @testset "test 1D laplace operator" test_1DΔ()
@@ -39,6 +41,15 @@ function unittests()
     @testset "test input validation" test_inputValidation()
 
     @testset "test solveWrapper" test_solveWrapper()
+
+    @testset "API: pipeline equivalence" test_api_equivalence()
+    @testset "API: units"                test_api_units()
+    @testset "API: single k-point"       test_api_single_k()
+    @testset "API: error paths"          test_api_errors()
+
+    @testset "subspaces: 2D degenerate"  test_subspace_invariance()
+    @testset "subspaces: 3D degenerate"  test_subspace_3D()
+    @testset "subspaces: periodic"       test_subspace_periodic()
 end
 
 # function test_convert_to_internalUnits()
