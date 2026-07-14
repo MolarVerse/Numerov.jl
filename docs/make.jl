@@ -21,4 +21,7 @@ makedocs(
 deploydocs(
     repo      = "github.com/MolarVerse/Numerov.jl.git",
     devbranch = "main",
+    # keep gh-pages a single commit: docs builds are artifacts, their
+    # history only bloats clones
+    forcepush = true,
 )
