@@ -146,12 +146,15 @@ function test_subspace_invariance()
     check_cluster_subspaces(sol_arpack, sol_lu, clusters, dx^2)
 
     # on this small grid, cross-check the projector-distance identity
-    # against the explicitly materialized projectors P = QQ'
+    # against the explicitly materialized projectors P = QQ'. The identity
+    # sqrt(2m - 2*norm(S)^2) suffers catastrophic cancellation when the
+    # subspaces are nearly identical, flooring at ~sqrt(eps), so the
+    # comparison cannot be tighter than ~1e-7
     r  = clusters[end]
     Q1 = orthonormal_basis(sol_arpack.states[:, r])
     Q2 = orthonormal_basis(sol_lu.states[:, r])
     @test projector_distance(sol_arpack.states[:, r], sol_lu.states[:, r]) ≈
-          norm(Q1 * Q1' - Q2 * Q2') atol = 1.0e-8
+          norm(Q1 * Q1' - Q2 * Q2') atol = 1.0e-6
 end
 
 """
