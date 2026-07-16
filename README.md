@@ -1,6 +1,7 @@
 # Numerov.jl
 
 [![version](https://juliahub.com/docs/General/Numerov/stable/version.svg)](https://juliahub.com/ui/Packages/General/Numerov)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21389968.svg)](https://doi.org/10.5281/zenodo.21389968)
 [![docs stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://molarverse.github.io/Numerov.jl/stable/)
 [![docs dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://molarverse.github.io/Numerov.jl/dev/)
 [![CI](https://github.com/MolarVerse/Numerov.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/MolarVerse/Numerov.jl/actions/workflows/CI.yml)
