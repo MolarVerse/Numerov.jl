@@ -1,0 +1,27 @@
+{
+    "title": "Numerov.jl",
+    "description": "Numerov.jl solves the time-independent Schrödinger equation on 1D, 2D and 3D grid potentials with high-order finite-difference (Numerov-type) stencils, sparse matrices and iterative eigensolvers, including periodic systems, k-point sampling and band structures.",
+    "license": "MIT",
+    "upload_type": "software",
+    "creators": [
+        {
+            "name": "Gamper, Jakob",
+            "orcid": "0000-0003-1136-2536"
+        }
+    ],
+    "keywords": [
+        "Julia",
+        "Schrödinger equation",
+        "Numerov method",
+        "band structure",
+        "computational chemistry",
+        "eigensolver"
+    ],
+    "related_identifiers": [
+        {
+            "identifier": "10.1021/acs.jpclett.3c01707",
+            "relation": "isSupplementTo",
+            "scheme": "doi"
+        }
+    ]
+}

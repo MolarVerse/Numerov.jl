@@ -7,6 +7,5 @@ function test_2DHarmonicOscillator()
 
         compare_eigenvalueFiles( "eigenvalues.dat"         , benchmark_path * "eigenvalues.dat")
         compare_frequenciesFiles("frequencies.dat"         , benchmark_path * "frequencies.dat")
-        @test_skip compare_eigenvectorFiles("eigenvectors.dat"        , benchmark_path * "eigenvectors.dat", 1)
     end
 end

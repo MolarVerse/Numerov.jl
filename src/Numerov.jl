@@ -16,6 +16,8 @@ module Numerov
     import PhysicalConstants.CODATA2018: h, ħ, N_A, c_0
 
     export numerov
+    export solve_schrodinger, band_structure
+    export SchrodingerSolution, BandStructure
 
     include("MyUnits.jl")
     using .MyUnits
@@ -61,6 +63,7 @@ module Numerov
     include("solve.jl")
 
     include("main.jl")
+    include("api.jl")
 
 
 end # module Numerov

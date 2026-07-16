@@ -75,6 +75,25 @@ A small launcher script is also provided:
 julia --project=<Numerov.jl dir> <Numerov.jl dir>/bin/numerov.jl input.in
 ```
 
+## Library usage
+
+The Schrödinger equation can also be solved directly from Julia arrays,
+without input or output files:
+
+```julia
+using Numerov
+
+x = range(-5.0, 5.0; length = 201)   # grid in bohr
+result = solve_schrodinger(0.5 .* x .^ 2, x; n_eigenvalues = 3)
+
+result.energies   # ≈ [0.5, 1.5, 2.5] hartree
+result.states     # normalized eigenvectors, one per column
+```
+
+`band_structure` computes band structures of periodic potentials the same
+way. See the [library usage documentation](https://molarverse.github.io/Numerov.jl/dev/library/)
+for 2D/3D problems, periodic systems, units and the full keyword list.
+
 ## Command-line interface
 
 Numerov.jl ships a [Comonicon](https://github.com/comonicon/Comonicon.jl)-based
