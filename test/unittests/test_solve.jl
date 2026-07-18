@@ -34,7 +34,7 @@ function test_solveWrapper()
 
     reference = eigen(Symmetric(Matrix(H))).values
 
-    for solver in (Numerov.ARPACK, Numerov.KRYLOV, Numerov.LU)
+    for solver in (Numerov.ARPACK, Numerov.KRYLOV, Numerov.LOBPCG, Numerov.LU)
         system, output, files = make_solver_structs(solver, n)
         eigenvalues, eigenvectors = Numerov.solveWrapper(system, output, files, H)
         check_eigenpairs(H, eigenvalues, eigenvectors, reference, n)
@@ -66,6 +66,19 @@ function test_solveWrapper()
     reference_p = eigen(Symmetric(Matrix(Hp))).values
     check_eigenpairs(Hp, eigenvalues, eigenvectors, reference_p, n)
     @test abs(real(eigenvalues[1])) < 1.0e-8
+
+    # lobpcg rejects complex Hermitian (periodic) problems with a clear error
+    system, output, files = make_solver_structs(Numerov.LOBPCG, n)
+    @test_throws ArgumentError Numerov.solveWrapper(system, output, files, Hc)
+
+    # the residual verifier reports machine-precision pairs as tight and
+    # corrupted pairs as loose
+    vals, vecs = Numerov.solveWrapper(make_solver_structs(Numerov.ARPACK, n)..., H)
+    @test Numerov.max_relative_residual(H, vals, vecs, n) < 1.0e-8
+    bad = copy(vecs); bad[:, 1] .= randn(N) ./ sqrt(N)
+    @test Numerov.max_relative_residual(H, vals, bad, n) > 1.0e-2
+    collapsed = copy(vecs); collapsed[:, 1] .= 0.0
+    @test Numerov.max_relative_residual(H, vals, collapsed, n) == Inf
 
     # the GPU enum value is rejected with a catchable error
     system, output, files = make_solver_structs(Numerov.GPU, n)

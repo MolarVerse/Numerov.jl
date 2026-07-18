@@ -54,6 +54,7 @@ end
 const SOLVER_NAMES = Dict(
     :arpack => ARPACK,
     :krylov => KRYLOV,
+    :lobpcg => LOBPCG,
     :lu     => LU,
 )
 
@@ -84,7 +85,8 @@ writing any files.
   real, non-periodic problem.
 - `stencil = 9`: finite-difference stencil size (`3`, `5`, `7`, `9`, `11` or
   `13`); `stencil_laplace` and `stencil_nabla` override it individually.
-- `solver = :arpack`: eigensolver backend (`:arpack`, `:krylov` or `:lu`).
+- `solver = :arpack`: eigensolver backend (`:arpack`, `:krylov`, `:lobpcg` or
+  `:lu`); `:lobpcg` is recommended for large non-periodic 3D problems.
 - `potential_unit = u"hartree"`, `coord_unit = u"bohr"`, `mass_unit = u"m_e"`:
   units of the inputs; energies are returned in `potential_unit`.
 
@@ -233,7 +235,7 @@ function setup_problem(V::AbstractArray{<:Real}, coords;
     all(isfinite, V) || throw(ArgumentError("the potential contains non-finite values"))
 
     haskey(SOLVER_NAMES, solver) ||
-        throw(ArgumentError("unknown solver :$solver - valid options are :arpack, :krylov and :lu"))
+        throw(ArgumentError("unknown solver :$solver - valid options are :arpack, :krylov, :lobpcg and :lu"))
     solver === :arpack && n_eigenvalues + 5 >= length(V) &&
         throw(ArgumentError("the arpack solver needs n_eigenvalues + 5 < number of grid points ($(length(V)))"))
 

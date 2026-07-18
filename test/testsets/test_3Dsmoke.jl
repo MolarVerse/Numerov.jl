@@ -101,6 +101,15 @@ function test_3Dsmoke()
     #                                                                   #
     #####################################################################
 
+    # the lobpcg solver must reproduce the arpack analytic result
+    let x = range(xmin, xmax; length = n_points)
+        V = [0.5 * (a^2 + b^2 + c^2) for a in x, b in x, c in x]
+        r = solve_schrodinger(V, (x, x, x); n_eigenvalues = 4, solver = :lobpcg)
+        (a0, a1) = (0.0032, 0.012)
+        @test isapprox(r.energies[1], 1.5; atol = a0)
+        @test all(isapprox.(r.energies[2:4], 2.5; atol = a1))
+    end
+
     for stencil in (3, 13)
         mktempdir() do tmp
 
