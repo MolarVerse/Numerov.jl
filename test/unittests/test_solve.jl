@@ -84,3 +84,72 @@ function test_solveWrapper()
     system, output, files = make_solver_structs(Numerov.GPU, n)
     @test_throws ArgumentError Numerov.solveWrapper(system, output, files, H)
 end
+
+"""
+Deterministically exercise both lobpcg safety nets - not by mocking, but by
+triggering the real failure modes:
+
+1. IterativeSolvers.lobpcg refuses to run (throws) when the matrix is smaller
+   than 3x the requested block size - this reliably fails both retry
+   attempts, forcing the arpack fallback.
+2. A tiny `lobpcg_maxiter` produces an under-converged (but not thrown)
+   result - this is caught by the post-solve residual verifier, which
+   re-solves with arpack.
+
+Both must still return results as accurate as calling arpack directly.
+"""
+function test_lobpcg_fallback()
+    Random.seed!(7)
+
+    # (1) too small for the requested block size -> throws on both attempts
+    N, n = 12, 1   # nev = n + 5 = 6; N=12 < 3*nev=18 triggers IterativeSolvers'
+                   # internal instability guard on every attempt
+    Δ = spdiagm(-1 => -ones(N - 1), 0 => 2 * ones(N), 1 => -ones(N - 1))
+    V = spdiagm(0 => collect(range(0.1, 2.0; length = N)))
+    H = Δ + V
+    reference = eigen(Symmetric(Matrix(H))).values
+
+    system, output, files = make_solver_structs(Numerov.LOBPCG, n)
+    local eigenvalues, eigenvectors
+    @test_logs (:warn, r"lobpcg attempt") match_mode = :any begin
+        eigenvalues, eigenvectors = Numerov.solveWrapper(system, output, files, H)
+    end
+    check_eigenpairs(H, eigenvalues, eigenvectors, reference, n)
+
+    # (2) large enough to run, but capped at 1 lobpcg iteration -> converges
+    # nowhere near tol, caught by the residual verifier and re-solved
+    N2, n2 = 40, 4
+    Δ2 = spdiagm(-1 => -ones(N2 - 1), 0 => 2 * ones(N2), 1 => -ones(N2 - 1))
+    V2 = spdiagm(0 => collect(range(0.1, 2.0; length = N2)))
+    H2 = Δ2 + V2
+    reference2 = eigen(Symmetric(Matrix(H2))).values
+
+    system2, output2, files2 = make_solver_structs(Numerov.LOBPCG, n2)
+    local eigenvalues2, eigenvectors2
+    @test_logs (:warn, r"exceed the residual tolerance") match_mode = :any begin
+        eigenvalues2, eigenvectors2 = Numerov.solveWrapper(system2, output2, files2, H2; lobpcg_maxiter = 1)
+    end
+    check_eigenpairs(H2, eigenvalues2, eigenvectors2, reference2, n2)
+end
+
+"""
+Non-lobpcg solvers have no fallback to escalate to (arpack is already the top
+of the ladder), so an under-converged Krylov result only warns rather than
+re-solving. Deterministically trigger this with a tiny `krylov_maxiter`
+rather than hoping a normal run happens to under-converge.
+"""
+function test_residual_warning()
+    N, n = 60, 4
+    Δ = spdiagm(-1 => -ones(N - 1), 0 => 2 * ones(N), 1 => -ones(N - 1))
+    V = spdiagm(0 => collect(range(0.1, 2.0; length = N)))
+    H = Δ + V
+
+    system, output, files = make_solver_structs(Numerov.KRYLOV, n)
+    local eigenvalues, eigenvectors
+    @test_logs (:warn, r"residuals are larger than expected") match_mode = :any begin
+        eigenvalues, eigenvectors = Numerov.solveWrapper(system, output, files, H; krylov_maxiter = 1)
+    end
+    # this is a deliberately broken scenario purely to exercise the warning
+    # path - just confirm the residual it reports is indeed loose
+    @test Numerov.max_relative_residual(H, eigenvalues, eigenvectors, n) > 1.0e-6
+end

@@ -96,7 +96,8 @@ function max_relative_residual(Hamiltonian, eigenvalues, eigenvectors, n::Int)
 end
 
 function solveWrapper(system::System, output::Output, files::Files, Hamiltonian;
-                      preconditioner = nothing)
+                      preconditioner = nothing, lobpcg_tol::Float64 = 1.0e-7,
+                      lobpcg_maxiter::Int = 2000, krylov_maxiter::Int = 10000)
 
     nev = output.n_eigenvalues + 5
 
@@ -106,7 +107,7 @@ function solveWrapper(system::System, output::Output, files::Files, Hamiltonian;
 
     elseif system.solver == KRYLOV
 
-        @timeit files.to "Krylov" eigenvalues, eigenvectors, info = eigsolve(Hamiltonian, nev, :SR; ishermitian=true, maxiter=10000)
+        @timeit files.to "Krylov" eigenvalues, eigenvectors, info = eigsolve(Hamiltonian, nev, :SR; ishermitian=true, maxiter=krylov_maxiter)
         # stack the eigenvectors as matrix columns; the previous adjoint-based
         # reshape conjugated complex eigenvectors
         eigenvectors = stack(eigenvectors)
@@ -125,8 +126,8 @@ function solveWrapper(system::System, output::Output, files::Files, Hamiltonian;
             try
                 X0 = randn(size(Hamiltonian, 1), nev)
                 result = preconditioner === nothing ?
-                    lobpcg(Hamiltonian, false, X0; tol = 1.0e-7, maxiter = 2000) :
-                    lobpcg(Hamiltonian, false, X0; P = preconditioner, tol = 1.0e-7, maxiter = 2000)
+                    lobpcg(Hamiltonian, false, X0; tol = lobpcg_tol, maxiter = lobpcg_maxiter) :
+                    lobpcg(Hamiltonian, false, X0; P = preconditioner, tol = lobpcg_tol, maxiter = lobpcg_maxiter)
                 break
             catch err
                 @warn "lobpcg attempt $attempt failed, $(attempt == 1 ? "retrying" : "falling back to arpack")" err

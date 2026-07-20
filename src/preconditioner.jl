@@ -1,14 +1,24 @@
 """
     KineticPreconditioner
 
-Tensor-product approximation to the inverse of the shifted kinetic operator,
-used to precondition the LOBPCG eigensolver.
+Tensor-product preconditioner for the shifted kinetic operator, used to
+precondition the LOBPCG eigensolver.
 
-The kinetic energy is approximated by the Kronecker sum of the per-dimension
-1D operators `t_d = -Δ_d / (2 Δq_d²)`; its eigendecomposition factorizes into
-the per-dimension eigenpairs, so `(T̃ + σI)⁻¹ x` is applied exactly with one
-small dense eigenbasis transform per dimension - no factorization of the full
-operator and therefore no fill-in.
+`T̃`, the Kronecker SUM of the per-dimension 1D operators
+`t_d = -Δ_d / (2 Δq_d²)`, replaces the true (possibly non-separable) kinetic
+operator: `T̃`'s eigendecomposition factorizes into the per-dimension
+eigenpairs, so `(T̃ + σI)⁻¹ x` is applied exactly - with one small dense
+eigenbasis transform per dimension - without ever factorizing a full-size
+operator, so there is no fill-in.
+
+`T̃` equals the true production kinetic operator exactly for 1D problems
+(trivially) and for 2D (`buildLaplace_2d`'s Laplacian is separable: dividing
+by `2^(dimension-1)`, as `solve()` does, recovers the Kronecker sum exactly).
+For 3D, `buildLaplace_3d` uses a more elaborate, non-separable stencil, so
+`T̃` is only an APPROXIMATION there; this does not compromise correctness,
+only convergence speed, since every LOBPCG result is independently verified
+against the true Hamiltonian's residual in `solveWrapper` (and re-solved with
+Arpack if that check fails) regardless of how good an approximation `T̃` is.
 """
 struct KineticPreconditioner
     Q     ::Vector{Matrix{Float64}}   # eigenbasis per dimension, d = 1..D
