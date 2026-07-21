@@ -101,11 +101,29 @@ function test_3Dsmoke()
     #                                                                   #
     #####################################################################
 
-    # the lobpcg solver must reproduce the arpack analytic result
+    # the lobpcg solver must reproduce the arpack analytic result - and must
+    # actually do so via lobpcg itself, not via solveWrapper's automatic
+    # retry/escalation-to-arpack fallback, which would make `r.energies` look
+    # correct even if lobpcg silently failed on this genuinely (3-fold)
+    # degenerate cluster and Arpack quietly rescued it. Seed the RNG for
+    # reproducibility and assert no fallback/escalation warning fired, so
+    # this test actually proves lobpcg converged rather than merely that the
+    # pipeline's overall answer is correct.
     let x = range(xmin, xmax; length = n_points)
         V = [0.5 * (a^2 + b^2 + c^2) for a in x, b in x, c in x]
-        r = solve_schrodinger(V, (x, x, x); n_eigenvalues = 4, solver = :lobpcg)
         (a0, a1) = (0.0032, 0.012)
+
+        Random.seed!(1)
+        local r
+        logs, _ = Test.collect_test_logs() do
+            r = solve_schrodinger(V, (x, x, x); n_eigenvalues = 4, solver = :lobpcg)
+        end
+        rescued = any(
+            l -> occursin("falling back to arpack", l.message) ||
+                 occursin("exceed the residual tolerance", l.message),
+            logs,
+        )
+        @test !rescued
         @test isapprox(r.energies[1], 1.5; atol = a0)
         @test all(isapprox.(r.energies[2:4], 2.5; atol = a1))
     end

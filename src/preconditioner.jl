@@ -12,13 +12,16 @@ eigenbasis transform per dimension - without ever factorizing a full-size
 operator, so there is no fill-in.
 
 `T̃` equals the true production kinetic operator exactly for 1D problems
-(trivially) and for 2D (`buildLaplace_2d`'s Laplacian is separable: dividing
+(trivially) and for the 2D **5-point** stencil (`buildLaplace_2d`'s 5-point
+Laplacian is a pure row/column "cross" pattern, which is separable: dividing
 by `2^(dimension-1)`, as `solve()` does, recovers the Kronecker sum exactly).
-For 3D, `buildLaplace_3d` uses a more elaborate, non-separable stencil, so
-`T̃` is only an APPROXIMATION there; this does not compromise correctness,
-only convergence speed, since every LOBPCG result is independently verified
-against the true Hamiltonian's residual in `solveWrapper` (and re-solved with
-Arpack if that check fails) regardless of how good an approximation `T̃` is.
+Every other case - 2D with stencil 3, 7, 9 (the package default) or 11, and
+3D with any stencil (`buildLaplace_3d` always uses a more elaborate,
+non-separable stencil) - is only an APPROXIMATION; this does not compromise
+correctness, only convergence speed, since every LOBPCG result is
+independently verified against the true Hamiltonian's residual in
+`solveWrapper` (and re-solved with Arpack if that check fails) regardless of
+how good an approximation `T̃` is.
 """
 struct KineticPreconditioner
     Q     ::Vector{Matrix{Float64}}   # eigenbasis per dimension, d = 1..D

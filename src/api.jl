@@ -236,8 +236,11 @@ function setup_problem(V::AbstractArray{<:Real}, coords;
 
     haskey(SOLVER_NAMES, solver) ||
         throw(ArgumentError("unknown solver :$solver - valid options are :arpack, :krylov, :lobpcg and :lu"))
-    solver === :arpack && n_eigenvalues + 5 >= length(V) &&
-        throw(ArgumentError("the arpack solver needs n_eigenvalues + 5 < number of grid points ($(length(V)))"))
+    # :lobpcg transparently falls back to solve_arpack, and :krylov uses the
+    # same nev, so all three solvers share arpack's nev < N requirement - only
+    # :lu diagonalizes the full dense matrix and has no such limit
+    solver in (:arpack, :lobpcg, :krylov) && n_eigenvalues + 5 >= length(V) &&
+        throw(ArgumentError("the $(solver) solver needs n_eigenvalues + 5 < number of grid points ($(length(V)))"))
 
     stencil         in (3, 5, 7, 9, 11, 13) || throw(ArgumentError("stencil has to be 3, 5, 7, 9, 11 or 13"))
     stencil_laplace in (3, 5, 7, 9, 11, 13) || throw(ArgumentError("stencil-laplace has to be 3, 5, 7, 9, 11 or 13"))

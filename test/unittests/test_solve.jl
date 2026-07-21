@@ -153,3 +153,35 @@ function test_residual_warning()
     # path - just confirm the residual it reports is indeed loose
     @test Numerov.max_relative_residual(H, eigenvalues, eigenvectors, n) > 1.0e-6
 end
+
+"""
+The lobpcg->arpack escalation (triggered by a loose residual, not by an
+exception) must itself be re-verified rather than returned on trust. Force
+lobpcg to under-converge (`lobpcg_maxiter = 1`, as in `test_lobpcg_fallback`)
+on a Hamiltonian whose extreme diagonal dynamic range also makes the arpack
+rescue itself land above the residual tolerance - `solve_arpack`'s shift
+heuristic scales with the largest diagonal entry, so a single huge spike
+degrades shift-invert accuracy for the low-lying eigenpairs actually wanted.
+This must produce a second, distinct warning naming the rescue result
+itself as suspect, not silence.
+"""
+function test_lobpcg_arpack_rescue_reverified()
+    Random.seed!(3)
+
+    N, n = 40, 4
+    Δ = spdiagm(-1 => -ones(N - 1), 0 => 2 * ones(N), 1 => -ones(N - 1))
+    V = collect(range(0.1, 2.0; length = N))
+    V[20] = 1.0e10
+    H = Δ + spdiagm(0 => V)
+
+    system, output, files = make_solver_structs(Numerov.LOBPCG, n)
+    local eigenvalues, eigenvectors
+    @test_logs (:warn, r"re-solving with arpack") (:warn, r"arpack rescue itself exceeds") match_mode = :any begin
+        eigenvalues, eigenvectors = Numerov.solveWrapper(system, output, files, H; lobpcg_maxiter = 1)
+    end
+
+    # the rescue result is still returned (nothing better to fall back to) -
+    # confirm it is indeed the loose result the warning describes, not a
+    # spuriously-triggered warning on an otherwise-fine result
+    @test Numerov.max_relative_residual(H, eigenvalues, eigenvectors, n) > 1.0e-6
+end

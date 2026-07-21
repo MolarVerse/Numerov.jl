@@ -157,7 +157,9 @@ function solveWrapper(system::System, output::Output, files::Files, Hamiltonian;
     eigenvalues, eigenvectors = eigenvalues[perm], eigenvectors[:, perm]
 
     # verify, don't trust: check the residuals of the eigenpairs that will be
-    # kept, and escalate or warn if an iterative solver returned loose pairs
+    # kept, and escalate or warn if an iterative solver returned loose pairs.
+    # The arpack rescue below is itself re-verified - no path may return
+    # without passing through this check.
     if system.solver in (ARPACK, KRYLOV, LOBPCG)
         residual = max_relative_residual(Hamiltonian, eigenvalues, eigenvectors, output.n_eigenvalues)
         if system.solver == LOBPCG && residual > 1.0e-6
@@ -165,6 +167,10 @@ function solveWrapper(system::System, output::Output, files::Files, Hamiltonian;
             eigenvalues, eigenvectors = solve_arpack(Hamiltonian, nev)
             perm = sortperm(eigenvalues; by = real)
             eigenvalues, eigenvectors = eigenvalues[perm], eigenvectors[:, perm]
+
+            residual = max_relative_residual(Hamiltonian, eigenvalues, eigenvectors, output.n_eigenvalues)
+            residual > 1.0e-6 &&
+                @warn "the arpack rescue itself exceeds the residual tolerance; returned eigenpairs may be inaccurate" residual
         elseif residual > 1.0e-6
             @warn "eigenpair residuals are larger than expected" solver = system.solver residual
         end

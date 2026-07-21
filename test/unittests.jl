@@ -44,6 +44,7 @@ function unittests()
     @testset "test solveWrapper" test_solveWrapper()
     @testset "test lobpcg fallback paths" test_lobpcg_fallback()
     @testset "test residual warning" test_residual_warning()
+    @testset "test lobpcg arpack rescue re-verified" test_lobpcg_arpack_rescue_reverified()
     @testset "test KineticPreconditioner" test_KineticPreconditioner()
 
     @testset "API: pipeline equivalence" test_api_equivalence()

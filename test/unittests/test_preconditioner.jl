@@ -4,16 +4,17 @@ against: the Kronecker SUM of independently-built per-dimension 1D kinetic
 matrices (`0.5 * -Δ_d / spacing_d²`), which is exactly what the
 preconditioner is DEFINED to approximate the true kinetic operator with.
 
-For 1D problems this is trivially the production operator itself. For 2D,
-`buildLaplace_2d`'s Δ is verified below to equal exactly `2 * (this
-separable sum)` - i.e. dividing by `2^(dimension-1)` (as `solve()` does when
-assembling the Hamiltonian) recovers this separable model exactly, so the
-preconditioner is an exact match there too. For 3D, `buildLaplace_3d` uses a
-genuinely non-separable (more elaborate, higher-order) stencil, so this
-separable model is only an approximation of the true operator in that case -
-that is fine for a preconditioner (only convergence speed depends on the
-approximation quality), and final accuracy is independently guaranteed by
-`solveWrapper`'s post-solve residual verification, tested elsewhere
+For 1D problems this is trivially the production operator itself. For 2D
+with the 5-point stencil, `buildLaplace_2d`'s Δ is verified below to equal
+exactly `2 * (this separable sum)` - i.e. dividing by `2^(dimension-1)` (as
+`solve()` does when assembling the Hamiltonian) recovers this separable
+model exactly, so the preconditioner is an exact match there too. Every
+other 2D stencil (3, 7, 9, 11) and every 3D stencil use a genuinely
+non-separable (more elaborate, higher-order or off-cross) pattern, so this
+separable model is only an approximation of the true operator in those
+cases - that is fine for a preconditioner (only convergence speed depends on
+the approximation quality), and final accuracy is independently guaranteed
+by `solveWrapper`'s post-solve residual verification, tested elsewhere
 (`test_solveWrapper`, `test_lobpcg_fallback`, `test_3Dsmoke`).
 """
 function separable_kinetic_reference(dims::NTuple{D, Int}, potential::Numerov.Potential, system::Numerov.System) where D
@@ -44,8 +45,11 @@ via dense Kronecker sums, not by calling any of the preconditioner's own
 internals - across 1D/2D/3D and a periodic dimension, through all four
 `ldiv!` dispatches (vector/matrix, in-place/allocating). Also confirms, as a
 regression guard, that this separable reference exactly equals the true
-production kinetic operator for 1D and 2D (division by `2^(dimension-1)`
-included), and is only an approximation for 3D (see module docstring above).
+production kinetic operator for 1D and for 2D's 5-point stencil (division by
+`2^(dimension-1)` included), and is only an approximation for every other 2D
+stencil and for 3D (see module docstring above) - the 2D stencil=9 case below
+guards specifically against re-introducing the "2D is always exact" overclaim
+this docstring used to make (the package's default stencil is 9, not 5).
 """
 function test_KineticPreconditioner()
     Random.seed!(42)
@@ -54,6 +58,7 @@ function test_KineticPreconditioner()
         (dims = (12,),      periodic = false, stencil = 9, exact_vs_production = true),
         (dims = (12,),      periodic = true,  stencil = 9, exact_vs_production = true),
         (dims = (6, 6),     periodic = false, stencil = 5, exact_vs_production = true),
+        (dims = (10, 10),   periodic = false, stencil = 9, exact_vs_production = false),
         (dims = (5, 5, 5),  periodic = false, stencil = 5, exact_vs_production = false),
     )
 
