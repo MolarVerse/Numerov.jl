@@ -1,7 +1,7 @@
 name = "Numerov"
 uuid = "19e90f0b-5b53-4501-bfb7-be6aec03b1b3"
-authors = ["Jakob Gamper <97gamjak@gmail.com>"]
 version = "0.3.1"
+authors = ["Jakob Gamper <97gamjak@gmail.com>"]
 
 [deps]
 Arpack = "7d9fca2a-8960-54d3-9f78-7d1dccf2cb97"
@@ -31,7 +31,7 @@ Statistics = "1.10"
 StatsBase = "0.34"
 Suppressor = "0.2"
 Test = "1.10"
-TimerOutputs = "0.5"
+TimerOutputs = "0.5, 1"
 Unitful = "1"
 UnitfulAtomic = "1"
 julia = "1.10"
