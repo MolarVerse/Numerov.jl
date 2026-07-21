@@ -8,10 +8,15 @@ definition: "the block for stencil offset i, placed at cell j") but does not
 scale well, which is exactly why `build_2d_stencil`/`build_3d_stencil` no
 longer work this way. `test_buildStencilMatrices` checks the production
 (fast, COO-accumulation-based) functions reproduce these bit-for-bit across
-1D/2D/3D, all stencil sizes, every periodicity combination, and - crucially -
-grids smaller than the stencil width, where a periodic wraparound can
-collide with a non-wrapped placement and a naive `sparse(I, J, V)`-with-
-default-summing rewrite would silently double-count instead of overwriting.
+1D/2D/3D, every legal stencil size (3/5/7/9/11/13 in 2D; 3/5/7/9/11/13 here
+too, even though `buildLaplace_3d`'s own coefficients are only implemented up
+to 11 - `build_3d_stencil` itself has no such restriction, and its stencil∇
+sub-case IS already reachable in production at size 11), every periodicity
+combination (all 8 in 3D, not just the 5 that omit "exactly two axes
+periodic"), and - crucially - grids smaller than the stencil width, where a
+periodic wraparound can collide with a non-wrapped placement and a naive
+`sparse(I, J, V)`-with-default-summing rewrite would silently double-count
+instead of overwriting.
 """
 function reference_build_2d_stencil(system, n_datapoints, stencil, stencil_size)
     total_points = prod(n_datapoints)
@@ -89,7 +94,7 @@ function test_buildStencilMatrices()
     Random.seed!(11)
 
     @testset "build_2d_stencil matches the reference" begin
-        for stencil_size in (3, 5, 7, 9, 11)
+        for stencil_size in (3, 5, 7, 9, 11, 13)
             for dims in ((6, 6), (10, 8), (stencil_size, stencil_size), (stencil_size, 6), (6, stencil_size))
                 for periodic in ((false, false), (true, false), (false, true), (true, true))
                     system = make_stencil_test_system(dims, periodic, stencil_size)
@@ -105,11 +110,12 @@ function test_buildStencilMatrices()
     end
 
     @testset "build_3d_stencil matches the reference" begin
-        for stencil_size in (3, 5, 7, 9)
+        for stencil_size in (3, 5, 7, 9, 11, 13)
             for dims in ((6, 6, 6), (stencil_size, stencil_size, stencil_size), (8, 6, 7))
                 for periodic in (
                     (false, false, false), (true, true, true),
                     (true, false, false), (false, true, false), (false, false, true),
+                    (true, true, false), (true, false, true), (false, true, true),
                 )
                     system = make_stencil_test_system(dims, periodic, stencil_size)
                     stencil = randn(stencil_size, stencil_size, stencil_size)
