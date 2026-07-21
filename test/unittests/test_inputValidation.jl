@@ -210,6 +210,34 @@ function test_numerov_inputValidation()
     end
 end
 
+"""
+solver=lobpcg only ever supports non-periodic (real symmetric) problems, but
+checkSolver runs before periodicity/k-points are known and so cannot reject
+this combination itself - the check has to happen in setupSystem, once
+system.reciprocal is set, and before main.jl's unconditional
+`rm(files.eigenvalueFileName)`, so a user's existing results survive a
+misconfigured re-run rather than being deleted ahead of the error.
+"""
+function test_lobpcg_periodic_rejected_before_side_effects()
+    mktempdir() do tmp
+        cd(tmp) do
+            write("input.in", """
+                               potential-file = potential.dat
+                               solver         = lobpcg
+                               periodic       = true
+                               band-structure = on
+                               k-points       = 10
+                               mass-unit      = m_e
+                               """)
+            write("potential.dat", harmonic_potential_1D())
+            write("eigenvalues.dat", "sentinel - must not be deleted by a rejected run")
+
+            @test_throws ArgumentError @suppress Numerov.numerov("input.in")
+            @test read("eigenvalues.dat", String) == "sentinel - must not be deleted by a rejected run"
+        end
+    end
+end
+
 function test_inputValidation()
     test_readInputFile_errors()
     test_readInputFile_valid()
@@ -219,4 +247,5 @@ function test_inputValidation()
     test_checkSystem_accepted()
     test_checkOutput()
     test_numerov_inputValidation()
+    test_lobpcg_periodic_rejected_before_side_effects()
 end

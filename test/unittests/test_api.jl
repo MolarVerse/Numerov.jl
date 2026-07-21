@@ -263,4 +263,12 @@ function test_api_errors()
 
     # the nabla stencil has no 13-point variant (checked also on 3D input)
     @test_throws ArgumentError solve_schrodinger(V3, (z, z, z); stencil_nabla = 13)
+
+    # n_eigenvalues too close to the grid size is rejected up front for every
+    # solver that shares arpack's nev < N requirement - :arpack directly,
+    # :lobpcg via its arpack fallback, and :krylov - not just :arpack; before
+    # this guard, :lobpcg raised an opaque BoundsError deep in solve() instead
+    for solver in (:arpack, :lobpcg, :krylov)
+        @test_throws ArgumentError solve_schrodinger(V1, x; n_eigenvalues = length(x), solver = solver)
+    end
 end
