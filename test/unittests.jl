@@ -4,6 +4,7 @@ include("unittests/test_1Dlaplace.jl")
 include("unittests/test_1Dnabla.jl")
 include("unittests/test_2Dlaplace.jl")
 include("unittests/test_2Dnabla.jl")
+include("unittests/test_buildStencilMatrices.jl")
 
 include("unittests/test_k_paths.jl")
 
@@ -18,6 +19,7 @@ function unittests()
     @testset "test 1D nabla   operator" test_1D∇()
     @testset "test 2D laplace operator" test_2DΔ()
     @testset "test 2D nabla   operator" test_2D∇()
+    @testset "test build_2d/3d_stencil vs reference" test_buildStencilMatrices()
 
     k_intervalls = [1.0, 1.0, 1.0]
     n_kpoints    = 3
