@@ -13,6 +13,12 @@ function setupSystem(potential::Potential, system::System)
     system.reciprocal && !any(system.periodic) && throw(ArgumentError("You have defined a number of k-points - this option is only valid in combination with \"periodic = true\""))
     any(system.n_datapoints .< system.stencil) && throw(ArgumentError("The number of datapoints in each dimension has at least to be equal to the stencil size!"))
 
+    # solveWrapper only ever builds a real Hamiltonian for lobpcg, so a
+    # reciprocal (k-point) run has to be rejected here - before any output
+    # file is written or an existing eigenvalues.dat is removed - rather than
+    # deep inside solve() on the first k-point
+    system.reciprocal && system.solver == LOBPCG && throw(ArgumentError("the lobpcg solver supports non-periodic (real symmetric) problems - use arpack or krylov for periodic k-point runs"))
+
     ###############################################################
     #                                                             #
     # set stencil for laplace and nabla if not defined seperately #

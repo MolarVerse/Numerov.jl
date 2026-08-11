@@ -157,7 +157,7 @@ The only required keyword is `potential-file`. All others have defaults:
 | `k-points` | Number of k-points sampled per direction between the Gamma point and the Brillouin-zone boundary; if omitted, a single calculation at k = 0 is performed | integer > 1 | not set |
 | `datapoints` | Number of grid points per dimension, comma- or space-separated (e.g. `datapoints = 20, 30`) | integers | required for 2D/3D; in 1D taken from the potential file |
 | `band-structure` | Compute the band structure along the path through the high-symmetry points of the Brillouin zone (requires `k-points`) | `on`, `true`, `off`, `false` | `off` |
-| `solver` | Eigensolver backend | `arpack`, `krylov`, `lu` | `arpack` |
+| `solver` | Eigensolver backend (`lobpcg` is recommended for large non-periodic 3D problems) | `arpack`, `krylov`, `lobpcg`, `lu` | `arpack` |
 | `output-file` | Name of the log file | file path | `Numerov.out` |
 | `timings-file` | Name of the timings file | file path | `timings.out` |
 | `read-k-points` | Read the k-points from a file instead of generating them [^3] | `true`, `false` | `false` |

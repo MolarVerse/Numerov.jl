@@ -28,6 +28,7 @@ function checkSolver(system::System)
     isempty(solver)    && (system.solver = ARPACK ; return) #write to log file about default setting
     solver == "arpack" && (system.solver = ARPACK ; return)
     solver == "krylov" && (system.solver = KRYLOV ; return)
+    solver == "lobpcg" && (system.solver = LOBPCG; return)
     solver == "cuda"   && throw(ArgumentError("the cuda solver is not implemented -- use arpack, krylov or lu"))
     solver == "lu"     && (system.solver = LU     ; return)
 
@@ -35,5 +36,6 @@ function checkSolver(system::System)
                         "Valid options are:                                               \n" *
                         "    - arpack                                                     \n" *
                         "    - krylov                                                     \n" *
+                        "    - lobpcg                                                     \n" *
                         "    - lu                                                         \n"))
 end

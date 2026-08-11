@@ -52,6 +52,14 @@ function write_3d_harmonic(dir::String, n::Int)
     end
 end
 
+function run_3d_harmonic_lobpcg(n::Int)
+    xs = range(-5.5, 5.5; length = n)
+    V = [0.5 * (x^2 + y^2 + z^2) for x in xs, y in xs, z in xs]
+    redirect_stdout(devnull) do
+        solve_schrodinger(V, (xs, xs, xs); n_eigenvalues = 4, solver = :lobpcg)
+    end
+end
+
 function run_3d_harmonic(n::Int)
     mktempdir() do tmp
         write_3d_harmonic(tmp, n)
@@ -94,6 +102,7 @@ SUITE["solve"] = BenchmarkGroup()
 SUITE["solve"]["1D_harmonic_201"] = @benchmarkable run_case("1DHarmonicOscillator") seconds = 30 samples = 5
 SUITE["solve"]["2D_water"]        = @benchmarkable run_case("2DWater") seconds = 60 samples = 3
 SUITE["solve"]["3D_harmonic_15"]  = @benchmarkable run_3d_harmonic(15) seconds = 120 samples = 3
+SUITE["solve"]["3D_harmonic_25_lobpcg"] = @benchmarkable run_3d_harmonic_lobpcg(25) seconds = 120 samples = 3
 
 SUITE["bandstructure"] = BenchmarkGroup()
 SUITE["bandstructure"]["1D_kronigpenney_10k"] =

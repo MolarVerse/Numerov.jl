@@ -11,6 +11,7 @@ module Numerov
     using DelimitedFiles
     using TimerOutputs
     using KrylovKit
+    using IterativeSolvers: lobpcg
     using StatsBase
 
     import PhysicalConstants.CODATA2018: h, ħ, N_A, c_0
@@ -60,6 +61,7 @@ module Numerov
     include("setupSystem.jl")
 
     include("normalize.jl")
+    include("preconditioner.jl")
     include("solve.jl")
 
     include("main.jl")

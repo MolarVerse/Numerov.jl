@@ -54,6 +54,7 @@ end
 const SOLVER_NAMES = Dict(
     :arpack => ARPACK,
     :krylov => KRYLOV,
+    :lobpcg => LOBPCG,
     :lu     => LU,
 )
 
@@ -84,7 +85,8 @@ writing any files.
   real, non-periodic problem.
 - `stencil = 9`: finite-difference stencil size (`3`, `5`, `7`, `9`, `11` or
   `13`); `stencil_laplace` and `stencil_nabla` override it individually.
-- `solver = :arpack`: eigensolver backend (`:arpack`, `:krylov` or `:lu`).
+- `solver = :arpack`: eigensolver backend (`:arpack`, `:krylov`, `:lobpcg` or
+  `:lu`); `:lobpcg` is recommended for large non-periodic 3D problems.
 - `potential_unit = u"hartree"`, `coord_unit = u"bohr"`, `mass_unit = u"m_e"`:
   units of the inputs; energies are returned in `potential_unit`.
 
@@ -233,9 +235,12 @@ function setup_problem(V::AbstractArray{<:Real}, coords;
     all(isfinite, V) || throw(ArgumentError("the potential contains non-finite values"))
 
     haskey(SOLVER_NAMES, solver) ||
-        throw(ArgumentError("unknown solver :$solver - valid options are :arpack, :krylov and :lu"))
-    solver === :arpack && n_eigenvalues + 5 >= length(V) &&
-        throw(ArgumentError("the arpack solver needs n_eigenvalues + 5 < number of grid points ($(length(V)))"))
+        throw(ArgumentError("unknown solver :$solver - valid options are :arpack, :krylov, :lobpcg and :lu"))
+    # :lobpcg transparently falls back to solve_arpack, and :krylov uses the
+    # same nev, so all three solvers share arpack's nev < N requirement - only
+    # :lu diagonalizes the full dense matrix and has no such limit
+    solver in (:arpack, :lobpcg, :krylov) && n_eigenvalues + 5 >= length(V) &&
+        throw(ArgumentError("the $(solver) solver needs n_eigenvalues + 5 < number of grid points ($(length(V)))"))
 
     stencil         in (3, 5, 7, 9, 11, 13) || throw(ArgumentError("stencil has to be 3, 5, 7, 9, 11 or 13"))
     stencil_laplace in (3, 5, 7, 9, 11, 13) || throw(ArgumentError("stencil-laplace has to be 3, 5, 7, 9, 11 or 13"))
