@@ -6,6 +6,9 @@ authors:
   - family-names: Gamper
     given-names: Jakob
     orcid: "https://orcid.org/0000-0003-1136-2536"
+  - family-names: Gallmetzer
+    given-names: Josef Maria
+    orcid: "https://orcid.org/0000-0002-4185-7831"
 repository-code: "https://github.com/MolarVerse/Numerov.jl"
 doi: 10.5281/zenodo.21389968
 license: MIT
